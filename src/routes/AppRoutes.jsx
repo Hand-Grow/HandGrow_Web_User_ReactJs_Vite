@@ -9,33 +9,29 @@ import UserDashboard from '../pages/user/UserDashboard';
 import CooperativeDashboard from '../pages/cooperative/CooperativeDashboard';
 import CompanyDashboard from '../pages/company/CompanyDashboard';
 import ProtectedRoute from './ProtectedRoute';
+import { USER_ROLES } from '../constants/roles';
+import Register from '../pages/Register';
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      
+      <Route path="/register" element={<Register />} />
+
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
-        
-        {/* Admin Routes */}
-        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-          <Route path="admin/dashboard" element={<AdminDashboard />} />
+
+        <Route element={<ProtectedRoute allowedRoles={[USER_ROLES.FARMER]} />}>
+          <Route
+            path="cooperative/dashboard"
+            element={<CooperativeDashboard />}
+          />
         </Route>
 
-        {/* User Routes */}
-        <Route element={<ProtectedRoute allowedRoles={['user', 'admin']} />}>
-          <Route path="dashboard" element={<UserDashboard />} />
-        </Route>
-
-        {/* Cooperative Routes */}
-        <Route element={<ProtectedRoute allowedRoles={['cooperative']} />}>
-          <Route path="cooperative/dashboard" element={<CooperativeDashboard />} />
-        </Route>
-
-        {/* Company Routes */}
-        <Route element={<ProtectedRoute allowedRoles={['company']} />}>
+        <Route
+          element={<ProtectedRoute allowedRoles={[USER_ROLES.ENTERPRISE]} />}
+        >
           <Route path="company/dashboard" element={<CompanyDashboard />} />
         </Route>
       </Route>

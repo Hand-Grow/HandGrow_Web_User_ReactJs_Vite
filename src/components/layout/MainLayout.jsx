@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../context/theme/useTheme';
 
 const MainLayout = () => {
   const { theme } = useTheme();
@@ -12,7 +12,7 @@ const MainLayout = () => {
     flexDirection: 'column',
     backgroundColor: theme === 'light' ? '#ffffff' : '#242424',
     color: theme === 'light' ? '#213547' : 'rgba(255, 255, 255, 0.87)',
-    transition: 'background-color 0.3s ease, color 0.3s ease'
+    transition: 'background-color 0.3s ease, color 0.3s ease',
   };
 
   const contentStyle = {
@@ -21,7 +21,7 @@ const MainLayout = () => {
     maxWidth: '800px',
     margin: '0 auto',
     width: '100%',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   };
 
   return (
