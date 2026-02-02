@@ -1,8 +1,6 @@
 import React, { useRef, useState } from 'react';
-import AuthLayout from '../components/layout/AuthLayout';
 import RoleSelectView from '../components/login/RoleSelector';
 import LoginForm from '../components/login/LoginForm';
-import AuthBanner from '../components/login/AuthBanner';
 import { useLogin } from '../hooks/useLogin';
 import { toast } from 'react-toastify';
 import { validateLogin } from '../utils/validators/authValidator';
@@ -63,42 +61,28 @@ const Login = () => {
   };
 
   if (!selectedRole) {
-    return (
-      <div className="min-h-screen bg-[#3CC18E]">
-        <div className="flex h-screen">
-          <div className="w-full lg:w-1/2 flex items-center justify-center">
-            <AuthBanner />
-          </div>
-          <RoleSelectView onSelectRole={setSelectedRole} />
-        </div>
-      </div>
-    );
+    return <RoleSelectView onSelectRole={setSelectedRole} />;
   }
 
   return (
-    <AuthLayout
-      left={
-        <LoginForm
-          email={email}
-          password={password}
-          rememberMe={rememberMe}
-          showPassword={showPassword}
-          rememberRef={rememberRef}
-          loading={loading}
-          onEmailChange={(e) =>
-            setLoginState((s) => ({ ...s, email: e.target.value }))
-          }
-          onPasswordChange={(e) =>
-            setLoginState((s) => ({ ...s, password: e.target.value }))
-          }
-          onRememberMeChange={() =>
-            setLoginState((s) => ({ ...s, rememberMe: !s.rememberMe }))
-          }
-          onTogglePassword={() => setShowPassword((s) => !s)}
-          onSubmit={handleSubmitLogin}
-        />
+    <LoginForm
+      email={email}
+      password={password}
+      rememberMe={rememberMe}
+      showPassword={showPassword}
+      rememberRef={rememberRef}
+      loading={loading}
+      onEmailChange={(e) =>
+        setLoginState((s) => ({ ...s, email: e.target.value }))
       }
-      right={<AuthBanner />}
+      onPasswordChange={(e) =>
+        setLoginState((s) => ({ ...s, password: e.target.value }))
+      }
+      onRememberMeChange={() =>
+        setLoginState((s) => ({ ...s, rememberMe: !s.rememberMe }))
+      }
+      onTogglePassword={() => setShowPassword((s) => !s)}
+      onSubmit={handleSubmitLogin}
     />
   );
 };

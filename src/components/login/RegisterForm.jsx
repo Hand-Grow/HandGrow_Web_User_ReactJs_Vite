@@ -18,7 +18,7 @@ const RegisterForm = ({
   onSubmit,
 }) => {
   return (
-    <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-white">
+    <div className="flex flex-col items-center justify-center bg-white w-full">
       <div className="mb-4 text-center">
         <div className="flex items-center justify-center mb-3">
           <img

@@ -3,7 +3,7 @@ import HandGrow from '../../assets/image/HandGrow.png';
 
 const RoleSelectView = ({ onSelectRole }) => {
   return (
-    <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-white p-12 rounded-tl-[50px] rounded-bl-[50px]">
+    <div className="flex flex-col items-center justify-center w-full max-w-md">
       <div className="mb-8 text-center">
         <div className="flex items-center justify-center mb-3">
           <img
