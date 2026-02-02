@@ -1,17 +1,19 @@
 import InputField from '../common/InputField';
 import PrimaryButton from '../common/PrimaryButton';
 import { Lock, Eye, EyeOff, User } from 'lucide-react';
-import HandGrow from '../../assets/image/HandGrow.png';
+// import HandGrow from '../../assets/image/HandGrow.png';
 
 const RegisterForm = ({
   name,
   email,
+  address,
   password,
   confirmPassword,
   showPassword,
   loading,
   onNameChange,
   onEmailChange,
+  onAddressChange,
   onPasswordChange,
   onConfirmPasswordChange,
   onTogglePassword,
@@ -20,7 +22,7 @@ const RegisterForm = ({
   return (
     <div className="flex flex-col items-center justify-center bg-white w-full">
       <div className="mb-4 text-center">
-        <div className="flex items-center justify-center mb-3">
+        {/* <div className="flex items-center justify-center mb-3">
           <img
             src={HandGrow}
             alt="Hand Grow Together"
@@ -28,7 +30,7 @@ const RegisterForm = ({
             height={100}
             className="rounded-full"
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="max-w-sm w-full">
@@ -47,10 +49,18 @@ const RegisterForm = ({
           />
 
           <InputField
-            label="Email hoặc số điện thoại"
-            placeholder="Nhập email hoặc số điện thoại"
+            label="Email"
+            placeholder="Nhập email"
             value={email}
             onChange={onEmailChange}
+            leftIcon={<User className="w-4 h-4" />}
+          />
+
+          <InputField
+            label="Địa chỉ"
+            placeholder="Nhập địa chỉ của bạn"
+            value={address}
+            onChange={onAddressChange}
             leftIcon={<User className="w-4 h-4" />}
           />
 
