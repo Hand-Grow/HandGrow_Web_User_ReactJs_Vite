@@ -32,7 +32,7 @@ const LoginForm = ({
         </div>
       </div>
 
-      <div className="max-w-sm w-full">
+      <div className="max-w-sm w-full px-4">
         <div className="mb-4 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Đăng nhập</h2>
           <p className="text-gray-600 text-sm">
@@ -94,10 +94,6 @@ const LoginForm = ({
 
           <div className="relative w-full">
             <GoogleLogin
-              onSuccess={(res) => {
-                console.log('ID TOKEN:', res.credential);
-              }}
-              onError={() => console.log('Google Login Failed')}
               style={{
                 position: 'absolute',
                 inset: 0,

@@ -29,8 +29,6 @@ export const useLogin = (selectedRole) => {
     try {
       setLoading(true);
 
-      console.log('LOGIN PAYLOAD', { email, password });
-
       const user = await login({
         email: email.trim(),
         password,
