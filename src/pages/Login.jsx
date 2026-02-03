@@ -1,44 +1,89 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import Button from '../components/common/Button';
+import React, { useRef, useState } from 'react';
+import RoleSelectView from '../components/login/RoleSelector';
+import LoginForm from '../components/login/LoginForm';
+import { useLogin } from '../hooks/useLogin';
+import { toast } from 'react-toastify';
+import { validateLogin } from '../utils/validators/authValidator';
+
+const getRememberedLogin = () => {
+  try {
+    const saved = localStorage.getItem('remember_login');
+    if (!saved) {
+      return {
+        email: '',
+        password: '',
+        rememberMe: false,
+      };
+    }
+
+    const parsed = JSON.parse(saved);
+    return {
+      email: parsed.email || '',
+      password: parsed.password || '',
+      rememberMe: true,
+    };
+  } catch {
+    return {
+      email: '',
+      password: '',
+      rememberMe: false,
+    };
+  }
+};
 
 const Login = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const rememberRef = useRef(null);
 
-  const handleLogin = (userType) => {
-    login(userType);
-    if (userType === 'admin') {
-      navigate('/admin/dashboard');
-    } else if (userType === 'cooperative') {
-      navigate('/cooperative/dashboard');
-    } else if (userType === 'company') {
-      navigate('/company/dashboard');
+  const [{ email, password, rememberMe }, setLoginState] =
+    useState(getRememberedLogin);
+
+  const { handleLogin } = useLogin(selectedRole);
+
+  const handleSubmitLogin = async (e) => {
+    e.preventDefault();
+
+    const error = validateLogin({ email, password });
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
+    await handleLogin({ email, password }, setLoading);
+
+    if (rememberMe) {
+      localStorage.setItem('remember_login', JSON.stringify({ email }));
     } else {
-      navigate('/dashboard');
+      localStorage.removeItem('remember_login');
     }
   };
 
+  if (!selectedRole) {
+    return <RoleSelectView onSelectRole={setSelectedRole} />;
+  }
+
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Login</h1>
-      <p>Select a role to simulate login:</p>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
-        <Button onClick={() => handleLogin('admin')} style={{ backgroundColor: '#dc3545' }}>
-          Login as Admin
-        </Button>
-        <Button onClick={() => handleLogin('user')} style={{ backgroundColor: '#28a745' }}>
-          Login as User
-        </Button>
-        <Button onClick={() => handleLogin('cooperative')} style={{ backgroundColor: '#007bff' }}>
-          Login as Cooperative
-        </Button>
-        <Button onClick={() => handleLogin('company')} style={{ backgroundColor: '#ffc107' }}>
-          Login as Company
-        </Button>
-      </div>
-    </div>
+    <LoginForm
+      email={email}
+      password={password}
+      rememberMe={rememberMe}
+      showPassword={showPassword}
+      rememberRef={rememberRef}
+      loading={loading}
+      onEmailChange={(e) =>
+        setLoginState((s) => ({ ...s, email: e.target.value }))
+      }
+      onPasswordChange={(e) =>
+        setLoginState((s) => ({ ...s, password: e.target.value }))
+      }
+      onRememberMeChange={() =>
+        setLoginState((s) => ({ ...s, rememberMe: !s.rememberMe }))
+      }
+      onTogglePassword={() => setShowPassword((s) => !s)}
+      onSubmit={handleSubmitLogin}
+    />
   );
 };
 

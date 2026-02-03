@@ -5,8 +5,9 @@ const About = () => {
     <div>
       <h1>About Us</h1>
       <p>
-        HandGrow is dedicated to providing the best tools for agriculture management.
-        This frontend application is built with modern web technologies to ensure performance and scalability.
+        HandGrow is dedicated to providing the best tools for agriculture
+        management. This frontend application is built with modern web
+        technologies to ensure performance and scalability.
       </p>
     </div>
   );
