@@ -1,3 +1,4 @@
+import { authService } from '../services/authService';
 export interface User {
   id: string;
   name: string;
@@ -8,4 +9,6 @@ export interface User {
 export interface AuthUser {
   email: string;
   role: string;
+  name?: string;
+  avatar?: string;
 }

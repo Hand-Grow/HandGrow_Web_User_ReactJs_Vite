@@ -25,7 +25,6 @@ export const Header = () => {
     return null;
   };
 
-  // đóng dropdown khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -57,7 +56,6 @@ export const Header = () => {
           </Link>
         ) : (
           <div ref={dropdownRef} className="relative">
-            {/* Avatar + Name */}
             <div
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => setOpen(!open)}

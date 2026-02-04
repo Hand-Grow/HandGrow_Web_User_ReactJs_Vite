@@ -1,9 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import './index.css';
 import App from './App';
-import { AuthProvider } from './context/auth/auth.context';
+import './index.css';
+import { AuthProvider } from './context/auth/AuthProvider';
 
 const root = document.getElementById('root');
 
