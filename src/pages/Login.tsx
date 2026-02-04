@@ -1,9 +1,13 @@
 import React, { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
 import RoleSelectView from '../components/login/RoleSelector';
 import LoginForm from '../components/login/LoginForm';
-import { useLogin } from '../hooks/useLogin';
-import { toast } from 'react-toastify';
+
 import { validateLogin } from '../utils/validators/authValidator';
+import { USER_ROLES } from '../constants/roles';
+import { SelectedRole, useLogin } from '../hooks/useLogin';
 
 const getRememberedLogin = () => {
   try {
@@ -19,7 +23,7 @@ const getRememberedLogin = () => {
     const parsed = JSON.parse(saved);
     return {
       email: parsed.email || '',
-      password: parsed.password || '',
+      password: '',
       rememberMe: true,
     };
   } catch {
@@ -32,17 +36,19 @@ const getRememberedLogin = () => {
 };
 
 const Login = () => {
-  const [selectedRole, setSelectedRole] = useState(null);
+  const navigate = useNavigate();
+
+  const [selectedRole, setSelectedRole] = useState<SelectedRole>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
   const rememberRef = useRef(null);
 
   const [{ email, password, rememberMe }, setLoginState] =
     useState(getRememberedLogin);
 
   const { handleLogin } = useLogin(selectedRole);
-
-  const handleSubmitLogin = async (e) => {
+  const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const error = validateLogin({ email, password });
@@ -51,12 +57,27 @@ const Login = () => {
       return;
     }
 
-    await handleLogin({ email, password }, setLoading);
+    try {
+      const user = await handleLogin({ email, password }, setLoading);
 
-    if (rememberMe) {
-      localStorage.setItem('remember_login', JSON.stringify({ email }));
-    } else {
-      localStorage.removeItem('remember_login');
+      if (!user) return;
+
+      if (rememberMe) {
+        localStorage.setItem('remember_login', JSON.stringify({ email }));
+      } else {
+        localStorage.removeItem('remember_login');
+      }
+
+      if (user.role === USER_ROLES.COOP) {
+        navigate('/cooperative', { replace: true });
+      } else if (user.role === USER_ROLES.ENTERPRISE) {
+        navigate('/company', { replace: true });
+      } else {
+        navigate('/login', { replace: true });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Đăng nhập thất bại');
     }
   };
 
@@ -72,14 +93,17 @@ const Login = () => {
       showPassword={showPassword}
       rememberRef={rememberRef}
       loading={loading}
-      onEmailChange={(e) =>
-        setLoginState((s) => ({ ...s, email: e.target.value }))
+      onEmailChange={(e: React.FormEvent<HTMLInputElement>) =>
+        setLoginState((s) => ({ ...s, email: e.currentTarget.value }))
       }
-      onPasswordChange={(e) =>
-        setLoginState((s) => ({ ...s, password: e.target.value }))
+      onPasswordChange={(e: React.FormEvent<HTMLInputElement>) =>
+        setLoginState((s) => ({ ...s, password: e.currentTarget.value }))
       }
       onRememberMeChange={() =>
-        setLoginState((s) => ({ ...s, rememberMe: !s.rememberMe }))
+        setLoginState((s) => ({
+          ...s,
+          rememberMe: !s.rememberMe,
+        }))
       }
       onTogglePassword={() => setShowPassword((s) => !s)}
       onSubmit={handleSubmitLogin}

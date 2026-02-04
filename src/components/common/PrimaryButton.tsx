@@ -1,6 +1,11 @@
 import React from 'react';
 
-const PrimaryButton = ({
+interface PrimaryButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+  loadingText?: string;
+}
+
+export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   type = 'button',
   loading = false,
   loadingText = 'Đang xử lý...',

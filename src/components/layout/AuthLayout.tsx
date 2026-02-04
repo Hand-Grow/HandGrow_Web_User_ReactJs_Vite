@@ -5,8 +5,8 @@ import clsx from 'clsx';
 const AuthLayout = ({ bannerPosition = 'left' }) => {
   const bannerRadius =
     bannerPosition === 'left'
-      ? 'rounded-tr-[50px] rounded-br-[50px]' // Trái → bo PHẢI
-      : 'rounded-tl-[50px] rounded-bl-[50px]'; // Phải → bo TRÁI
+      ? 'rounded-tr-[50px] rounded-br-[50px]'
+      : 'rounded-tl-[50px] rounded-bl-[50px]';
 
   const Banner = (
     <div
