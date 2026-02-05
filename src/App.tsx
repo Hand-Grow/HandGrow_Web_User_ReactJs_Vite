@@ -1,8 +1,8 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './context/theme/ThemeContext';
-import { AuthProvider } from './context/auth/AuthContext';
 import AppRoutes from './routes/AppRoutes';
 import { ToastContainer } from 'react-toastify';
+import { AuthProvider } from './context/auth/AuthProvider';
 
 function App() {
   return (

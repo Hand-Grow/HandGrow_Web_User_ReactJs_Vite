@@ -42,10 +42,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const onTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
   const rememberRef = useRef(null);
 
   const [{ email, password, rememberMe }, setLoginState] =
-    useState(getRememberedLogin);
+    useState(getRememberedLogin());
 
   const { handleLogin } = useLogin(selectedRole);
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,7 +61,13 @@ const Login = () => {
     }
 
     try {
-      const user = await handleLogin({ email, password }, setLoading);
+      const user = await handleLogin(
+        {
+          username: email,
+          password,
+        },
+        setLoading
+      );
 
       if (!user) return;
 
@@ -93,19 +102,19 @@ const Login = () => {
       showPassword={showPassword}
       rememberRef={rememberRef}
       loading={loading}
-      onEmailChange={(e: React.FormEvent<HTMLInputElement>) =>
-        setLoginState((s) => ({ ...s, email: e.currentTarget.value }))
-      }
-      onPasswordChange={(e: React.FormEvent<HTMLInputElement>) =>
-        setLoginState((s) => ({ ...s, password: e.currentTarget.value }))
-      }
+      onEmailChange={(value: string) => {
+        setLoginState((s) => ({ ...s, email: value }));
+      }}
+      onPasswordChange={(value: string) => {
+        setLoginState((s) => ({ ...s, password: value }));
+      }}
       onRememberMeChange={() =>
         setLoginState((s) => ({
           ...s,
           rememberMe: !s.rememberMe,
         }))
       }
-      onTogglePassword={() => setShowPassword((s) => !s)}
+      onTogglePassword={onTogglePassword}
       onSubmit={handleSubmitLogin}
     />
   );

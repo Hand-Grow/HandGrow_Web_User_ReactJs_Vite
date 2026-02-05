@@ -45,16 +45,17 @@ const LoginForm = ({
             label="Email hoặc số điện thoại"
             placeholder="Nhập email hoặc số điện thoại"
             value={email}
-            onChange={onEmailChange}
+            onChangeValue={(value) => onEmailChange(value)}
             leftIcon={<User className="w-4 h-4" />}
           />
 
+          {/* PASSWORD */}
           <InputField
             label="Mật khẩu"
             type={showPassword ? 'text' : 'password'}
             placeholder="Nhập mật khẩu của bạn"
             value={password}
-            onChange={onPasswordChange}
+            onChangeValue={(value) => onPasswordChange(value)}
             leftIcon={<Lock className="w-4 h-4 text-gray-500" />}
             rightIcon={
               showPassword ? (
@@ -65,7 +66,6 @@ const LoginForm = ({
             }
             onRightIconClick={onTogglePassword}
           />
-
           <div className="flex items-center justify-between">
             <label className="flex items-center gap-2">
               <input

@@ -1,16 +1,21 @@
 import { InputHTMLAttributes, ReactNode } from 'react';
 import { Input } from '../ui/input';
 
-interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'onChange'
+> {
   label?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  onChangeValue?: (value: string) => void;
 }
 
 const InputField = ({
   label,
   leftIcon,
   rightIcon,
+  onChangeValue,
   ...props
 }: InputFieldProps) => {
   return (
@@ -28,6 +33,7 @@ const InputField = ({
 
         <Input
           {...props}
+          onChange={(e) => onChangeValue?.(e.target.value)}
           className={`${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''}`}
         />
 

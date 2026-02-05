@@ -5,6 +5,7 @@ import { validateLogin } from '../utils/validators/authValidator';
 import { useAuth } from '../context/auth/useAuth';
 import { handleApiError } from '../utils/errors/apiErrorHandler';
 import { LoginJwtPayload, LoginResponse } from '../context/auth/jwt';
+import { LoginCredentials } from '../context/auth/auth.types';
 
 export type SelectedRole = 'cooperative' | 'company' | null;
 
@@ -23,7 +24,7 @@ export const useLogin = (selectedRole: SelectedRole) => {
   const { login, logout } = useAuth();
 
   const handleLogin = async (
-    { email, password }: LoginFormValues,
+    { username: email, password }: LoginCredentials,
     setLoading: SetLoading
   ) => {
     const error = validateLogin({ email, password });
@@ -36,7 +37,7 @@ export const useLogin = (selectedRole: SelectedRole) => {
       setLoading(true);
 
       const data = await login({
-        email: email.trim(),
+        username: email.trim(),
         password,
       });
 
