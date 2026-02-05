@@ -1,4 +1,0 @@
-export const USER_ROLES = {
-  FARMER: 'FARMER',
-  ENTERPRISE: 'ENTERPRISE',
-};

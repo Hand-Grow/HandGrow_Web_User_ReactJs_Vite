@@ -2,7 +2,10 @@ import { toast } from 'react-toastify';
 
 export const handleApiError = (err) => {
   const status = err?.response?.status;
-
+  if (!err?.response) {
+    toast.error(err.message || 'Có lỗi xảy ra, vui lòng thử lại');
+    return;
+  }
   switch (status) {
     case 400:
       toast.error('Dữ liệu không hợp lệ');
