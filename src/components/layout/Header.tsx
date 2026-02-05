@@ -1,0 +1,97 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../../context/theme/useTheme';
+import { useAuth } from '../../context/auth/useAuth';
+import Button from '../common/PrimaryButton';
+import { USER_ROLES } from '../../constants/roles';
+
+export const Header = () => {
+  const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const getHomePath = () => {
+    if (!user) return null;
+    if (user.role === USER_ROLES.COOP) return '/cooperative';
+    if (user.role === USER_ROLES.ENTERPRISE) return '/company';
+    return null;
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <header className="flex justify-between items-center p-5">
+      <div className="text-2xl font-bold">HandGrow</div>
+
+      <nav className="flex gap-4">
+        {getHomePath() && <Link to={getHomePath()!}>Home</Link>}
+        <Link to="/about">About</Link>
+      </nav>
+
+      <div className="flex items-center gap-3 relative">
+        <Button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</Button>
+
+        {!user ? (
+          <Link to="/login">
+            <Button>Login</Button>
+          </Link>
+        ) : (
+          <div ref={dropdownRef} className="relative">
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setOpen(!open)}
+            >
+              <img
+                src={user.avatar || '/avatar-default.png'}
+                alt="avatar"
+                className="w-9 h-9 rounded-full object-cover border"
+              />
+              <span className="font-medium">{user.name}</span>
+            </div>
+
+            {/* Dropdown */}
+            {open && (
+              <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setOpen(false)}
+                >
+                  👤 Thông tin cá nhân
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+                >
+                  🚪 Đăng xuất
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
+
+export default Header;
