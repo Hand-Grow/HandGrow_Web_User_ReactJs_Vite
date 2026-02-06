@@ -1,17 +1,18 @@
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
-import { USER_ROLES, UserRole } from '../constants/roles';
 import { validateLogin } from '../utils/validators/authValidator';
 import { useAuth } from '../context/auth/useAuth';
 import { handleApiError } from '../utils/errors/apiErrorHandler';
 import { LoginJwtPayload, LoginResponse } from '../context/auth/jwt';
 import { LoginCredentials } from '../context/auth/auth.types';
+import { UserRole } from '../types/users';
 
 export type SelectedRole = 'cooperative' | 'company' | null;
 
 export const BACKEND_ROLE_MAP: Record<UserRole, UserRole> = {
-  COOP: USER_ROLES.COOP,
-  ENTERPRISE: USER_ROLES.ENTERPRISE,
+  COOP: UserRole.COOP,
+  ENTERPRISE: UserRole.ENTERPRISE,
+  FARMER: UserRole.FARMER,
 };
 
 export interface LoginFormValues {
@@ -55,8 +56,8 @@ export const useLogin = (selectedRole: SelectedRole) => {
       }
 
       const isInvalidRole =
-        (selectedRole === 'cooperative' && mappedRole !== USER_ROLES.COOP) ||
-        (selectedRole === 'company' && mappedRole !== USER_ROLES.ENTERPRISE);
+        (selectedRole === 'cooperative' && mappedRole !== UserRole.COOP) ||
+        (selectedRole === 'company' && mappedRole !== UserRole.ENTERPRISE);
 
       if (isInvalidRole) {
         toast.error('Email hoặc số điện thoại không phù hợp');

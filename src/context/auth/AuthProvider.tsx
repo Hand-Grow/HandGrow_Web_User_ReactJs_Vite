@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { authService } from '../../services/authService';
 import { AuthContext } from './auth.context';
 import { CustomJwtPayload, LoginResponse } from './jwt';
-import { AuthUser } from '../../types/users';
+import { UserProfile, UserRole, UserStatistics } from '../../types/users';
 import { LoginCredentials } from './auth.types';
 
 interface AuthProviderProps {
@@ -11,7 +11,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<UserStatistics | UserProfile | null>(null);
   const [initializing] = useState<boolean>(false);
 
   const login = async (
@@ -25,8 +25,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const decoded = jwtDecode<CustomJwtPayload>(data.accessToken);
 
     setUser({
-      email: decoded.sub,
-      role: decoded.role,
+      username: decoded.sub,
+      role: decoded.role as UserRole,
     });
 
     return data;

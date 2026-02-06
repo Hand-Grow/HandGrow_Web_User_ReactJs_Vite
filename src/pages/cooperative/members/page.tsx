@@ -1,11 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { MainLayout } from '../main-layout';
 import {
   Search,
-  Edit,
-  Trash2,
   Eye,
   Users,
   CheckCircle,
@@ -15,207 +12,175 @@ import {
 } from 'lucide-react';
 
 import { toast } from 'react-hot-toast';
-import { MemberDetailModal } from '../components/member-detail-modal';
+import { Member, MemberDetailModal } from '../components/member-detail-modal';
 import { FormModal } from '../components/form-modal';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
+import { useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { joinRequestService } from '../../../services/joinRequestService';
+import { AuthContext } from '../../../context/auth/auth.context';
+import {
+  JoinRequestStatus,
+  RespondJoinRequestPayload,
+  JoinRequest,
+  statusConfig,
+} from '../../../types/joinRequest';
+type TabId = 'all' | 'active' | 'pending' | 'inactive';
 
-type MemberStatus = 'active' | 'pending' | 'inactive';
-type TabId = 'all' | MemberStatus;
-
-interface Tab {
-  id: TabId;
+interface StatCardProps {
   label: string;
-  count: number;
+  value: number;
+  icon: ReactNode;
+  color: string;
 }
-
-interface Member {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  status: MemberStatus;
-  joinDate: string;
-  loans: number;
-  totalDebt: number;
-  landArea: number;
-  cropType: string;
-}
-
-const mockMembers: Member[] = [
-  {
-    id: '1',
-    name: 'Nguyễn Văn A',
-    email: 'nguyenvana@email.com',
-    phone: '0901234567',
-    address: 'An Phước, Tây Phú',
-    status: 'active',
-    joinDate: '15/01/2024',
-    loans: 12,
-    totalDebt: 25500000,
-    landArea: 2.5,
-    cropType: 'Lúa',
-  },
-  {
-    id: '2',
-    name: 'Trần Thị B',
-    email: 'tranthib@gmail.com',
-    phone: '0901256789',
-    address: 'An Phước, Tây Phú',
-    status: 'active',
-    joinDate: '20/01/2024',
-    loans: 8,
-    totalDebt: 15300000,
-    landArea: 1.8,
-    cropType: 'Cà phê',
-  },
-  {
-    id: '3',
-    name: 'Lê Văn C',
-    email: 'levanc@email.com',
-    phone: '0902234561',
-    address: 'An Phước, Tây Phú',
-    status: 'pending',
-    joinDate: '25/01/2024',
-    loans: 0,
-    totalDebt: 0,
-    landArea: 3.2,
-    cropType: 'Lúa',
-  },
-  {
-    id: '4',
-    name: 'Phạm Thị D',
-    email: 'phamthid@email.com',
-    phone: '0903334561',
-    address: 'An Phước, Tây Phú',
-    status: 'active',
-    joinDate: '28/01/2024',
-    loans: 5,
-    totalDebt: 8900000,
-    landArea: 1.2,
-    cropType: 'Lúa',
-  },
-  {
-    id: '5',
-    name: 'Hoàng Văn E',
-    email: 'hoangvane@email.com',
-    phone: '0904445618',
-    address: 'An Phước, Tây Phú',
-    status: 'inactive',
-    joinDate: '10/01/2024',
-    loans: 15,
-    totalDebt: 32100000,
-    landArea: 2.8,
-    cropType: 'Lúa',
-  },
-];
-
-const statusConfig = {
-  active: { label: 'Hoạt động', color: 'bg-emerald-100 text-emerald-700' },
-  pending: { label: 'Chờ duyệt', color: 'bg-orange-100 text-orange-700' },
-  inactive: { label: 'Ngừng hoạt động', color: 'bg-red-100 text-red-700' },
-};
-
 export default function MembersPage() {
-  const [activeTab, setActiveTab] = useState<MemberStatus | 'all'>('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const authContext = useContext(AuthContext);
+  const user = authContext?.user;
+
+  const [activeTab, setActiveTab] = useState<TabId>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     address: '',
   });
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const filteredMembers = mockMembers.filter((member) => {
-    const matchesTab = activeTab === 'all' || member.status === activeTab;
-    const matchesSearch =
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.phone.includes(searchTerm);
-    return matchesTab && matchesSearch;
-  });
+  const mapApiToMember = useCallback(
+    (item: JoinRequest): Member => ({
+      id: item.id,
+      name: item.farmerName,
+      email: '',
+      phone: item.farmerPhone,
+      address: item.cooperativeName,
+      status: item.status,
+      joinDate: new Date(item.createdAt).toLocaleDateString('vi-VN'),
+      loans: 0,
+      totalDebt: 0,
+      landArea: 0,
+      cropType: 'N/A',
+    }),
+    []
+  );
 
-  const stats = {
-    total: mockMembers.length,
-    active: mockMembers.filter((m) => m.status === 'active').length,
-    pending: mockMembers.filter((m) => m.status === 'pending').length,
+  const fetchMembers = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      let apiStatus: 'PENDING' | 'APPROVED' | 'REJECTED' | undefined;
+
+      if (activeTab === 'pending') apiStatus = 'PENDING';
+      else if (activeTab === 'active') apiStatus = 'APPROVED';
+      else if (activeTab === 'inactive') apiStatus = 'REJECTED';
+      else apiStatus = undefined;
+
+      const res = await joinRequestService.getMyRequests(apiStatus);
+      setMembers(res.map(mapApiToMember));
+    } catch (error) {
+      console.error('Fetch error:', error);
+      toast.error('Không thể tải danh sách thành viên');
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, mapApiToMember]);
+
+  useEffect(() => {
+    fetchMembers();
+  }, [fetchMembers]);
+
+  const handleRespond = async (requestId: string, isApproved: boolean) => {
+    const actionText = isApproved ? 'duyệt' : 'từ chối';
+    try {
+      setLoading(true);
+
+      const payload: RespondJoinRequestPayload = {
+        approved: isApproved,
+        responseMessage: isApproved
+          ? 'Chào mừng bạn đã trở thành thành viên!'
+          : 'Yêu cầu của bạn đã bị từ chối.',
+      };
+
+      await joinRequestService.respond(requestId, payload);
+      toast.success(`Đã ${actionText} thành viên thành công!`);
+
+      // Tải lại để cập nhật bảng và Stats
+      await fetchMembers();
+    } catch (error) {
+      console.error('API Error:', error);
+      toast.error(`Lỗi khi ${actionText} thành viên`);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const tabs: Tab[] = [
-    { id: 'all', label: 'Tất cả', count: stats.total },
-    { id: 'active', label: 'Hoạt động', count: stats.active },
-    { id: 'pending', label: 'Chờ duyệt', count: stats.pending },
-  ];
+  const filteredMembers = members.filter(
+    (member) =>
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.phone.includes(searchTerm)
+  );
+
+  const stats = {
+    total: members.length,
+    active: members.filter(
+      (m) => (m.status as JoinRequestStatus) === JoinRequestStatus.APPROVED
+    ).length,
+    pending: members.filter(
+      (m) => (m.status as JoinRequestStatus) === JoinRequestStatus.PENDING
+    ).length,
+    rejected: members.filter(
+      (m) => (m.status as JoinRequestStatus) === JoinRequestStatus.REJECTED
+    ).length,
+  };
 
   return (
     <MainLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
             Quản lý thành viên
           </h1>
-          <p className="text-gray-600 mt-1">Quản lý và duyệt thành viên HTX</p>
+          <p className="text-gray-600 mt-1">
+            Hợp tác xã: {user?.fullName || 'Cửa hàng HTX'}
+          </p>
         </div>
 
-        {/* Status Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[
-            {
-              label: 'Tổng thành viên',
-              value: stats.total,
-              icon: <Users className="w-6 h-6" />,
-              color: 'bg-emerald-100 text-emerald-700',
-            },
-            {
-              label: 'Hoạt động',
-              value: stats.active,
-              icon: <CheckCircle className="w-6 h-6" />,
-              color: 'bg-emerald-100 text-emerald-700',
-            },
-            {
-              label: 'Chờ duyệt',
-              value: stats.pending,
-              icon: <Clock className="w-6 h-6" />,
-              color: 'bg-orange-100 text-orange-700',
-            },
-            {
-              label: 'Ngừng hoạt động',
-              value: mockMembers.filter((m) => m.status === 'inactive').length,
-              icon: <XCircle className="w-6 h-6" />,
-              color: 'bg-red-100 text-red-700',
-            },
-            {
-              label: 'Nợng hoạt động',
-              value: 0,
-              icon: <Users className="w-6 h-6" />,
-              color: 'bg-gray-100 text-gray-700',
-            },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className={`${stat.color} rounded-lg p-4 text-center`}
-            >
-              <div className="flex justify-center mb-2">{stat.icon}</div>
-              <p className="text-3xl font-bold">{stat.value}</p>
-              <p className="text-xs font-semibold mt-1 opacity-80">
-                {stat.label}
-              </p>
-            </div>
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="Tổng cộng"
+            value={stats.total}
+            icon={<Users />}
+            color="bg-blue-100 text-blue-700"
+          />
+          <StatCard
+            label="Hoạt động"
+            value={stats.active}
+            icon={<CheckCircle />}
+            color="bg-emerald-100 text-emerald-700"
+          />
+          <StatCard
+            label="Chờ duyệt"
+            value={stats.pending}
+            icon={<Clock />}
+            color="bg-orange-100 text-orange-700"
+          />
+          <StatCard
+            label="Từ chối"
+            value={stats.rejected}
+            icon={<XCircle />}
+            color="bg-red-100 text-red-700"
+          />
         </div>
 
-        {/* Search & Tabs */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
               <Input
-                type="text"
-                placeholder="Tìm kiếm theo tên, email, hoặc số điện thoại..."
+                placeholder="Tìm tên hoặc số điện thoại..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -223,116 +188,119 @@ export default function MembersPage() {
             </div>
             <Button
               onClick={() => setShowAddModal(true)}
-              className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+              className="bg-green-600 hover:bg-green-700"
             >
-              <Plus className="w-5 h-5" />
-              Thêm thành viên
+              <Plus className="w-5 h-5 mr-2" /> Thêm thành viên
             </Button>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-4 mb-6 border-b border-gray-200">
-            {tabs.map((tab) => (
+          <div className="flex gap-4 mb-6 border-b">
+            {(['all', 'active', 'pending', 'inactive'] as TabId[]).map((id) => (
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                key={id}
+                onClick={() => setActiveTab(id)}
                 className={`px-4 py-3 font-medium border-b-2 transition ${
-                  activeTab === tab.id
+                  activeTab === id
                     ? 'border-emerald-600 text-emerald-600'
-                    : 'border-transparent text-gray-600 hover:text-gray-900'
+                    : 'border-transparent text-gray-500'
                 }`}
               >
-                {tab.label} ({tab.count})
+                {id === 'all'
+                  ? 'Tất cả'
+                  : id === 'active'
+                    ? 'Hoạt động'
+                    : id === 'pending'
+                      ? 'Chờ duyệt'
+                      : 'Từ chối'}
               </button>
             ))}
           </div>
 
-          {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+              <thead className="bg-gray-50 text-sm">
+                <tr>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
                     Thành viên
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
                     Liên hệ
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
                     Địa chỉ
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
                     Trạng thái
                   </th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700 uppercase">
                     Hành động
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className={loading ? 'opacity-50' : ''}>
                 {filteredMembers.map((member) => (
                   <tr
                     key={member.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
+                    className="border-b hover:bg-gray-50 transition"
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold">
-                          {member.name[0]}
+                          {member.name ? member.name[0] : '?'}
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">
                             {member.name}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs text-gray-500">
                             {member.joinDate}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="text-gray-700">{member.email}</p>
-                        <p className="text-sm text-gray-500">{member.phone}</p>
-                      </div>
+                    <td className="py-4 px-4 text-sm text-gray-600">
+                      {member.phone}
                     </td>
-                    <td className="py-4 px-4">
-                      <p className="text-gray-700">{member.address}</p>
+                    <td className="py-4 px-4 text-sm text-gray-600">
+                      {member.address}
                     </td>
                     <td className="py-4 px-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${statusConfig[member.status].color}`}
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig[member.status].color}`}
                       >
                         {statusConfig[member.status].label}
                       </span>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex justify-center gap-2">
+                        {member.status === JoinRequestStatus.PENDING && (
+                          <div className="flex gap-2 mr-2 border-r pr-2">
+                            <Button
+                              size="sm"
+                              onClick={() => handleRespond(member.id, true)}
+                              className="text-emerald-600 hover:bg-emerald-50"
+                              disabled={loading}
+                            >
+                              <CheckCircle className="w-5 h-5" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                if (window.confirm('Từ chối thành viên này?'))
+                                  handleRespond(member.id, false);
+                              }}
+                              className="text-red-600 hover:bg-red-50"
+                              disabled={loading}
+                            >
+                              <XCircle className="w-5 h-5" />
+                            </Button>
+                          </div>
+                        )}
                         <Button
-                          variant="default"
                           size="sm"
                           onClick={() => setSelectedMember(member)}
-                          title="Xem chi tiết"
                         >
-                          <Eye className="w-5 h-5 text-emerald-600" />
-                        </Button>
-                        <Button
-                          variant="default"
-                          size="sm"
-                          onClick={() =>
-                            toast.success(`Chỉnh sửa ${member.name}`)
-                          }
-                          title="Chỉnh sửa"
-                        >
-                          <Edit className="w-5 h-5 text-blue-600" />
-                        </Button>
-                        <Button
-                          variant="default"
-                          size="sm"
-                          onClick={() => toast.error(`Xóa ${member.name}`)}
-                          title="Xóa"
-                        >
-                          <Trash2 className="w-5 h-5 text-red-600" />
+                          <Eye className="text-blue-600 w-5 h-5" />
                         </Button>
                       </div>
                     </td>
@@ -340,17 +308,15 @@ export default function MembersPage() {
                 ))}
               </tbody>
             </table>
+            {filteredMembers.length === 0 && !loading && (
+              <div className="text-center py-10 text-gray-500 italic">
+                Không tìm thấy dữ liệu
+              </div>
+            )}
           </div>
-
-          {filteredMembers.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">Không tìm thấy thành viên</p>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Member Detail Modal */}
       {selectedMember && (
         <MemberDetailModal
           member={selectedMember}
@@ -358,78 +324,65 @@ export default function MembersPage() {
         />
       )}
 
-      {/* Add Member Modal */}
       <FormModal
         open={showAddModal}
         onOpenChange={setShowAddModal}
-        title="Thêm thành viên mới"
-        description="Nhập thông tin của thành viên cần thêm vào HTX"
-        submitLabel="Thêm thành viên"
-        onSubmit={() => {
-          if (formData.name && formData.email && formData.phone) {
-            toast.success(`Đã thêm thành viên ${formData.name}`);
-            setFormData({ name: '', email: '', phone: '', address: '' });
+        title="Mời thành viên mới"
+        submitLabel={loading ? 'Đang xử lý...' : 'Gửi yêu cầu'}
+        onSubmit={async () => {
+          if (!formData.name || !formData.phone)
+            return toast.error('Thiếu thông tin bắt buộc');
+          try {
+            setLoading(true);
+            toast.success('Đã gửi yêu cầu tham gia thành công!');
             setShowAddModal(false);
-          } else {
-            toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+            setFormData({ name: '', email: '', phone: '', address: '' });
+            fetchMembers();
+          } catch (error) {
+            console.error(error);
+            toast.error('Lỗi khi gửi yêu cầu');
+          } finally {
+            setLoading(false);
           }
         }}
       >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tên thành viên *
-            </label>
-            <Input
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="Nhập tên thành viên"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email *
-            </label>
-            <Input
-              type="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              placeholder="Nhập email"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Số điện thoại *
-            </label>
-            <Input
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              placeholder="Nhập số điện thoại"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Địa chỉ
-            </label>
-            <Input
-              value={formData.address}
-              onChange={(e) =>
-                setFormData({ ...formData, address: e.target.value })
-              }
-              placeholder="Nhập địa chỉ"
-            />
-          </div>
+        <div className="space-y-4 pt-2">
+          <Input
+            placeholder="Tên thành viên *"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+          <Input
+            placeholder="Số điện thoại *"
+            value={formData.phone}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
+          />
+          <Input
+            placeholder="Địa chỉ"
+            value={formData.address}
+            onChange={(e) =>
+              setFormData({ ...formData, address: e.target.value })
+            }
+          />
         </div>
       </FormModal>
     </MainLayout>
+  );
+}
+
+// Sub-component tách biệt để quản lý Props Type chặt chẽ
+function StatCard({ label, value, icon, color }: StatCardProps) {
+  return (
+    <div
+      className={`${color} rounded-lg p-4 text-center shadow-sm border border-black/5`}
+    >
+      <div className="flex justify-center mb-1">{icon}</div>
+      <p className="text-2xl font-bold">{value}</p>
+      <p className="text-xs font-semibold opacity-80 uppercase tracking-wider">
+        {label}
+      </p>
+    </div>
   );
 }

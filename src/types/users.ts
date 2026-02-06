@@ -1,14 +1,23 @@
-import { authService } from '../services/authService';
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar?: string;
+export enum UserRole {
+  ENTERPRISE = 'ENTERPRISE',
+  FARMER = 'FARMER',
+  COOP = 'COOP',
 }
-export interface AuthUser {
-  email: string;
-  role: string;
-  name?: string;
-  avatar?: string;
+
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  username: string;
+  phoneNumber: string;
+  role: UserRole;
+  avatarUrl?: string | null;
+  address: string | null;
+  commune: string | null;
+  province: string | null;
+  produce: string | null;
+}
+
+export interface UserStatistics {
+  role: UserRole;
+  username: string;
 }
