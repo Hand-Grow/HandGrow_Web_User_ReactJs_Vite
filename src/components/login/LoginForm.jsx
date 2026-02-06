@@ -49,7 +49,6 @@ const LoginForm = ({
             leftIcon={<User className="w-4 h-4" />}
           />
 
-          {/* PASSWORD */}
           <InputField
             label="Mật khẩu"
             type={showPassword ? 'text' : 'password'}

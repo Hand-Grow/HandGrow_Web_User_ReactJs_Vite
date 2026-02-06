@@ -82,7 +82,6 @@ const statusConfig = {
   cancelled: { label: 'Hủy', color: 'bg-red-100 text-red-700' },
 };
 
-/* ================= CREATE DIALOG ================= */
 export function CreatePurchaseDialog({
   open,
   onOpenChange,

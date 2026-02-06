@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/theme/useTheme';
 import { useAuth } from '../../context/auth/useAuth';
 import Button from '../common/PrimaryButton';
-import { USER_ROLES } from '../../constants/roles';
+import { UserRole } from '../../types/users';
 
 export const Header = () => {
   const { theme, toggleTheme } = useTheme();
@@ -20,8 +20,8 @@ export const Header = () => {
 
   const getHomePath = () => {
     if (!user) return null;
-    if (user.role === USER_ROLES.COOP) return '/cooperative';
-    if (user.role === USER_ROLES.ENTERPRISE) return '/company';
+    if (user.role === UserRole.COOP) return '/cooperative';
+    if (user.role === UserRole.ENTERPRISE) return '/company';
     return null;
   };
 
@@ -65,14 +65,13 @@ export const Header = () => {
                 alt="avatar"
                 className="w-9 h-9 rounded-full object-cover border"
               />
-              <span className="font-medium">{user.name}</span>
+              <span className="font-medium">{user.fullName}</span>
             </div>
 
-            {/* Dropdown */}
             {open && (
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden">
                 <Link
-                  to="/profile"
+                  to="/cooperative/profile"
                   className="block px-4 py-2 hover:bg-gray-100"
                   onClick={() => setOpen(false)}
                 >

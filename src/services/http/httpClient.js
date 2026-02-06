@@ -11,13 +11,10 @@ const httpClient = axios.create({
 httpClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
-    if (
-      token &&
-      !config.url.includes('/auth/login') &&
-      !config.url.includes('/auth/register')
-    ) {
+    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -25,7 +22,15 @@ httpClient.interceptors.request.use(
 
 httpClient.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    // Xử lý tập trung lỗi 401 (Hết hạn token) tại đây
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // window.location.href = '/login'; // Tùy chọn redirect
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default httpClient;

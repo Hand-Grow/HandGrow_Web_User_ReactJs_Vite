@@ -1,17 +1,17 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/auth/useAuth';
-import { USER_ROLES } from '../constants/roles';
+import { UserRole } from '../types/users';
 const RootRedirect = () => {
   const { user, initializing } = useAuth();
   if (initializing) return null;
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  if (user.role === USER_ROLES.COOP) {
+  if (user.role === UserRole.COOP) {
     return <Navigate to="/cooperative/dashboard" replace />;
   }
 
-  if (user.role === USER_ROLES.ENTERPRISE) {
+  if (user.role === UserRole.ENTERPRISE) {
     return <Navigate to="/company" replace />;
   }
 

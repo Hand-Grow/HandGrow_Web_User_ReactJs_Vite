@@ -2,14 +2,15 @@
 
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
+import { JoinRequestStatus } from '../../../types/joinRequest';
 
-interface Member {
+export interface Member {
   id: string;
   name: string;
   email: string;
   phone: string;
   address: string;
-  status: 'active' | 'pending' | 'inactive';
+  status: JoinRequestStatus;
   joinDate: string;
   loans: number;
   totalDebt: number;
@@ -39,15 +40,14 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
 
   return (
     <>
-      {/* Backdrop */}
+      \{' '}
       <div
         onClick={onClose}
         className="fixed inset-0 bg-black/50 z-40 animate-in fade-in"
       />
-
-      {/* Modal */}
+      \{' '}
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto z-50 animate-in zoom-in-95">
-        {/* Header */}
+        \{' '}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900">
             Chi tiết thành viên
@@ -59,10 +59,7 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             <X className="w-6 h-6 text-gray-400" />
           </button>
         </div>
-
-        {/* Content */}
         <div className="p-6 space-y-6">
-          {/* Member Info */}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-2xl">
               {member.name[0]}
@@ -70,14 +67,17 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             <div className="flex-1">
               <h3 className="font-bold text-lg text-gray-900">{member.name}</h3>
               <span
-                className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${statusConfig[member.status].color}`}
+                className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${statusConfig[member.status.toLowerCase() as keyof typeof statusConfig].color}`}
               >
-                {statusConfig[member.status].label}
+                {
+                  statusConfig[
+                    member.status.toLowerCase() as keyof typeof statusConfig
+                  ].label
+                }
               </span>
             </div>
           </div>
 
-          {/* Contact Info */}
           <div>
             <h4 className="font-semibold text-gray-900 mb-3">
               Thông tin liên hệ
@@ -147,7 +147,6 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             </div>
           </div>
 
-          {/* Financial Info */}
           <div>
             <h4 className="font-semibold text-gray-900 mb-3">
               Thông tin tài chính
@@ -168,7 +167,6 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             </div>
           </div>
 
-          {/* Agriculture Info */}
           <div>
             <h4 className="font-semibold text-gray-900 mb-3">
               Thông tin canh tác
@@ -189,8 +187,6 @@ export function MemberDetailModal({ member, onClose }: MemberDetailModalProps) {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
         <div className="flex gap-3 p-6 border-t border-gray-200">
           <button
             onClick={onClose}

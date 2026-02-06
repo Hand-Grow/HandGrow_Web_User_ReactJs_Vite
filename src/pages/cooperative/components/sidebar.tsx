@@ -64,7 +64,7 @@ export function Sidebar() {
         </div>
         {expanded && (
           <span className="text-sm font-bold text-gray-900">
-            HTX hàng nghịch
+            HTX nông nghiệp
           </span>
         )}
       </div>
@@ -89,7 +89,6 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer */}
       <div className="p-4 border-t border-gray-200 space-y-2">
         <button
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
