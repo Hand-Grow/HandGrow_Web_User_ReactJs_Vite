@@ -1,6 +1,7 @@
+import React from 'react';
 import HandGrow from '../../../assets/image/image.png';
 
-const AuthBanner = () => {
+const AuthBanner: React.FC = () => {
   return (
     <div className="text-center text-white max-w-md">
       <div className="mb-8">

@@ -12,6 +12,9 @@ import CooperativeReports from '../pages/cooperative/reports/page';
 import CooperativeSettings from '../pages/cooperative/settings/page';
 import CooperativeMembers from '../pages/cooperative/members/page';
 import CompanyDashboard from '../pages/company/CompanyDashboard';
+import CompanyLayout from '../components/layout/company/CompanyLayout';
+import SourcingPage from '../pages/company/sourcing/Sourcing';
+import CompanyMessages from '../pages/company/messages/CompanyMessages';
 
 import ProtectedRoute from './ProtectedRoute';
 import RootRedirect from './RootRedirect';
@@ -33,7 +36,6 @@ const AppRoutes = () => {
       <Route element={<AuthLayout bannerPosition="left" />}>
         <Route path="/register/coop" element={<Register />} />
         <Route path="/register/enterprise" element={<RegisterEnterprise />} />
-        {/* <Route path="/register" element={<Register />} /> */}
       </Route>
 
       {/* APP */}
@@ -57,7 +59,11 @@ const AppRoutes = () => {
         <Route
           element={<ProtectedRoute allowedRoles={[USER_ROLES.ENTERPRISE]} />}
         >
-          <Route path="/company" element={<CompanyDashboard />} />
+          <Route path="/company" element={<CompanyLayout />}>
+            <Route index element={<CompanyDashboard />} />
+            <Route path="sourcing" element={<SourcingPage />} />
+            <Route path="messages" element={<CompanyMessages />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
