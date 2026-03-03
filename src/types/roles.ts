@@ -1,5 +1,6 @@
 export const USER_ROLES = {
   COOP: 'COOP',
+  FARMER: 'FARMER',
   ENTERPRISE: 'ENTERPRISE',
 } as const;
 

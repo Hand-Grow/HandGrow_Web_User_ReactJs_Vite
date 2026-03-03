@@ -23,7 +23,7 @@ interface RegisterFormProps {
   onPasswordChange: (value: string) => void;
   onConfirmPasswordChange: (value: string) => void;
   onProvinceChange: (code: number) => void;
-  onCommuneChange: (value: string) => void;
+  onCommuneChange: (code: number) => void;
   onProduceChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onTogglePassword: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -53,6 +53,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   onTogglePassword,
   onSubmit,
 }) => {
+  console.log('PROVINCE PROP:', province);
+  console.log('COMMUNE PROP:', commune);
+  console.log('COMMUNES PROP:', communes);
   return (
     <div className="h-screen flex justify-center bg-white w-full">
       <div className="w-full max-w-sm flex flex-col">
@@ -123,14 +126,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               <label className="text-sm font-medium">Xã / Phường</label>
               <select
                 value={commune}
-                onChange={(e) => onCommuneChange(e.target.value)}
+                onChange={(e) => onCommuneChange(Number(e.target.value))}
                 className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md
                   focus:border-blue-500 focus:ring-2 focus:ring-blue-200
                   focus:outline-none"
               >
                 <option value="">-- Chọn xã / phường --</option>
                 {communes.map((w) => (
-                  <option key={w.code} value={w.name}>
+                  <option key={w.code} value={w.code}>
                     {w.name}
                   </option>
                 ))}

@@ -6,8 +6,8 @@ import RoleSelectView from '../components/layout/login/RoleSelector';
 import LoginForm from '../components/layout/login/LoginForm';
 
 import { validateLogin } from '../utils/validators/authValidator';
-import { USER_ROLES } from '../constants/roles';
 import { SelectedRole, useLogin } from '../hooks/useLogin';
+import { UserRole } from '../types/users';
 
 const getRememberedLogin = () => {
   try {
@@ -77,9 +77,9 @@ const Login = () => {
         localStorage.removeItem('remember_login');
       }
 
-      if (user.role === USER_ROLES.COOP) {
+      if (user.role === UserRole.COOP) {
         navigate('/cooperative', { replace: true });
-      } else if (user.role === USER_ROLES.ENTERPRISE) {
+      } else if (user.role === UserRole.ENTERPRISE) {
         navigate('/company', { replace: true });
       } else {
         navigate('/login', { replace: true });

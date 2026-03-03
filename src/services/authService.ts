@@ -9,6 +9,8 @@ export const authService = {
       API_ENDPOINTS.AUTH.LOGIN,
       payload
     );
+    localStorage.setItem('accessToken', res.data.accessToken);
+    localStorage.setItem('refreshToken', res.data.refreshToken);
     return res.data;
   },
 

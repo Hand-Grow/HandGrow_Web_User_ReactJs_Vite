@@ -16,6 +16,8 @@ httpClient.interceptors.request.use(
 
     if (token && isBackendApi) {
       config.headers = config.headers || {};
+    }
+    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -26,7 +28,15 @@ httpClient.interceptors.request.use(
 
 httpClient.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    // Xử lý tập trung lỗi 401 (Hết hạn token) tại đây
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // window.location.href = '/login'; // Tùy chọn redirect
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default httpClient;

@@ -62,12 +62,12 @@ export default function Header() {
               className="flex items-center gap-3 cursor-pointer"
             >
               <img
-                src={user.avatar || '/avatar-default.png'}
+                src={user.avatarUrl || '/avatar-default.png'}
                 className="w-10 h-10 rounded-full object-cover border"
               />
 
               <div className="text-sm">
-                <p className="font-semibold">{user.name}</p>
+                <p className="font-semibold">{user.fullName}</p>
                 <p className="text-neutral-500 text-xs">{user.role}</p>
               </div>
             </div>

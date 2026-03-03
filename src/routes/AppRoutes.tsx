@@ -18,17 +18,15 @@ import CompanyMessages from '../pages/company/messages/CompanyMessages';
 
 import ProtectedRoute from './ProtectedRoute';
 import RootRedirect from './RootRedirect';
-import { USER_ROLES } from '../constants/roles';
 import MessagesPage from '../pages/cooperative/messages/page';
 import PurchasesPage from '../pages/cooperative/purchases/page';
+import { ProfileContent } from '../pages/cooperative/profile/page';
+import { UserRole } from '../types/users';
 
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* ROOT */}
       <Route path="/" element={<RootRedirect />} />
-
-      {/* AUTH */}
       <Route element={<AuthLayout bannerPosition="right" />}>
         <Route path="/login" element={<Login />} />
       </Route>
@@ -38,12 +36,10 @@ const AppRoutes = () => {
         <Route path="/register/enterprise" element={<RegisterEnterprise />} />
       </Route>
 
-      {/* APP */}
       <Route element={<MainLayout />}>
         <Route path="/about" element={<About />} />
 
-        {/* HTX */}
-        <Route element={<ProtectedRoute allowedRoles={[USER_ROLES.COOP]} />}>
+        <Route element={<ProtectedRoute allowedRoles={[UserRole.COOP]} />}>
           <Route path="/cooperative">
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<CooperativeHome />} />
@@ -52,12 +48,12 @@ const AppRoutes = () => {
             <Route path="settings" element={<CooperativeSettings />} />
             <Route path="purchases" element={<PurchasesPage />} />
             <Route path="messages" element={<MessagesPage />} />
+            <Route path="profile" element={<ProfileContent />} />
           </Route>
         </Route>
 
-        {/* DOANH NGHIỆP */}
         <Route
-          element={<ProtectedRoute allowedRoles={[USER_ROLES.ENTERPRISE]} />}
+          element={<ProtectedRoute allowedRoles={[UserRole.ENTERPRISE]} />}
         >
           <Route path="/company" element={<CompanyLayout />}>
             <Route index element={<CompanyDashboard />} />
