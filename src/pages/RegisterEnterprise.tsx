@@ -79,7 +79,7 @@ const RegisterEnterprise: React.FC = () => {
       const payload = {
         companyName,
         username,
-        phone_num: phoneNumber,
+        phoneNumber,
         password,
         province,
         commune,

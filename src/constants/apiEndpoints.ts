@@ -8,7 +8,7 @@ export const API_ENDPOINTS = {
   LOCATION: {
     PROVINCES: 'https://provinces.open-api.vn/api/v2/p',
     PROVINCE_DETAIL: (code: number) =>
-      `https://provinces.open-api.vn/api/v2/p/${code}?depth=3`,
+      `https://provinces.open-api.vn/api/v2/p/${code}?depth=2`,
   },
 
   JOIN_REQUEST: {

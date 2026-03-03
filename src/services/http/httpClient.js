@@ -12,12 +12,10 @@ httpClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
 
-    const isBackendApi = config.baseURL === import.meta.env.VITE_API_BASE_URL;
+    const isAuthRoute = config.url?.includes('/auth/');
 
-    if (token && isBackendApi) {
+    if (token && !isAuthRoute) {
       config.headers = config.headers || {};
-    }
-    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 

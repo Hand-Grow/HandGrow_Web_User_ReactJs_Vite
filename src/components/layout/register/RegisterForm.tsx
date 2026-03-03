@@ -22,8 +22,8 @@ interface RegisterFormProps {
   onPhoneNumberChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onConfirmPasswordChange: (value: string) => void;
-  onProvinceChange: (code: number) => void;
-  onCommuneChange: (code: number) => void;
+  onProvinceChange: (name: string) => void;
+  onCommuneChange: (name: string) => void;
   onProduceChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onTogglePassword: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -108,7 +108,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               <label className="text-sm font-medium">Tỉnh / Thành phố</label>
               <select
                 value={province}
-                onChange={(e) => onProvinceChange(Number(e.target.value))}
+                onChange={(e) => onProvinceChange(e.target.value)}
                 className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md
                   focus:border-blue-500 focus:ring-2 focus:ring-blue-200
                   focus:outline-none"
@@ -126,7 +126,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               <label className="text-sm font-medium">Xã / Phường</label>
               <select
                 value={commune}
-                onChange={(e) => onCommuneChange(Number(e.target.value))}
+                onChange={(e) => onCommuneChange(e.target.value)}
                 className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md
                   focus:border-blue-500 focus:ring-2 focus:ring-blue-200
                   focus:outline-none"
@@ -150,9 +150,21 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                   focus:outline-none"
               >
                 <option value="">-- Chọn --</option>
+                <option value="RICE">Lúa gạo</option>
+                <option value="CORN">Ngô</option>
                 <option value="VEGETABLES">Rau củ</option>
                 <option value="FRUITS">Trái cây</option>
-                <option value="RICE">Lúa gạo</option>
+                <option value="COFFEE">Cà phê</option>
+                <option value="TEA">Chè</option>
+                <option value="RUBBER">Cao su</option>
+                <option value="SUGARCANE">Mía</option>
+                <option value="CASSAVA">Sắn</option>
+                <option value="PEPPER">Tiêu</option>
+                <option value="COCONUT">Dừa</option>
+                <option value="CASHEW">Điều</option>
+                <option value="AQUACULTURE">Thủy sản</option>
+                <option value="LIVESTOCK">Chăn nuôi</option>
+                <option value="OTHER">Khác</option>
               </select>
             </div>
 

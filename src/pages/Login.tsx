@@ -45,13 +45,15 @@ const Login = () => {
   const onTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
-  const rememberRef = useRef(null);
+  const rememberRef = useRef<HTMLInputElement>(null!);
 
   const [{ email, password, rememberMe }, setLoginState] =
     useState(getRememberedLogin());
 
   const { handleLogin } = useLogin(selectedRole);
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log('EMAIL LENGTH:', email.length);
+    console.log('EMAIL VALUE:', JSON.stringify(email));
     e.preventDefault();
 
     const error = validateLogin({ email, password });

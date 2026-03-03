@@ -6,7 +6,7 @@ import { authApi } from '../services/auth/authApi';
 import { validateRegister } from '../utils/validators/authValidator';
 import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
-import type { Province, Ward, District } from '../types/location';
+import type { Province, Ward } from '../types/location';
 
 const Register: React.FC = () => {
   const [name, setName] = useState<string>('');
@@ -15,7 +15,8 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-  const [province, setProvince] = useState<string>('');
+  const [provinceCode, setProvinceCode] = useState<number | null>(null);
+  const [provinceName, setProvinceName] = useState<string>('');
   const [commune, setCommune] = useState<string>('');
   const [produce, setProduce] = useState<string>('');
 
@@ -35,23 +36,16 @@ const Register: React.FC = () => {
   }, []);
 
   const handleProvinceChange = async (code: number) => {
-    try {
-      setProvince(code.toString());
-      setCommune('');
-      setCommunes([]);
+    const selectedProvince = provinces.find((p) => p.code === code);
+    if (!selectedProvince) return;
 
-      const res = await locationApi.getProvinceDetail(code);
+    setProvinceCode(code);
+    setProvinceName(selectedProvince.name);
+    setCommune('');
+    setCommunes([]);
 
-      const districts: District[] = res.data?.districts ?? [];
-
-      const allWards: Ward[] = districts.flatMap((d) => d.wards ?? []);
-
-      console.log('WARD COUNT:', allWards.length);
-
-      setCommunes(allWards);
-    } catch (error) {
-      console.error(error);
-    }
+    const res = await locationApi.getProvinceDetail(code);
+    setCommunes(res.data.wards || []);
   };
 
   const handleCommuneChange = (name: string) => {
@@ -61,12 +55,12 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const selectedRole = localStorage.getItem('selectedRole');
+    // const selectedRole = localStorage.getItem('selectedRole');
 
-    if (!selectedRole) {
-      toast.error('Vui lòng chọn vai trò');
-      return;
-    }
+    // if (!selectedRole) {
+    //   toast.error('Vui lòng chọn vai trò');
+    //   return;
+    // }
 
     const error = validateRegister({
       name,
@@ -74,7 +68,7 @@ const Register: React.FC = () => {
       phoneNumber,
       password,
       confirmPassword,
-      province,
+      province: provinceName,
       commune,
       produce,
     });
@@ -87,18 +81,14 @@ const Register: React.FC = () => {
       const payload = {
         name,
         username,
-        phone_num: phoneNumber,
+        phoneNumber,
         password,
-        province,
+        province: provinceName,
         commune,
         produce,
       };
-
-      if (selectedRole === 'cooperative') {
-        await authApi.registerCoop(payload);
-      } else if (selectedRole === 'company') {
-        await authApi.registerEnterprise(payload);
-      }
+      console.log('REGISTER PAYLOAD:', payload);
+      await authApi.registerCoop(payload);
 
       toast.success('Đăng ký thành công');
       setTimeout(() => (window.location.href = '/login'), 800);
@@ -110,7 +100,6 @@ const Register: React.FC = () => {
     }
   };
 
-  console.log('PROVINCES STATE:', provinces);
   return (
     <RegisterForm
       name={name}
@@ -118,7 +107,7 @@ const Register: React.FC = () => {
       phoneNumber={phoneNumber}
       password={password}
       confirmPassword={confirmPassword}
-      province={province}
+      province={provinceCode?.toString() ?? ''}
       commune={commune}
       produce={produce}
       provinces={provinces}
@@ -130,7 +119,7 @@ const Register: React.FC = () => {
       onPhoneNumberChange={setPhoneNumber}
       onPasswordChange={setPassword}
       onConfirmPasswordChange={setConfirmPassword}
-      onProvinceChange={handleProvinceChange}
+      onProvinceChange={(name: string) => handleProvinceChange(Number(name))}
       onCommuneChange={handleCommuneChange}
       onProduceChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
         setProduce(e.target.value)
