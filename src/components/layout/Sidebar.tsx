@@ -1,3 +1,4 @@
+import React, { JSX } from 'react';
 import {
   Home,
   Users,
@@ -8,7 +9,13 @@ import {
 } from 'lucide-react';
 import Button from '../common/PrimaryButton';
 
-const navItems = [
+interface NavItem {
+  label: string;
+  icon: React.ReactNode;
+  active?: boolean;
+}
+
+const navItems: NavItem[] = [
   { label: 'Trang chủ', icon: <Home className="w-5 h-5" />, active: true },
   { label: 'Thành viên', icon: <Users className="w-5 h-5" /> },
   { label: 'Mua chứng', icon: <ShoppingCart className="w-5 h-5" /> },
@@ -17,7 +24,7 @@ const navItems = [
   { label: 'Cá nhân', icon: <User className="w-5 h-5" /> },
 ];
 
-export default function Sidebar() {
+export default function Sidebar(): JSX.Element {
   return (
     <aside className="h-screen w-64 border-r border-border bg-background">
       <div className="p-6 border-b border-border">

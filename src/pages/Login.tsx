@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import RoleSelectView from '../components/login/RoleSelector';
-import LoginForm from '../components/login/LoginForm';
+import RoleSelectView from '../components/layout/login/RoleSelector';
+import LoginForm from '../components/layout/login/LoginForm';
 
 import { validateLogin } from '../utils/validators/authValidator';
 import { SelectedRole, useLogin } from '../hooks/useLogin';
@@ -45,13 +45,15 @@ const Login = () => {
   const onTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
-  const rememberRef = useRef(null);
+  const rememberRef = useRef<HTMLInputElement>(null!);
 
   const [{ email, password, rememberMe }, setLoginState] =
     useState(getRememberedLogin());
 
   const { handleLogin } = useLogin(selectedRole);
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log('EMAIL LENGTH:', email.length);
+    console.log('EMAIL VALUE:', JSON.stringify(email));
     e.preventDefault();
 
     const error = validateLogin({ email, password });
@@ -85,8 +87,17 @@ const Login = () => {
         navigate('/login', { replace: true });
       }
     } catch (error) {
-      console.error('Login error:', error);
       toast.error('Đăng nhập thất bại');
+    }
+  };
+
+  const goRegister = () => {
+    if (selectedRole === 'cooperative') {
+      navigate('/register/coop');
+    }
+
+    if (selectedRole === 'company') {
+      navigate('/register/enterprise');
     }
   };
 
@@ -116,6 +127,7 @@ const Login = () => {
       }
       onTogglePassword={onTogglePassword}
       onSubmit={handleSubmitLogin}
+      onGoRegister={goRegister}
     />
   );
 };

@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 export const handleApiError = (err) => {
   const status = err?.response?.status;
   if (!err?.response) {
-    console.error('Frontend error:', err);
     toast.error(err.message || 'Có lỗi xảy ra, vui lòng thử lại');
     return;
   }

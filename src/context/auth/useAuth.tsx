@@ -1,4 +1,3 @@
-// src/context/auth/useAuth.ts
 import { useContext } from 'react';
 import { AuthContextType } from './auth.types';
 import { AuthContext } from './auth.context';

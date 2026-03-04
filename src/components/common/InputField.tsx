@@ -9,6 +9,7 @@ interface InputFieldProps extends Omit<
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   onChangeValue?: (value: string) => void;
+  onRightIconClick?: () => void;
 }
 
 const InputField = ({
@@ -16,6 +17,7 @@ const InputField = ({
   leftIcon,
   rightIcon,
   onChangeValue,
+  onRightIconClick,
   ...props
 }: InputFieldProps) => {
   return (
@@ -40,6 +42,7 @@ const InputField = ({
         {rightIcon && (
           <button
             type="button"
+            onClick={onRightIconClick}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
           >
             {rightIcon}

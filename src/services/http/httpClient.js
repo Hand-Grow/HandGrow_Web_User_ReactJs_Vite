@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const httpClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 10000,
+  timeout: 50000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -11,7 +11,11 @@ const httpClient = axios.create({
 httpClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
-    if (token && config.headers) {
+
+    const isAuthRoute = config.url?.includes('/auth/');
+
+    if (token && !isAuthRoute) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
 

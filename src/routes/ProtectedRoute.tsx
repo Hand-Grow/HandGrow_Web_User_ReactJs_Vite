@@ -1,7 +1,14 @@
+import React, { JSX } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/auth/useAuth';
 
-const ProtectedRoute = ({ allowedRoles }) => {
+interface ProtectedRouteProps {
+  allowedRoles?: string[];
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  allowedRoles,
+}): JSX.Element | null => {
   const { user, initializing } = useAuth();
 
   if (initializing) return null;
