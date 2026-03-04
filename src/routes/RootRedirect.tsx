@@ -1,26 +1,28 @@
-import React, { JSX } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/auth/useAuth';
 import { USER_ROLES } from '../constants/roles';
 
-const RootRedirect: React.FC = (): JSX.Element | null => {
+const RootRedirect: React.FC = () => {
   const { user, initializing } = useAuth();
-
-  if (initializing) return null;
+  if (initializing) {
+    return null;
+  }
 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.role === USER_ROLES.COOP) {
-    return <Navigate to="/cooperative/dashboard" replace />;
-  }
+  switch (user.role) {
+    case USER_ROLES.COOP:
+      return <Navigate to="/cooperative/dashboard" replace />;
 
-  if (user.role === USER_ROLES.ENTERPRISE) {
-    return <Navigate to="/company" replace />;
-  }
+    case USER_ROLES.ENTERPRISE:
+      return <Navigate to="/company" replace />;
 
-  return <Navigate to="/login" replace />;
+    default:
+      return <Navigate to="/login" replace />;
+  }
 };
 
 export default RootRedirect;

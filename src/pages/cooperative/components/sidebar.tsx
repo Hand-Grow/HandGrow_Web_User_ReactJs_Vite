@@ -22,7 +22,7 @@ const menuItems = [
   },
   {
     label: 'Bài đăng',
-    href: '/cooperative/posts',
+    href: '/cooperative/feed',
     icon: <MessageSquare className="w-5 h-5" />,
   },
   {

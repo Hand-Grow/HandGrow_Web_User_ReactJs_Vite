@@ -22,7 +22,7 @@ import MessagesPage from '../pages/cooperative/messages/page';
 import PurchasesPage from '../pages/cooperative/purchases/page';
 import { ProfileContent } from '../pages/cooperative/profile/page';
 import { UserRole } from '../types/users';
-import PostsPage from '../pages/cooperative/posts/page';
+import FeedPage from '../pages/cooperative/feed/page';
 
 const AppRoutes = () => {
   return (
@@ -45,7 +45,7 @@ const AppRoutes = () => {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<CooperativeHome />} />
             <Route path="members" element={<CooperativeMembers />} />
-            <Route path="posts" element={<PostsPage />} />
+            <Route path="feed" element={<FeedPage />} />
             <Route path="reports" element={<CooperativeReports />} />
             <Route path="settings" element={<CooperativeSettings />} />
             <Route path="purchases" element={<PurchasesPage />} />

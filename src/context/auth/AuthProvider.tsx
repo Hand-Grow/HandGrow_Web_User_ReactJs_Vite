@@ -11,8 +11,30 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<UserStatistics | UserProfile | null>(null);
-  const [initializing] = useState<boolean>(false);
+  const getInitialUser = (): UserStatistics | UserProfile | null => {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+
+      return {
+        username: decoded.sub,
+        role: decoded.role as UserRole,
+      };
+    } catch {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState<UserStatistics | UserProfile | null>(
+    getInitialUser
+  );
+
+  const initializing = false;
 
   const login = async (
     credentials: LoginCredentials
