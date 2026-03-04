@@ -11,7 +11,8 @@ const httpClient = axios.create({
 httpClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
-    if (token && config.headers) {
+
+    if (token && config.headers && !config.url?.includes('/auth/login')) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -23,11 +24,9 @@ httpClient.interceptors.request.use(
 httpClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Xử lý tập trung lỗi 401 (Hết hạn token) tại đây
     if (error.response?.status === 401) {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      // window.location.href = '/login'; // Tùy chọn redirect
     }
     return Promise.reject(error);
   }
