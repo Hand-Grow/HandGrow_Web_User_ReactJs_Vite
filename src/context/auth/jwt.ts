@@ -2,7 +2,7 @@ import { JwtPayload } from 'jwt-decode';
 import { UserRole } from '../../types/users';
 
 export interface CustomJwtPayload extends JwtPayload {
-  role: string;
+  role: UserRole;
   sub: string;
 }
 

@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import AuthBanner from '../login/AuthBanner';
+import AuthBanner from './login/AuthBanner';
 import clsx from 'clsx';
 
 const AuthLayout = ({ bannerPosition = 'left' }) => {
