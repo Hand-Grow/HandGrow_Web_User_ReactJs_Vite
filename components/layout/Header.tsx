@@ -1,18 +1,12 @@
-'use client';
-
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-import { useTheme } from '../../context/theme/useTheme';
-import { useAuth } from '../../context/auth/useAuth';
 import Button from '../common/PrimaryButton';
 import { UserRole } from '../../types/users';
+import { useAuth } from '@/context/auth/useAuth';
 
 export const Header = () => {
-  const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
-
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -39,7 +33,6 @@ export const Header = () => {
         setOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -54,7 +47,7 @@ export const Header = () => {
       </nav>
 
       <div className="flex items-center gap-3 relative">
-        <Button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</Button>
+        {/* <Button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</Button> */}
 
         {!user ? (
           <Link href="/login">
