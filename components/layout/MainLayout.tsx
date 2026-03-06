@@ -1,9 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import Header from './Header';
-import { useTheme } from '../../context/theme/useTheme';
-
+import { useTheme } from '@/context/theme/ThemeContext';
 interface MainLayoutProps {
   children: ReactNode;
 }
@@ -22,9 +20,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         }
       `}
     >
-      <Header />
-
-      <main className="flex-1 w-full p-5 box-border">{children}</main>
+      <main className="flex-1 w-full p-5 box-border"> {children} </main>
     </div>
   );
 };
