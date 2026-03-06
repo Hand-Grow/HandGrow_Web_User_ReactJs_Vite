@@ -1,8 +1,13 @@
-import { Outlet } from 'react-router-dom';
-import AuthBanner from './login/AuthBanner';
+import { ReactNode } from 'react';
 import clsx from 'clsx';
+import AuthBanner from '@/components/layout/login/AuthBanner';
 
-const AuthLayout = ({ bannerPosition = 'left' }) => {
+interface AuthLayoutProps {
+  children: ReactNode;
+  bannerPosition?: 'left' | 'right';
+}
+
+const AuthLayout = ({ children, bannerPosition = 'left' }: AuthLayoutProps) => {
   const bannerRadius =
     bannerPosition === 'left'
       ? 'rounded-tr-[50px] rounded-br-[50px]'
@@ -21,7 +26,7 @@ const AuthLayout = ({ bannerPosition = 'left' }) => {
 
   const Content = (
     <div className="w-full lg:w-1/2 flex items-center justify-center">
-      <Outlet />
+      {children}
     </div>
   );
 

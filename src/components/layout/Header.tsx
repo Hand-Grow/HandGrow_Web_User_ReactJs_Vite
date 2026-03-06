@@ -1,5 +1,9 @@
+'use client';
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { useTheme } from '../../context/theme/useTheme';
 import { useAuth } from '../../context/auth/useAuth';
 import Button from '../common/PrimaryButton';
@@ -8,14 +12,15 @@ import { UserRole } from '../../types/users';
 export const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
+
+  const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    router.push('/login');
   };
 
   const getHomePath = () => {
@@ -34,6 +39,7 @@ export const Header = () => {
         setOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -43,15 +49,15 @@ export const Header = () => {
       <div className="text-2xl font-bold">HandGrow</div>
 
       <nav className="flex gap-4">
-        {getHomePath() && <Link to={getHomePath()!}>Home</Link>}
-        <Link to="/about">About</Link>
+        {getHomePath() && <Link href={getHomePath()!}>Home</Link>}
+        <Link href="/about">About</Link>
       </nav>
 
       <div className="flex items-center gap-3 relative">
         <Button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</Button>
 
         {!user ? (
-          <Link to="/login">
+          <Link href="/login">
             <Button>Login</Button>
           </Link>
         ) : (
@@ -71,7 +77,7 @@ export const Header = () => {
             {open && (
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden">
                 <Link
-                  to="/cooperative/profile"
+                  href="/cooperative/profile"
                   className="block px-4 py-2 hover:bg-gray-100"
                   onClick={() => setOpen(false)}
                 >

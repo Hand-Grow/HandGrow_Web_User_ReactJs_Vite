@@ -1,9 +1,14 @@
-// import React from 'react';
-import { Outlet } from 'react-router-dom';
-// import Header from './Header';
+'use client';
+
+import { ReactNode } from 'react';
+import Header from './Header';
 import { useTheme } from '../../context/theme/useTheme';
 
-const MainLayout = () => {
+interface MainLayoutProps {
+  children: ReactNode;
+}
+
+const MainLayout = ({ children }: MainLayoutProps) => {
   const { theme } = useTheme();
 
   return (
@@ -17,10 +22,9 @@ const MainLayout = () => {
         }
       `}
     >
-      {/* <Header /> */}
-      <main className="flex-1 w-full p-5 box-border">
-        <Outlet />
-      </main>
+      <Header />
+
+      <main className="flex-1 w-full p-5 box-border">{children}</main>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { UserRole } from './roles';
+
 export interface User {
   id: string;
   name: string;
@@ -10,11 +12,6 @@ export interface AuthUser {
   role: UserRole;
   name?: string;
   avatar?: string;
-}
-export enum UserRole {
-  ENTERPRISE = 'ENTERPRISE',
-  FARMER = 'FARMER',
-  COOP = 'COOP',
 }
 
 export interface UserProfile {
