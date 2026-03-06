@@ -20,7 +20,7 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { label: 'Trang chủ', href: '/company', icon: Home },
+  { label: 'Trang chủ', href: '/company/dashboard', icon: Home },
   { label: 'Tìm kiếm nguồn cung', href: '/company/sourcing', icon: Search },
   { label: 'Tin nhắn', href: '/company/messages', icon: MessageCircle },
   { label: 'Hợp đồng', href: '/company/contracts', icon: FileText },

@@ -81,7 +81,7 @@ const Login = () => {
       if (user.role === UserRole.COOP) {
         router.replace('/cooperative/dashboard');
       } else if (user.role === UserRole.ENTERPRISE) {
-        router.replace('/company');
+        router.replace('/company/dashboard');
       } else {
         router.replace('/login');
       }
