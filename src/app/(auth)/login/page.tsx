@@ -51,8 +51,6 @@ const Login = () => {
 
   const { handleLogin } = useLogin(selectedRole);
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('EMAIL LENGTH:', email.length);
-    console.log('EMAIL VALUE:', JSON.stringify(email));
     e.preventDefault();
 
     const error = validateLogin({ email, password });
