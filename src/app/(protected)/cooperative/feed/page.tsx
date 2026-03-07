@@ -7,17 +7,26 @@ import MainLayout from '@/components/layout/MainLayout';
 import { feedService } from '@/services/feedService';
 import { Post, PostType } from '@/src/types';
 import { authService } from '@/services/authService';
+import { useRouter } from 'next/navigation';
 
 import FeedCard from '@/src/components/feed/FeedCard';
 import CreatePostModal from '@/src/components/feed/CreatePostModal';
+
+import {
+  Megaphone,
+  Sprout,
+  Newspaper,
+  PlusCircle,
+  ShoppingCart,
+} from 'lucide-react';
 
 export default function FeedPage() {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<PostType | 'ALL'>('ALL');
 
+  const router = useRouter();
   const [feed, setFeed] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -25,8 +34,8 @@ export default function FeedPage() {
 
         const user = await authService.getProfile();
         const coopId = user.id;
+
         const data = await feedService.getFeed(coopId);
-        console.log('Feed data:', data);
 
         setFeed(data || []);
       } catch (err) {
@@ -38,6 +47,10 @@ export default function FeedPage() {
 
     loadData();
   }, []);
+  const campaignCount = feed.filter((f) => f.type === 'CAMPAIGN').length;
+  const announcementCount = feed.filter(
+    (f) => f.type === 'ANNOUNCEMENT'
+  ).length;
   const handleCreatePost = (post: Post) => {
     setFeed((prev) => [post, ...prev]);
   };
@@ -51,44 +64,90 @@ export default function FeedPage() {
     <MainLayout>
       <div className="bg-gray-50 min-h-screen p-4 md:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* LEFT FEED */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="bg-linear-to-r from-green-500 to-green-600 h-28 md:h-32 rounded-2xl flex items-center px-6 text-white">
-              <h2 className="text-lg md:text-xl font-semibold">
-                Bảng tin HTX Nông Nghiệp
-              </h2>
+            {/* HEADER */}
+            <div
+              className="bg-gradient-to-r from-green-500 via-emerald-500 to-green-600
+h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
+            >
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold">Bảng tin HTX</h2>
+
+                <p className="text-sm opacity-90">
+                  Cập nhật thông báo và chiến dịch thu gom
+                </p>
+              </div>
+
+              <Sprout size={40} className="opacity-80" />
+              <button
+                onClick={() => router.push('/cooperative/marketplace')}
+                className="flex items-center gap-2 bg-white text-green-700 px-4 py-2 rounded-lg shadow
+  hover:bg-gray-100 hover:scale-105 transition"
+              >
+                <ShoppingCart size={16} />
+                Marketplace
+              </button>
             </div>
 
+            {/* FILTER */}
             <div className="flex gap-2 flex-wrap">
-              {['ALL', 'ANNOUNCEMENT', 'CAMPAIGN'].map((type) => (
+              {[
+                { key: 'ALL', label: 'Tất cả', icon: <Newspaper size={16} /> },
+                {
+                  key: 'ANNOUNCEMENT',
+                  label: 'Thông báo',
+                  icon: <Megaphone size={16} />,
+                },
+                {
+                  key: 'CAMPAIGN',
+                  label: 'Thu gom',
+                  icon: <Sprout size={16} />,
+                },
+              ].map((tab) => (
                 <button
-                  key={type}
-                  onClick={() => setFilter(type as PostType | 'ALL')}
-                  className={`px-4 py-1 rounded-full text-sm transition
-                    ${
-                      filter === type
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-100 hover:bg-gray-200'
-                    }`}
+                  key={tab.key}
+                  onClick={() => setFilter(tab.key as PostType | 'ALL')}
+                  className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm transition
+                  ${
+                    filter === (tab.key as PostType | 'ALL')
+                      ? 'bg-green-500 text-white shadow'
+                      : 'bg-white border hover:bg-gray-100'
+                  }`}
                 >
-                  {type === 'ALL' && 'Tất cả'}
-                  {type === 'ANNOUNCEMENT' && 'Thông báo'}
-                  {type === 'CAMPAIGN' && 'Thu gom'}
+                  {tab.icon}
+                  {tab.label}
                 </button>
               ))}
             </div>
 
-            <div className="bg-white p-4 rounded-2xl shadow-md">
+            {/* CREATE POST */}
+            <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <Sprout size={18} />
+              </div>
+
               <button
                 onClick={() => setOpen(true)}
-                className="w-full bg-gray-100 hover:bg-gray-200 
-                rounded-full py-2 text-gray-600 transition"
+                className="flex-1 text-left bg-gray-100 hover:bg-gray-200
+                rounded-full px-4 py-2 text-gray-600 transition"
               >
                 Bạn đang nghĩ gì?
               </button>
+
+              <button
+                onClick={() => setOpen(true)}
+                className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600"
+              >
+                <PlusCircle size={18} />
+              </button>
             </div>
 
+            {/* LOADING */}
             {loading && (
-              <div className="text-center py-16 text-gray-400">Đang tải...</div>
+              <div className="text-center py-16 text-gray-400">
+                Đang tải bảng tin...
+              </div>
             )}
 
             {!loading && filteredFeed.length === 0 && (
@@ -103,41 +162,61 @@ export default function FeedPage() {
               ))}
           </div>
 
+          {/* SIDEBAR */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white p-4 rounded-2xl shadow">
-              <h3 className="font-semibold mb-3">Thống kê nhanh</h3>
+            {/* QUICK STATS */}
+            <div className="bg-white p-5 rounded-2xl shadow">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                📊 Thống kê nhanh
+              </h3>
 
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>Tổng bài: {feed.length}</p>
-                <p>
-                  Thu gom: {feed.filter((f) => f.type === 'CAMPAIGN').length}
-                </p>
-                <p>
-                  Thông báo:
-                  {feed.filter((f) => f.type === 'ANNOUNCEMENT').length}
-                </p>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-lg font-bold">{feed.length}</p>
+                  <p className="text-xs text-gray-500">Tổng bài</p>
+                </div>
+
+                <div className="bg-green-50 rounded-xl p-3">
+                  <p className="text-lg font-bold text-green-600">
+                    {campaignCount}
+                  </p>
+                  <p className="text-xs text-gray-500">Thu gom</p>
+                </div>
+
+                <div className="bg-red-50 rounded-xl p-3">
+                  <p className="text-lg font-bold text-red-600">
+                    {announcementCount}
+                  </p>
+                  <p className="text-xs text-gray-500">Thông báo</p>
+                </div>
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl shadow">
-              <h3 className="font-semibold mb-3">Thu gom sắp tới</h3>
+            {/* UPCOMING CAMPAIGN */}
+            <div className="bg-white p-5 rounded-2xl shadow">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                🌱 Thu gom sắp tới
+              </h3>
 
               {campaignPosts.length === 0 && (
-                <p className="text-sm text-gray-400"> Chưa có đợt thu gom</p>
+                <p className="text-sm text-gray-400">Chưa có đợt thu gom</p>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {campaignPosts.map((post) => (
                   <div
                     key={post.id}
-                    className="bg-green-50 p-2 rounded-lg text-sm"
+                    className="bg-green-50 p-3 rounded-xl hover:bg-green-100 transition"
                   >
                     {'productName' in post && (
                       <>
-                        <p className="font-medium"> {post.productName}</p>
+                        <p className="font-medium text-green-700 flex items-center gap-1">
+                          {post.productName}
+                        </p>
 
                         {'expectedDate' in post && (
-                          <p className="text-gray-500">
+                          <p className="text-xs text-gray-500">
+                            📅{' '}
                             {new Date(post.expectedDate).toLocaleDateString(
                               'vi-VN'
                             )}

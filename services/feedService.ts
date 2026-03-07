@@ -119,7 +119,17 @@ export const feedService = {
     return res.data;
   },
 
-  publishCampaignToB2B: async (campaignId: number): Promise<void> => {
-    await httpClient.post(API_ENDPOINTS.CAMPAIGN.PUBLISH_TO_B2B(campaignId));
+  publishCampaign: async (
+    campaignId: string,
+    expectedPrice: number
+  ): Promise<void> => {
+    await httpClient.post(API_ENDPOINTS.CAMPAIGN.PUBLISH_TO_B2B(campaignId), {
+      expectedPrice,
+    });
+  },
+  async getMarketplacePosts(page = 0) {
+    const res = await httpClient.get(API_ENDPOINTS.MARKETPLACE.LIST(page));
+
+    return res.data || [];
   },
 };
