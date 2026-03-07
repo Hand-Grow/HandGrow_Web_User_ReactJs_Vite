@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import MainLayout from '@/components/layout/MainLayout';
 
 import { feedService } from '@/services/feedService';
@@ -27,6 +26,7 @@ export default function FeedPage() {
   const router = useRouter();
   const [feed, setFeed] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -47,10 +47,12 @@ export default function FeedPage() {
 
     loadData();
   }, []);
+
   const campaignCount = feed.filter((f) => f.type === 'CAMPAIGN').length;
   const announcementCount = feed.filter(
     (f) => f.type === 'ANNOUNCEMENT'
   ).length;
+
   const handleCreatePost = (post: Post) => {
     setFeed((prev) => [post, ...prev]);
   };
@@ -66,81 +68,91 @@ export default function FeedPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* LEFT FEED */}
           <div className="lg:col-span-8 space-y-6">
-            {/* HEADER */}
-            <div
-              className="bg-gradient-to-r from-green-500 via-emerald-500 to-green-600
-h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
-            >
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold">Bảng tin HTX</h2>
-
-                <p className="text-sm opacity-90">
-                  Cập nhật thông báo và chiến dịch thu gom
-                </p>
-              </div>
-
-              <Sprout size={40} className="opacity-80" />
-              <button
-                onClick={() => router.push('/cooperative/marketplace')}
-                className="flex items-center gap-2 bg-white text-green-700 px-4 py-2 rounded-lg shadow
-  hover:bg-gray-100 hover:scale-105 transition"
+            {/* STICKY HEADER AREA */}
+            <div className="sticky top-0 z-20 space-y-4 pb-4 backdrop-blur bg-gray-50/90">
+              {/* HEADER */}
+              <div
+                className="bg-gradient-to-r from-green-500 via-emerald-500 to-green-600
+                h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
               >
-                <ShoppingCart size={16} />
-                Marketplace
-              </button>
-            </div>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold">
+                    Bảng tin HTX
+                  </h2>
 
-            {/* FILTER */}
-            <div className="flex gap-2 flex-wrap">
-              {[
-                { key: 'ALL', label: 'Tất cả', icon: <Newspaper size={16} /> },
-                {
-                  key: 'ANNOUNCEMENT',
-                  label: 'Thông báo',
-                  icon: <Megaphone size={16} />,
-                },
-                {
-                  key: 'CAMPAIGN',
-                  label: 'Thu gom',
-                  icon: <Sprout size={16} />,
-                },
-              ].map((tab) => (
+                  <p className="text-sm opacity-90">
+                    Cập nhật thông báo và chiến dịch thu gom
+                  </p>
+                </div>
+
+                <Sprout size={40} className="opacity-80" />
+
                 <button
-                  key={tab.key}
-                  onClick={() => setFilter(tab.key as PostType | 'ALL')}
-                  className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm transition
-                  ${
-                    filter === (tab.key as PostType | 'ALL')
-                      ? 'bg-green-500 text-white shadow'
-                      : 'bg-white border hover:bg-gray-100'
-                  }`}
+                  onClick={() => router.push('/cooperative/marketplace')}
+                  className="flex items-center gap-2 bg-white text-green-700 px-4 py-2 rounded-lg shadow
+                  hover:bg-gray-100 hover:scale-105 transition"
                 >
-                  {tab.icon}
-                  {tab.label}
+                  <ShoppingCart size={16} />
+                  Marketplace
                 </button>
-              ))}
-            </div>
-
-            {/* CREATE POST */}
-            <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <Sprout size={18} />
               </div>
 
-              <button
-                onClick={() => setOpen(true)}
-                className="flex-1 text-left bg-gray-100 hover:bg-gray-200
-                rounded-full px-4 py-2 text-gray-600 transition"
-              >
-                Bạn đang nghĩ gì?
-              </button>
+              {/* FILTER */}
+              <div className="flex gap-2 flex-wrap bg-white p-3 rounded-xl shadow">
+                {[
+                  {
+                    key: 'ALL',
+                    label: 'Tất cả',
+                    icon: <Newspaper size={16} />,
+                  },
+                  {
+                    key: 'ANNOUNCEMENT',
+                    label: 'Thông báo',
+                    icon: <Megaphone size={16} />,
+                  },
+                  {
+                    key: 'CAMPAIGN',
+                    label: 'Thu gom',
+                    icon: <Sprout size={16} />,
+                  },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setFilter(tab.key as PostType | 'ALL')}
+                    className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm transition
+                    ${
+                      filter === (tab.key as PostType | 'ALL')
+                        ? 'bg-green-500 text-white shadow'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
-              <button
-                onClick={() => setOpen(true)}
-                className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600"
-              >
-                <PlusCircle size={18} />
-              </button>
+              {/* CREATE POST */}
+              <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <Sprout size={18} />
+                </div>
+
+                <button
+                  onClick={() => setOpen(true)}
+                  className="flex-1 text-left bg-gray-100 hover:bg-gray-200
+                  rounded-full px-4 py-2 text-gray-600 transition"
+                >
+                  Bạn đang nghĩ gì?
+                </button>
+
+                <button
+                  onClick={() => setOpen(true)}
+                  className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600"
+                >
+                  <PlusCircle size={18} />
+                </button>
+              </div>
             </div>
 
             {/* LOADING */}
@@ -150,12 +162,14 @@ h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
               </div>
             )}
 
+            {/* EMPTY */}
             {!loading && filteredFeed.length === 0 && (
               <div className="text-center py-16 text-gray-400">
                 Không có bài đăng
               </div>
             )}
 
+            {/* POSTS */}
             {!loading &&
               filteredFeed.map((item) => (
                 <FeedCard key={item.id} item={item} setFeed={setFeed} />
@@ -163,7 +177,7 @@ h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
           </div>
 
           {/* SIDEBAR */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 space-y-6 sticky top-6 h-fit">
             {/* QUICK STATS */}
             <div className="bg-white p-5 rounded-2xl shadow">
               <h3 className="font-semibold mb-4 flex items-center gap-2">

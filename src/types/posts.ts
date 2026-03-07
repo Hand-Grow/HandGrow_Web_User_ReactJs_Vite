@@ -29,7 +29,7 @@ export interface CommentResponse {
   id: number;
   content: string;
   createdAt: string;
-  authorName: string;
+  farmerName: string;
 }
 
 export interface CreateAnnouncementRequest {

@@ -18,10 +18,10 @@ export interface PageResponse<T> {
 }
 
 export interface CommentResponse {
-  id: number;
+  id: string;
   content: string;
   createdAt: string;
-  authorName: string;
+  farmerName: string;
 }
 
 export const feedService = {
@@ -45,8 +45,8 @@ export const feedService = {
     id: string,
     page = 0,
     size = 20
-  ): Promise<PageResponse<CommentResponse>> => {
-    const res = await httpClient.get<PageResponse<CommentResponse>>(
+  ): Promise<CommentResponse[]> => {
+    const res = await httpClient.get<CommentResponse[]>(
       API_ENDPOINTS.FEED.GET_COMMENTS(type, id, page, size)
     );
     return res.data;
