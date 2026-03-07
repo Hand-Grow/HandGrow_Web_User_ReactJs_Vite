@@ -21,6 +21,11 @@ const menuItems = [
     icon: <Home className="w-5 h-5" />,
   },
   {
+    label: 'Bài đăng',
+    href: '/cooperative/feed',
+    icon: <MessageSquare className="w-5 h-5" />,
+  },
+  {
     label: 'Mua chung',
     href: '/cooperative/purchases',
     icon: <ShoppingCart className="w-5 h-5" />,
