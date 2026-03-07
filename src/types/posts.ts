@@ -29,7 +29,7 @@ export interface CommentResponse {
   id: number;
   content: string;
   createdAt: string;
-  authorName: string;
+  farmerName: string;
 }
 
 export interface CreateAnnouncementRequest {
@@ -86,8 +86,10 @@ export interface BasePost {
   likeCount: number;
   liked: boolean;
   commentCount: number;
+  image?: string;
+  /* marketplace */
+  isPublished?: boolean;
 }
-
 export interface CampaignPost extends BasePost {
   type: 'CAMPAIGN';
   productName: string;
@@ -96,3 +98,13 @@ export interface CampaignPost extends BasePost {
 
 export type Post = AnnouncementPost | CampaignPost;
 export type FeedResponse = Post[];
+export interface MarketplacePost {
+  id: number;
+  campaignId: string;
+  productName: string;
+  totalQuantity: number;
+  expectedPrice?: number;
+  status: 'OPEN' | 'GATHERING';
+  coopName: string;
+  createdAt: string;
+}

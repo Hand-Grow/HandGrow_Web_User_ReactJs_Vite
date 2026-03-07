@@ -53,6 +53,11 @@ export const API_ENDPOINTS = {
     COMMIT: (id: number) => `/api/v1/campaigns/${id}/commitments`,
     GET_COMMITMENTS: (id: number, page = 0, size = 20) =>
       `/api/v1/campaigns/${id}/commitments?page=${page}&size=${size}`,
-    PUBLISH_TO_B2B: (id: number) => `/api/v1/campaigns/${id}/publish-to-b2b`,
+    PUBLISH_TO_B2B: (id: string) => `/api/v1/campaigns/${id}/publish-to-b2b`,
+  },
+  MARKETPLACE: {
+    LIST: (page = 0) => `/api/v1/marketplace/bulk-sales?page=${page}`,
+    DETAIL: (id: string) => `/api/v1/marketplace/bulk-sales/${id}`,
+    CREATE_OFFER: (id: string) => `/api/v1/marketplace/bulk-sales/${id}/offers`,
   },
 };
