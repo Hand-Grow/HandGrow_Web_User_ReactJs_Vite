@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Home,
   Search,
@@ -11,80 +12,107 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { useState } from 'react';
-import React from 'react';
 
-type MenuItem = {
-  label: string;
-  href: string;
-  icon: React.ElementType;
-};
-
-const menuItems: MenuItem[] = [
-  { label: 'Trang chủ', href: '/company/dashboard', icon: Home },
-  { label: 'Tìm kiếm nguồn cung', href: '/company/sourcing', icon: Search },
-  { label: 'Tin nhắn', href: '/company/messages', icon: MessageCircle },
-  { label: 'Hợp đồng', href: '/company/contracts', icon: FileText },
-  { label: 'Cá nhân', href: '/company/profile', icon: User },
+const menuItems = [
+  {
+    label: 'Trang chủ',
+    href: '/company/dashboard',
+    icon: <Home className="w-5 h-5" />,
+  },
+  {
+    label: 'Tìm kiếm nguồn cung',
+    href: '/company/sourcing',
+    icon: <Search className="w-5 h-5" />,
+  },
+  {
+    label: 'Tin nhắn',
+    href: '/company/messages',
+    icon: <MessageCircle className="w-5 h-5" />,
+  },
+  {
+    label: 'Hợp đồng',
+    href: '/company/contracts',
+    icon: <FileText className="w-5 h-5" />,
+  },
+  {
+    label: 'Cá nhân',
+    href: '/company/profile',
+    icon: <User className="w-5 h-5" />,
+  },
 ];
 
-export default function Sidebar() {
-  const [expanded, setExpanded] = useState(true);
+export function Sidebar() {
+  const pathname = usePathname();
   const router = useRouter();
+  const [expanded, setExpanded] = useState(true);
+
+  const handleLogout = () => {
+    document.cookie = 'accessToken=; path=/; max-age=0';
+    router.push('/login');
+  };
+
   return (
     <aside
-      className={`bg-white border-r border-gray-200 transition-all duration-300
-      ${expanded ? 'w-64' : 'w-20'}
-      min-h-screen flex flex-col sticky top-0`}
+      className={`bg-white border-r border-gray-200 transition-all duration-300 ${
+        expanded ? 'w-64' : 'w-20'
+      } min-h-screen flex flex-col sticky top-0`}
     >
-      {/* ===== Logo ===== */}
-      <div className="p-5 border-b border-gray-200 flex items-center gap-3">
+      {/* Logo */}
+      <div className="p-4 border-b border-gray-200 flex items-center gap-3">
         <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">
           AT
         </div>
-
         {expanded && (
           <div>
-            <p className="text-sm font-bold text-gray-900">AgriTrade</p>
-            <p className="text-xs text-gray-400">Sàn giao dịch B2B</p>
+            <span className="text-sm font-bold text-gray-900">AgriTrade</span>
+            <br />
+            <span className="text-xs text-gray-400">Sàn giao dịch B2B</span>
           </div>
         )}
       </div>
 
-      {/* ===== Menu ===== */}
+      {/* Menu */}
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
-          const Icon = item.icon;
+          const isActive = pathname === item.href;
 
           return (
-            <button
+            <Link
               key={item.href}
-              onClick={() => router.push(item.href)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all hover:bg-gray-100"
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                isActive
+                  ? 'bg-emerald-100 text-emerald-700 font-semibold'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
             >
-              <Icon className="w-5 h-5" />
-              {expanded && <span>{item.label}</span>}
-            </button>
+              {item.icon}
+              {expanded && <span className="text-sm">{item.label}</span>}
+            </Link>
           );
         })}
       </nav>
 
-      {/* ===== Footer ===== */}
+      {/* Bottom actions */}
       <div className="p-4 border-t border-gray-200 space-y-2">
         <button
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
           onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition"
         >
-          <ChevronDown
-            className={`w-5 h-5 transition ${expanded ? '' : 'rotate-180'}`}
-          />
-          {expanded && <span>Thu gọn</span>}
+          <ChevronDown className="w-5 h-5" />
+          {expanded && <span className="text-sm">Thu gọn</span>}
         </button>
 
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+        >
           <LogOut className="w-5 h-5" />
-          {expanded && <span>Đăng xuất</span>}
+          {expanded && <span className="text-sm">Đăng xuất</span>}
         </button>
       </div>
     </aside>
   );
 }
+
+export default Sidebar;

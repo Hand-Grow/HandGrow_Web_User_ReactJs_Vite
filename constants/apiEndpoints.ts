@@ -59,5 +59,19 @@ export const API_ENDPOINTS = {
     LIST: (page = 0) => `/api/v1/marketplace/bulk-sales?page=${page}`,
     DETAIL: (id: string) => `/api/v1/marketplace/bulk-sales/${id}`,
     CREATE_OFFER: (id: string) => `/api/v1/marketplace/bulk-sales/${id}/offers`,
+    BULK_SALES: '/api/v1/marketplace/bulk-sales',
+    BULK_SALE_DETAIL: (id: string) => `/api/v1/marketplace/bulk-sales/${id}`,
+    MY_OFFERS: '/api/v1/enterprises/me/offers',
+    BULK_POSTS: '/api/v1/market/bulk-posts',
+  },
+  MESSAGE: {
+    CONVERSATIONS: '/api/v1/messages/conversations',
+    CONVERSATION_DETAIL: (id: string) => `/api/v1/messages/conversations/${id}`,
+    CONVERSATION_MESSAGES: (id: string) =>
+      `/api/v1/messages/conversations/${id}/messages`,
+    SEND_MESSAGE: (id: string) =>
+      `/api/v1/messages/conversations/${id}/messages`,
+    MARK_AS_READ: (id: string) => `/api/v1/messages/conversations/${id}/read`,
+    SEARCH_CONVERSATIONS: '/api/v1/messages/conversations/search',
   },
 };
