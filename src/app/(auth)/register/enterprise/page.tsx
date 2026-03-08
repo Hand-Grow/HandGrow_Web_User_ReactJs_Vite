@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import type { AxiosError } from 'axios';
-import { District, Province, Ward } from '@/types/location';
+import { Province, Ward } from '@/types/location';
 import { locationApi } from '@/services/location/locationApi';
 import { toast } from 'react-toastify';
 import { authApi } from '@/services/auth/authApi';
@@ -50,13 +50,7 @@ const RegisterEnterprise: React.FC = () => {
 
       const res = await locationApi.getProvinceDetail(selected.code);
 
-      const districts: District[] = res.data.districts ?? [];
-
-      const allWards: Ward[] = districts.flatMap(
-        (district: District) => district.wards ?? []
-      );
-
-      setCommunes(allWards);
+      setCommunes(res.data.wards || []);
     } catch (error) {
       console.error('Fetch province detail failed:', error);
     }

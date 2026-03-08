@@ -10,7 +10,6 @@ const httpClient = axios.create({
 
 httpClient.interceptors.request.use(
   (config) => {
-    // Chỉ chạy ở client
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('accessToken');
       const isAuthRoute = config.url?.includes('/auth/');
@@ -33,7 +32,6 @@ httpClient.interceptors.response.use(
       if (error.response?.status === 401) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        // window.location.href = '/login';
       }
     }
 
