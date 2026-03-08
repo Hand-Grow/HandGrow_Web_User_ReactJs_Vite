@@ -179,7 +179,7 @@ export default function MembersPage() {
           />
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl border border-emerald-100 shadow-sm p-6">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
@@ -222,21 +222,22 @@ export default function MembersPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 text-sm">
+              <thead className="bg-emerald-50 text-sm">
                 <tr>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
+                  <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
+                    {' '}
                     Thành viên
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
+                  <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
                     Liên hệ
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
+                  <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
                     Địa chỉ
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 uppercase">
+                  <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
                     Trạng thái
                   </th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700 uppercase">
+                  <th className="text-center py-3 px-4 font-semibold text-emerald-800 uppercase">
                     Hành động
                   </th>
                 </tr>
@@ -245,11 +246,11 @@ export default function MembersPage() {
                 {filteredMembers.map((member) => (
                   <tr
                     key={member.id}
-                    className="border-b hover:bg-gray-50 transition"
+                    className="border-b border-emerald-50 hover:bg-emerald-50/40 transition-all duration-200"
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold">
+                        <div className="w-11 h-11 bg-linear-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-semibold shadow-sm">
                           {member.name ? member.name[0] : '?'}
                         </div>
                         <div>
@@ -270,7 +271,7 @@ export default function MembersPage() {
                     </td>
                     <td className="py-4 px-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig[member.status as JoinRequestStatus].color}`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${statusConfig[member.status as JoinRequestStatus].color}`}
                       >
                         {statusConfig[member.status as JoinRequestStatus].label}
                       </span>
@@ -282,7 +283,7 @@ export default function MembersPage() {
                             <Button
                               size="sm"
                               onClick={() => handleRespond(member.id, true)}
-                              className="text-emerald-600 hover:bg-emerald-50"
+                              className="text-emerald-600 hover:bg-emerald-100 rounded-md"
                               disabled={loading}
                             >
                               <CheckCircle className="w-5 h-5" />
@@ -293,7 +294,7 @@ export default function MembersPage() {
                                 if (window.confirm('Từ chối thành viên này?'))
                                   handleRespond(member.id, false);
                               }}
-                              className="text-red-600 hover:bg-red-50"
+                              className="text-red-600 hover:bg-red-100 rounded-md"
                               disabled={loading}
                             >
                               <XCircle className="w-5 h-5" />
@@ -303,8 +304,9 @@ export default function MembersPage() {
                         <Button
                           size="sm"
                           onClick={() => setSelectedMember(member)}
+                          className="text-emerald-600 hover:bg-emerald-100"
                         >
-                          <Eye className="text-blue-600 w-5 h-5" />
+                          <Eye className="w-5 h-5" />
                         </Button>
                       </div>
                     </td>

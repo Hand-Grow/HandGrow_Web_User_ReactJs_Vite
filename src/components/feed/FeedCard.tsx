@@ -194,7 +194,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         <img
           src={item.image}
           alt="post"
-          className="w-full max-h-[420px] object-cover"
+          className="w-full max-h-105 object-cover"
         />
       )}
 
@@ -247,7 +247,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
 
             {comments.map((c) => (
               <div key={c.id} className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center shrink-0">
                   <Sprout size={16} />
                 </div>
 
