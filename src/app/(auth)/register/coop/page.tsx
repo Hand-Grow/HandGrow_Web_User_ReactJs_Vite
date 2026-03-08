@@ -9,6 +9,7 @@ import { validateRegister } from '@/utils/validators/authValidator';
 import RegisterForm from '@/components/layout/register/RegisterForm';
 import { locationApi } from '@/services/location/locationApi';
 import { authApi } from '@/services/auth/authApi';
+import { API_ENDPOINTS } from '@/constants';
 
 const Register: React.FC = () => {
   const [name, setName] = useState<string>('');
@@ -19,9 +20,9 @@ const Register: React.FC = () => {
 
   const [provinceCode, setProvinceCode] = useState<number | null>(null);
   const [provinceName, setProvinceName] = useState<string>('');
-  const [commune, setCommune] = useState<string>('');
   const [produce, setProduce] = useState<string>('');
-
+  const [communeCode, setCommuneCode] = useState<string>('');
+  const [communeName, setCommuneName] = useState<string>('');
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [communes, setCommunes] = useState<Ward[]>([]);
 
@@ -29,10 +30,9 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch('https://provinces.open-api.vn/api/v2/p')
+    fetch(API_ENDPOINTS.LOCATION.PROVINCES)
       .then((res) => res.json())
       .then((data) => {
-        console.log('FETCH DATA:', data);
         setProvinces(data);
       });
   }, []);
@@ -43,26 +43,24 @@ const Register: React.FC = () => {
 
     setProvinceCode(code);
     setProvinceName(selectedProvince.name);
-    setCommune('');
+    setCommuneCode('');
+    setCommuneName('');
     setCommunes([]);
 
     const res = await locationApi.getProvinceDetail(code);
     setCommunes(res.data.wards || []);
   };
 
-  const handleCommuneChange = (name: string) => {
-    setCommune(name);
+  const handleCommuneChange = (code: string) => {
+    const ward = communes.find((w) => w.code.toString() === code);
+    if (!ward) return;
+
+    setCommuneCode(code);
+    setCommuneName(ward.name);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // const selectedRole = localStorage.getItem('selectedRole');
-
-    // if (!selectedRole) {
-    //   toast.error('Vui lòng chọn vai trò');
-    //   return;
-    // }
 
     const error = validateRegister({
       name,
@@ -71,7 +69,7 @@ const Register: React.FC = () => {
       password,
       confirmPassword,
       province: provinceName,
-      commune,
+      commune: communeName,
       produce,
     });
 
@@ -86,10 +84,9 @@ const Register: React.FC = () => {
         phoneNumber,
         password,
         province: provinceName,
-        commune,
+        commune: communeName,
         produce,
       };
-      console.log('REGISTER PAYLOAD:', payload);
       await authApi.registerCoop(payload);
 
       toast.success('Đăng ký thành công');
@@ -110,7 +107,7 @@ const Register: React.FC = () => {
       password={password}
       confirmPassword={confirmPassword}
       province={provinceCode?.toString() ?? ''}
-      commune={commune}
+      commune={communeCode}
       produce={produce}
       provinces={provinces}
       communes={communes}

@@ -72,7 +72,7 @@ export default function FeedPage() {
             <div className="sticky top-0 z-20 space-y-4 pb-4 backdrop-blur bg-gray-50/90">
               {/* HEADER */}
               <div
-                className="bg-gradient-to-r from-green-500 via-emerald-500 to-green-600
+                className="bg-linear-to-r from-green-500 via-emerald-500 to-green-600
                 h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
               >
                 <div>
