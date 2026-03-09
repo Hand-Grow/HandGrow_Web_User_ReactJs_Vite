@@ -174,9 +174,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               leftIcon={<Lock className="w-4 h-4" />}
               rightIcon={
                 showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
                   <Eye className="w-4 h-4" />
+                ) : (
+                  <EyeOff className="w-4 h-4" />
                 )
               }
               onRightIconClick={onTogglePassword}
