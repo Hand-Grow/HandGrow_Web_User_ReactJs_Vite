@@ -32,13 +32,17 @@ export default function SourcingPage() {
     page: 0,
   });
   const [sortBy, setSortBy] = useState<
-    'relevant' | 'price_asc' | 'price_desc' | 'quantity_desc'
+    'relevant' | 'price_asc' | 'price_desc' | 'contact_price'
   >('relevant');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchBulkSales();
-  }, [filters]);
+  }, [filters, sortBy]);
+
+  useEffect(() => {
+    fetchBulkSales();
+  }, [searchTerm]);
 
   const fetchBulkSales = async () => {
     try {
@@ -51,20 +55,28 @@ export default function SourcingPage() {
 
       let sortedData = [...data];
       if (sortBy === 'price_asc') {
-        sortedData.sort(
-          (a, b) => (a.expectedPrice || 0) - (b.expectedPrice || 0)
-        );
+        sortedData.sort((a, b) => {
+          if (a.expectedPrice === null && b.expectedPrice === null) return 0;
+          if (a.expectedPrice === null) return 1;
+          if (b.expectedPrice === null) return -1;
+          return a.expectedPrice - b.expectedPrice;
+        });
       } else if (sortBy === 'price_desc') {
         sortedData.sort(
           (a, b) => (b.expectedPrice || 0) - (a.expectedPrice || 0)
         );
-      } else if (sortBy === 'quantity_desc') {
-        sortedData.sort((a, b) => b.totalQuantity - a.totalQuantity);
+      } else if (sortBy === 'contact_price') {
+        sortedData.sort((a, b) => {
+          if (a.expectedPrice === null && b.expectedPrice === null) return 0;
+          if (a.expectedPrice === null) return -1;
+          if (b.expectedPrice === null) return 1;
+          return a.expectedPrice - b.expectedPrice;
+        });
       } else if (sortBy === 'relevant') {
         sortedData.sort((a, b) => {
-          const aScore = a.expectedPrice && a.totalQuantity > 0 ? 1 : 0;
-          const bScore = b.expectedPrice && b.totalQuantity > 0 ? 1 : 0;
-          return bScore - aScore;
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA;
         });
       }
 
@@ -169,6 +181,7 @@ export default function SourcingPage() {
     product?: string;
     min_qty?: number;
     page?: number;
+    search?: string;
   }) => {
     setFilters((prev: { product: string; min_qty: number; page: number }) => ({
       ...prev,
@@ -204,14 +217,14 @@ export default function SourcingPage() {
                 | 'relevant'
                 | 'price_asc'
                 | 'price_desc'
-                | 'quantity_desc'
+                | 'contact_price'
             )
           }
         >
           <option value="relevant">Liên quan nhất</option>
           <option value="price_asc">Giá thấp → cao</option>
           <option value="price_desc">Giá cao → thấp</option>
-          <option value="quantity_desc">Số lượng giảm dần</option>
+          <option value="contact_price">Giá liên hệ</option>
         </select>
       </div>
 
