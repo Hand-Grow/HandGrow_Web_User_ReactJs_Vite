@@ -8,7 +8,7 @@ import {
 } from '../../../../../../constants/produce';
 import React from 'react';
 interface FilterBarProps {
-  onFilterChange?: (filters: { product: string }) => void;
+  onFilterChange?: (filters: { product: string; search: string }) => void;
   onSearchChange?: (searchValue: string) => void;
 }
 
@@ -47,12 +47,18 @@ export default function FilterBar({
     const value = e.target.value;
     setSearchTerm(value);
     onSearchChange?.(value);
-    onFilterChange?.({ product: value });
+    onFilterChange?.({
+      product: selectedProduct === 'Tất cả' ? '' : selectedProduct,
+      search: value,
+    });
   };
 
   const handleProductSelect = (product: string) => {
     setSelectedProduct(product);
-    onFilterChange?.({ product: product === 'Tất cả' ? '' : product });
+    onFilterChange?.({
+      product: product === 'Tất cả' ? '' : product,
+      search: searchTerm,
+    });
   };
 
   return (
@@ -60,7 +66,7 @@ export default function FilterBar({
       <div className="flex items-center border rounded-xl px-4 py-3 bg-white">
         <Search size={18} className="text-neutral-400" />
         <input
-          placeholder="Tìm kiếm hợp tác xã"
+          placeholder="Tìm kiếm tên hợp tác xã"
           value={searchTerm}
           onChange={handleSearch}
           className="ml-3 outline-none w-full text-sm"
