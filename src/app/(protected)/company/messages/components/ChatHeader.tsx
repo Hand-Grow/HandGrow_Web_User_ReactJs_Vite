@@ -1,6 +1,14 @@
 import { Phone, Video, MoreVertical } from 'lucide-react';
+import { ChatRoom } from '../../../../../services/chat/types';
 
-export default function ChatHeader() {
+interface Props {
+  room: ChatRoom;
+  viewerType: 'ENTERPRISE' | 'COOPERATIVE';
+}
+
+export default function ChatHeader({ room, viewerType }: Props) {
+  const displayName =
+    viewerType === 'ENTERPRISE' ? room.cooperativeName : room.enterpriseName;
   return (
     <div className="flex items-center justify-between p-4 border border-neutral-200 shadow-sm bg-white">
       <div className="flex items-center gap-3">
@@ -10,7 +18,7 @@ export default function ChatHeader() {
         />
 
         <div>
-          <p className="font-semibold text-sm">HTX Nông nghiệp An Phước</p>
+          <p className="font-semibold text-sm">{displayName}</p>
           <p className="text-xs text-green-600">Đang hoạt động</p>
         </div>
       </div>

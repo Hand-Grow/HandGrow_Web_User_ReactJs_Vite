@@ -1,13 +1,25 @@
+import { ChatRoom } from '../../../../../services/chat/types';
+
 interface Props {
+  room: ChatRoom;
   active?: boolean;
-  unread?: number;
+  viewerType: 'ENTERPRISE' | 'COOPERATIVE';
+  onClick: () => void;
 }
 
-export default function ConversationItem({ active, unread }: Props) {
+export default function ConversationItem({
+  room,
+  active,
+  viewerType,
+  onClick,
+}: Props) {
+  const displayName =
+    viewerType === 'ENTERPRISE' ? room.cooperativeName : room.enterpriseName;
   return (
     <div
+      onClick={onClick}
       className={`
-        flex items-center gap-3 px-4 py-3 cursor-pointer border border-neutral-200 shadow-sm transition
+        flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-neutral-100 transition
         ${active ? 'bg-emerald-50' : 'hover:bg-neutral-50'}
       `}
     >
@@ -20,21 +32,17 @@ export default function ConversationItem({ active, unread }: Props) {
         <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
       </div>
 
-      <div className="flex-1">
-        <p className="text-sm font-semibold">HTX Nông nghiệp An Phước</p>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold truncate">{displayName}</p>
         <p className="text-xs text-neutral-500 truncate">
-          Vâng, chúng tôi có thể giao hàng vào...
+          Về: {room.productName}
         </p>
       </div>
 
       <div className="flex flex-col items-end gap-1">
-        <span className="text-xs text-neutral-400">10:30</span>
-
-        {unread ? (
-          <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full">
-            {unread}
-          </span>
-        ) : null}
+        <span className="text-xs text-neutral-400 min-w-max">
+          {new Date(room.updatedAt).toLocaleDateString()}
+        </span>
       </div>
     </div>
   );

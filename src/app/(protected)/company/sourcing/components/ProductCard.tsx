@@ -1,8 +1,9 @@
-'use client';
-
-import { MapPin, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Star, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 import { PRODUCE_LABELS } from '../../../../../../constants/produce';
+import { chatApi } from '../../../../../services/chat/chatApi';
 
 interface ProductCardProps {
   product?: {
@@ -44,6 +45,7 @@ const getDisplayName = (productName: string): string => {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter();
+  const [isCreatingChat, setIsCreatingChat] = useState(false);
 
   if (!product) {
     return (
@@ -96,8 +98,30 @@ export default function ProductCard({ product }: ProductCardProps) {
     router.push(`/company/sourcing/${product.id}`);
   };
 
-  const handleContact = () => {
-    router.push('/company/messages');
+  const handleContact = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!product?.id) {
+      toast.error('Không tìm thấy thông tin sản phẩm');
+      return;
+    }
+
+    try {
+      setIsCreatingChat(true);
+      const res = await chatApi.createRoom(product.id);
+      if (res.data && res.data.id) {
+        router.push(`/company/messages?roomId=${res.data.id}`);
+      } else {
+        toast.error('Không thể tạo phòng chat');
+      }
+    } catch (error: unknown) {
+      console.error('Lỗi khi tạo phòng chat:', error);
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(
+        err.response?.data?.message || 'Có lỗi xảy ra khi tạo phòng chat'
+      );
+    } finally {
+      setIsCreatingChat(false);
+    }
   };
 
   return (
@@ -162,13 +186,18 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex gap-3 mt-3">
           <button
-            className="flex-1 bg-emerald-600 text-white py-2 rounded-xl hover:bg-emerald-700 transition"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push('/company/messages');
-            }}
+            className="flex-1 bg-emerald-600 text-white py-2 rounded-xl hover:bg-emerald-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleContact}
+            disabled={isCreatingChat}
           >
-            Liên hệ
+            {isCreatingChat ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Đang xử lý...
+              </>
+            ) : (
+              'Liên hệ'
+            )}
           </button>
 
           {/* <button

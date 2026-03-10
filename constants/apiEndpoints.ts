@@ -74,4 +74,8 @@ export const API_ENDPOINTS = {
     MARK_AS_READ: (id: string) => `/api/v1/messages/conversations/${id}/read`,
     SEARCH_CONVERSATIONS: '/api/v1/messages/conversations/search',
   },
+  CHAT: {
+    ROOMS: '/api/v1/chat/rooms',
+    MESSAGES: (roomId: string) => `/api/v1/chat/rooms/${roomId}/messages`,
+  },
 };

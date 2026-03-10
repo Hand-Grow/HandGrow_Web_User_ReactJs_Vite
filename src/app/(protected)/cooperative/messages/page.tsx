@@ -1,135 +1,80 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Dot } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
-
-interface Message {
-  id: string;
-  senderName: string;
-  company: string;
-  content: string;
-  time: string;
-  isRead: boolean;
-}
-
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    senderName: 'Công ty A',
-    company: 'Công ty TNHH Nông sản Á',
-    content: 'Cần xác nhận đơn hàng mới',
-    time: '10:30',
-    isRead: false,
-  },
-  {
-    id: '2',
-    senderName: 'Công ty B',
-    company: 'Công ty TNHH Nông sản B',
-    content: 'Có thể giao hàng tuần này không?',
-    time: '09:15',
-    isRead: true,
-  },
-  {
-    id: '3',
-    senderName: 'Công ty C',
-    company: 'Công ty TNHH Nông sản C',
-    content: 'Cập nhật giá mới cho lúa',
-    time: '08:45',
-    isRead: false,
-  },
-  {
-    id: '4',
-    senderName: 'Công ty D',
-    company: 'Công ty TNHH Nông sản D',
-    content: 'Thuyên giao hàng lần 1 hoàn tất',
-    time: '07:30',
-    isRead: true,
-  },
-  {
-    id: '5',
-    senderName: 'Công ty E',
-    company: 'Công ty TNHH Nông sản E',
-    content: 'Cần hỗ trợ xử lý khiếu nại',
-    time: '06:20',
-    isRead: true,
-  },
-];
+import ConversationList from '../../company/messages/components/ConversationList';
+import ChatWindow from '../../company/messages/components/ChatWindow';
+import { chatApi } from '../../../../services/chat/chatApi';
+import { ChatRoom } from '../../../../services/chat/types';
+import { toast } from 'react-toastify';
+import { Loader2 } from 'lucide-react';
 
 export default function MessagesPage() {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
-  const [searchQuery, setSearchQuery] = useState('');
+  const searchParams = useSearchParams();
+  const roomIdFromUrl = searchParams.get('roomId');
 
-  const filteredMessages = messages.filter(
-    (msg) =>
-      msg.senderName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      msg.content.toLowerCase().includes(searchQuery.toLowerCase())
+  const [rooms, setRooms] = useState<ChatRoom[]>([]);
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(
+    roomIdFromUrl
   );
+  const [loading, setLoading] = useState(true);
 
-  const handleMarkAsRead = (id: string) => {
-    setMessages((prev) =>
-      prev.map((msg) => (msg.id === id ? { ...msg, isRead: true } : msg))
-    );
-  };
+  const fetchRooms = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await chatApi.getMyRooms();
+      setRooms(res.data);
+
+      if (
+        roomIdFromUrl &&
+        !res.data.find((r: ChatRoom) => r.id === roomIdFromUrl)
+      ) {
+        // The room might not be fully fetched yet, but ideally it should be in the list
+      } else if (!roomIdFromUrl && res.data.length > 0) {
+        setSelectedRoomId(res.data[0].id);
+      }
+    } catch (error) {
+      console.error('Lỗi khi tải danh sách phòng chat:', error);
+      toast.error('Không thể tải danh sách phòng chat');
+    } finally {
+      setLoading(false);
+    }
+  }, [roomIdFromUrl]);
+
+  useEffect(() => {
+    fetchRooms();
+  }, [fetchRooms]);
+
+  const selectedRoom = rooms.find((r) => r.id === selectedRoomId);
 
   return (
     <MainLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Tin nhắn</h1>
-          <p className="text-gray-600 mt-1">
-            Quản lý tin nhắn từ các hợp tác xã
-          </p>
+          <p className="text-gray-600 mt-1">Quản lý tin nhắn từ các đối tác</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Tìm kiếm tin nhắn..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        <div className="h-[calc(100vh-200px)] flex gap-6">
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center bg-white rounded-2xl border border-neutral-200">
+              <Loader2 className="animate-spin text-green-600" size={32} />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            {filteredMessages.map((message) => (
-              <button
-                key={message.id}
-                onClick={() => handleMarkAsRead(message.id)}
-                className="w-full flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg transition text-left border-b border-gray-100 last:border-0"
-              >
-                <div className="relative shrink-0">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold">
-                    {message.senderName[0]}
-                  </div>
-                  {!message.isRead && (
-                    <Dot className="absolute -top-1 -right-1 w-6 h-6 text-green-500 fill-green-500" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900">
-                      {message.senderName}
-                    </h3>
-                    <span className="text-xs text-gray-500 shrink-0">
-                      {message.time}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {message.company}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-2 truncate">
-                    {message.content}
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
+          ) : (
+            <>
+              <ConversationList
+                rooms={rooms}
+                selectedRoomId={selectedRoomId}
+                viewerType="COOPERATIVE"
+                onSelectRoom={setSelectedRoomId}
+              />
+              <ChatWindow
+                selectedRoom={selectedRoom}
+                senderType="COOPERATIVE"
+              />
+            </>
+          )}
         </div>
       </div>
     </MainLayout>
