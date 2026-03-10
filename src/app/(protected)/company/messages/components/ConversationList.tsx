@@ -1,9 +1,20 @@
 import { Search } from 'lucide-react';
 import ConversationItem from './ConversationItem';
+import { ChatRoom } from '../../../../../services/chat/types';
 
-export default function ConversationList() {
-  const mock = Array(6).fill(0);
+interface Props {
+  rooms: ChatRoom[];
+  selectedRoomId: string | null;
+  viewerType: 'ENTERPRISE' | 'COOPERATIVE';
+  onSelectRoom: (roomId: string) => void;
+}
 
+export default function ConversationList({
+  rooms,
+  selectedRoomId,
+  viewerType,
+  onSelectRoom,
+}: Props) {
   return (
     <div className="w-[360px] bg-white rounded-2xl border border-neutral-200 shadow-sm shadow-sm flex flex-col overflow-hidden">
       {/* search */}
@@ -19,9 +30,20 @@ export default function ConversationList() {
 
       {/* list */}
       <div className="flex-1 overflow-y-auto">
-        {mock.map((_, i) => (
-          <ConversationItem key={i} active={i === 0} unread={i === 0 ? 2 : 0} />
+        {rooms.map((room) => (
+          <ConversationItem
+            key={room.id}
+            room={room}
+            active={room.id === selectedRoomId}
+            viewerType={viewerType}
+            onClick={() => onSelectRoom(room.id)}
+          />
         ))}
+        {rooms.length === 0 && (
+          <div className="p-8 text-center text-sm text-neutral-500">
+            Chưa có đoạn chat nào.
+          </div>
+        )}
       </div>
     </div>
   );
