@@ -1,10 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { X, Megaphone, Sprout } from 'lucide-react';
+import { useState, useEffect, useRef, ChangeEvent } from 'react';
+import {
+  X,
+  Megaphone,
+  Sprout,
+  Image as ImageIcon,
+  Loader2,
+} from 'lucide-react';
 import { Post, PostType } from '@/src/types';
 import { feedService } from '@/services/feedService';
 import { authService } from '@/services/authService';
+import { fileService } from '@/services/fileService';
 import { PRODUCE_LABELS, PRODUCE_VALUES, ProduceType } from '@/constants';
 
 interface CreatePostModalProps {
@@ -24,8 +31,13 @@ export default function CreatePostModal({
   const [productName, setProductName] = useState<ProduceType>('RICE');
   const [expectedDate, setExpectedDate] = useState('');
 
+  const [attachments, setAttachments] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [coopId, setCoopId] = useState<string>('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -35,6 +47,26 @@ export default function CreatePostModal({
 
     loadProfile();
   }, []);
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      setUploading(true);
+      const file = files[0];
+      const url = await fileService.uploadFile(file);
+      setAttachments((prev) => [...prev, url]);
+    } catch (err) {
+      console.error('Upload failed', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async () => {
     if (!content.trim()) return;
@@ -48,13 +80,17 @@ export default function CreatePostModal({
         newPost = await feedService.createAnnouncement(coopId, {
           title,
           content,
+          attachments,
         });
       } else {
         if (!productName || !expectedDate) return;
 
         newPost = await feedService.createCampaign(coopId, {
+          title,
+          content,
           productName,
           expectedDate,
+          attachments,
         });
       }
 
@@ -69,7 +105,7 @@ export default function CreatePostModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white w-105 rounded-2xl shadow-xl animate-in fade-in zoom-in p-6 space-y-5">
+      <div className="bg-white w-105 max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl animate-in fade-in zoom-in p-6 space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Tạo bài đăng</h2>
@@ -123,22 +159,21 @@ export default function CreatePostModal({
           </div>
         )}
 
-        {/* Content */}
-        <div className="space-y-2">
-          <label className="text-sm text-gray-500">Nội dung</label>
-
-          <textarea
-            rows={4}
-            placeholder="Nhập nội dung bài đăng..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
-          />
-        </div>
-
         {/* Campaign fields */}
         {type === 'CAMPAIGN' && (
           <>
+            <div className="space-y-2">
+              <label className="text-sm text-gray-500">
+                Tiêu đề (Không bắt buộc)
+              </label>
+              <input
+                placeholder="Nhập tiêu đề..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
+              />
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm text-gray-500">Sản phẩm thu gom</label>
 
@@ -168,19 +203,78 @@ export default function CreatePostModal({
           </>
         )}
 
+        {/* Content */}
+        <div className="space-y-2">
+          <label className="text-sm text-gray-500">Nội dung</label>
+
+          <textarea
+            rows={4}
+            placeholder="Nhập nội dung bài đăng..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
+          />
+        </div>
+
+        {/* Attachments */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-sm text-gray-500">Ảnh đính kèm</label>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="text-xs text-green-600 flex items-center gap-1 hover:underline"
+            >
+              {uploading ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <ImageIcon size={14} />
+              )}
+              Thêm ảnh
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+              accept="image/*"
+            />
+          </div>
+
+          {attachments.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {attachments.map((url, i) => (
+                <div key={i} className="relative w-20 h-20 shrink-0">
+                  <img
+                    src={url}
+                    alt="upload"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={() => removeAttachment(i)}
+                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Footer */}
         <div className="flex justify-end gap-3 pt-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border hover:bg-gray-50"
+            className="px-4 py-2 rounded-lg border hover:bg-gray-100 transition"
           >
             Hủy
           </button>
 
           <button
             onClick={handleSubmit}
-            disabled={loading}
-            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+            disabled={loading || uploading}
+            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 transition shadow-sm"
           >
             {loading ? 'Đang đăng...' : 'Đăng bài'}
           </button>

@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, Dispatch, SetStateAction, useEffect } from 'react';
+import {
+  useState,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useCallback,
+} from 'react';
 import {
   ThumbsUp,
   MessageCircle,
@@ -49,16 +55,14 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
 
   const config = typeConfig[postType];
 
-  const productLabel = PRODUCE_LABELS[item.title as ProduceType] ?? item.title;
+  const productLabel =
+    postType === 'CAMPAIGN'
+      ? (PRODUCE_LABELS[(item.productName || item.title) as ProduceType] ??
+        (item.productName || item.title))
+      : item.title;
 
   const isRecent =
     Date.now() - new Date(item.createdAt).getTime() < 24 * 60 * 60 * 1000;
-
-  const formatDate = (text: string) => {
-    const dateStr = text.replace('Ngày dự kiến: ', '');
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('vi-VN');
-  };
 
   const formatTimeAgo = (dateString: string) => {
     const diff = Date.now() - new Date(dateString).getTime();
@@ -93,7 +97,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
     }
   };
 
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     try {
       setLoadingComment(true);
 
@@ -105,11 +109,11 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
     } finally {
       setLoadingComment(false);
     }
-  };
+  }, [apiType, item.id]);
 
   useEffect(() => {
     if (showComments) loadComments();
-  }, [showComments]);
+  }, [showComments, loadComments]);
 
   const handleComment = async () => {
     if (!comment.trim()) return;
@@ -170,10 +174,16 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
               🌱 {productLabel}
             </div>
 
+            {item.content && (
+              <p className="text-sm text-gray-700 mb-2">{item.content}</p>
+            )}
+
             <p className="text-sm text-gray-700">
               HTX muốn thu gom sản phẩm này vào ngày
               <span className="font-semibold text-green-700 ml-1">
-                {formatDate(item.content)}
+                {item.expectedDate
+                  ? new Date(item.expectedDate).toLocaleDateString('vi-VN')
+                  : 'N/A'}
               </span>
             </p>
           </div>
@@ -190,7 +200,20 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         )}
       </div>
 
-      {item?.image && (
+      {item.attachments && item.attachments.length > 0 && (
+        <div className="flex flex-col gap-1">
+          {item.attachments.map((url, i) => (
+            <img
+              key={i}
+              src={url}
+              alt={`attachment-${i}`}
+              className="w-full max-h-120 object-cover"
+            />
+          ))}
+        </div>
+      )}
+
+      {item?.image && !item.attachments?.includes(item.image) && (
         <img
           src={item.image}
           alt="post"
