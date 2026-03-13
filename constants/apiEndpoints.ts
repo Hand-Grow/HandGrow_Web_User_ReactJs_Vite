@@ -78,6 +78,10 @@ export const API_ENDPOINTS = {
     ROOMS: '/api/v1/chat/rooms',
     MESSAGES: (roomId: string) => `/api/v1/chat/rooms/${roomId}/messages`,
   },
+  FILES: {
+    PRESIGNED_URL: (filename: string, contentType: string) =>
+      `/api/v1/files/presigned-url?filename=${filename}&contentType=${contentType}`,
+  },
   AI: {
     EXTRACT_CONTRACT: '/api/v1/ai/contracts/extract',
   },

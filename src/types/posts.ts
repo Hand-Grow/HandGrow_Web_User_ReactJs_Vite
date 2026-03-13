@@ -11,10 +11,6 @@ export interface Author {
   name: string;
   avatar?: string;
 }
-export interface AnnouncementPost extends BasePost {
-  type: 'ANNOUNCEMENT';
-  title: string;
-}
 
 // export interface CampaignPost extends BasePost {
 //   type: 'CAMPAIGN';
@@ -35,11 +31,15 @@ export interface CommentResponse {
 export interface CreateAnnouncementRequest {
   title: string;
   content: string;
+  attachments?: string[];
 }
 
 export interface CreateCampaignRequest {
+  title: string;
+  content: string;
   productName: string;
   expectedDate: string;
+  attachments?: string[];
 }
 
 export interface CommitmentRequest {
@@ -87,13 +87,20 @@ export interface BasePost {
   liked: boolean;
   commentCount: number;
   image?: string;
+  attachments?: string[];
+  /* campaign specific */
+  productName?: string;
+  expectedDate?: string;
   /* marketplace */
   isPublished?: boolean;
 }
+
+export interface AnnouncementPost extends BasePost {
+  type: 'ANNOUNCEMENT';
+}
+
 export interface CampaignPost extends BasePost {
   type: 'CAMPAIGN';
-  productName: string;
-  expectedDate: string;
 }
 
 export type Post = AnnouncementPost | CampaignPost;
