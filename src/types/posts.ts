@@ -113,5 +113,6 @@ export interface MarketplacePost {
   expectedPrice?: number;
   status: 'OPEN' | 'GATHERING';
   coopName: string;
+  attachments?: string[];
   createdAt: string;
 }
