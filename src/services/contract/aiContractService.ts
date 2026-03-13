@@ -1,5 +1,5 @@
-import { API_ENDPOINTS } from '@/constants';
-import httpClient from '@/services/http/httpClient';
+import { API_ENDPOINTS } from '@/src/constants';
+import httpClient from '@/src/services/http/httpClient';
 import {
   Contract,
   CreateContractPayload,

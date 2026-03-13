@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Bell, Settings } from 'lucide-react';
 
-import { useTheme } from '@/context/theme/ThemeContext';
-import { useAuth } from '@/context/auth/useAuth';
+import { useTheme } from '@/src/context/theme/ThemeContext';
+import { useAuth } from '@/src/context/auth/useAuth';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();

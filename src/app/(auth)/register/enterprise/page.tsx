@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import type { AxiosError } from 'axios';
 import { Province, Ward } from '@/types/location';
-import { locationApi } from '@/services/location/locationApi';
+import { locationApi } from '@/src/services/location/locationApi';
 import { toast } from 'react-toastify';
-import { authApi } from '@/services/auth/authApi';
-import CompanyRegisterForm from '@/components/layout/register/CompanyRegisterForm';
+import { authApi } from '@/src/services/auth/authApi';
+import CompanyRegisterForm from '@/src/components/layout/register/CompanyRegisterForm';
 
 const RegisterEnterprise: React.FC = () => {
   const [companyName, setCompanyName] = useState<string>('');

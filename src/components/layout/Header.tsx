@@ -3,9 +3,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useTheme } from '@/context/theme/ThemeContext';
-import { useAuth } from '@/context/auth/useAuth';
-import { USER_ROLES } from '@/constants';
+import { useTheme } from '@/src/context/theme/ThemeContext';
+import { useAuth } from '@/src/context/auth/useAuth';
+import { USER_ROLES } from '@/src/constants';
 import { Button } from '../ui/button';
 
 export const Header = () => {

@@ -5,7 +5,7 @@ import { Search } from 'lucide-react';
 import {
   PRODUCE_VALUES,
   PRODUCE_LABELS,
-} from '../../../../../../constants/produce';
+} from '../../../../../constants/produce';
 import React from 'react';
 interface FilterBarProps {
   onFilterChange?: (filters: { product: string; search: string }) => void;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Star, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { PRODUCE_LABELS } from '../../../../../../constants/produce';
+import { PRODUCE_LABELS } from '../../../../../constants/produce';
 import { chatApi } from '../../../../../../services/chat/chatApi';
 
 interface ProductCardProps {

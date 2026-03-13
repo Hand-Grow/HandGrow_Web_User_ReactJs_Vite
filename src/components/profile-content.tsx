@@ -1,7 +1,7 @@
 'use client';
 
-import { authService } from '@/services/authService';
-import { userService } from '@/services/userService';
+import { authService } from '@/src/services/authService';
+import { userService } from '@/src/services/userService';
 import { UserProfile } from '@/types/users';
 import {
   LogOut,

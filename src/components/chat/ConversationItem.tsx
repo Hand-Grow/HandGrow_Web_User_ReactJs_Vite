@@ -1,4 +1,4 @@
-import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
+import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
 import { ChatRoom } from '@/src/types';
 
 interface Props {

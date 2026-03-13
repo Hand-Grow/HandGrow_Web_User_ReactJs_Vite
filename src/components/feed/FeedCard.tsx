@@ -18,9 +18,9 @@ import {
   Calendar,
 } from 'lucide-react';
 
-import { CommentResponse, feedService } from '@/services/feedService';
+import { CommentResponse, feedService } from '@/src/services/feedService';
 import { Post, PostType } from '@/src/types';
-import { PRODUCE_LABELS, ProduceType } from '@/constants';
+import { PRODUCE_LABELS, ProduceType } from '@/src/constants';
 import PublishCampaignModal from './PublishCampaignModal';
 
 interface FeedCardProps {

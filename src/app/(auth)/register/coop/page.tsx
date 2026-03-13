@@ -6,10 +6,10 @@ import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
 import { Province, Ward } from '@/types/location';
 import { validateRegister } from '@/utils/validators/authValidator';
-import RegisterForm from '@/components/layout/register/RegisterForm';
-import { locationApi } from '@/services/location/locationApi';
-import { authApi } from '@/services/auth/authApi';
-import { API_ENDPOINTS } from '@/constants';
+import RegisterForm from '@/src/components/layout/register/RegisterForm';
+import { locationApi } from '@/src/services/location/locationApi';
+import { authApi } from '@/src/services/auth/authApi';
+import { API_ENDPOINTS } from '@/src/constants';
 
 const Register: React.FC = () => {
   const [name, setName] = useState<string>('');

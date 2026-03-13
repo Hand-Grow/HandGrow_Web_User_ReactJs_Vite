@@ -1,6 +1,6 @@
 'use client';
 
-import MainLayout from '@/components/layout/MainLayout';
+import MainLayout from '@/src/components/layout/MainLayout';
 import {
   BarChart,
   Bar,

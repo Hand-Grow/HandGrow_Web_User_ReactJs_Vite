@@ -2,14 +2,14 @@
 
 import { useEffect, useState, useMemo } from 'react';
 
-import MainLayout from '@/components/layout/MainLayout';
-import { feedService } from '@/services/feedService';
+import MainLayout from '@/src/components/layout/MainLayout';
+import { feedService } from '@/src/services/feedService';
 import { MarketplacePost } from '@/src/types';
 
 import { Store, PackageSearch, Clock, Filter } from 'lucide-react';
 
 import MarketplaceCard from '@/src/components/feed/MarketplaceModal';
-import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
+import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
 
 const getProduceLabel = (value?: string) => {
   return PRODUCE_LABELS[value as ProduceType] ?? value ?? 'Khác';

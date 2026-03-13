@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { Plus, ChevronRight } from 'lucide-react';
 
-import MainLayout from '@/components/layout/MainLayout';
+import MainLayout from '@/src/components/layout/MainLayout';
 import { statusConfigContract, Contract } from '@/src/types';
-import { contractAPI } from '@/services/contract/aiContractService';
+import { contractAPI } from '@/src/services/contract/aiContractService';
 
 export default function OrdersPage() {
   const [contracts, setContracts] = useState<Contract[]>([]);

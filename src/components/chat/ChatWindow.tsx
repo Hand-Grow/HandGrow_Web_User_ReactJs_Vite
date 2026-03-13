@@ -6,9 +6,9 @@ import ChatInput from './ChatInput';
 import MessageBubble from './MessageBubble';
 
 import { ChatMessage, ChatRoom, DraftContractData } from '@/src/types';
-import { contractAPI } from '@/services/contract/aiContractService';
+import { contractAPI } from '@/src/services/contract/aiContractService';
 import ContractFormModal from './components/ContractModal';
-import { chatApi } from '@/services/chat/chatApi';
+import { chatApi } from '@/src/services/chat/chatApi';
 
 interface Props {
   selectedRoom: ChatRoom | undefined;

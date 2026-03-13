@@ -7,7 +7,7 @@ import {
   Post,
 } from '@/src/types';
 import httpClient from './http/httpClient';
-import { API_ENDPOINTS } from '@/constants/apiEndpoints';
+import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
 
 export interface PageResponse<T> {
   content: T[];

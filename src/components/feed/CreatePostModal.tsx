@@ -11,10 +11,10 @@ import {
 } from 'lucide-react';
 
 import { Post, PostType } from '@/src/types';
-import { feedService } from '@/services/feedService';
-import { authService } from '@/services/authService';
-import { fileService } from '@/services/fileService';
-import { PRODUCE_LABELS, PRODUCE_VALUES, ProduceType } from '@/constants';
+import { feedService } from '@/src/services/feedService';
+import { authService } from '@/src/services/authService';
+import { fileService } from '@/src/services/fileService';
+import { PRODUCE_LABELS, PRODUCE_VALUES, ProduceType } from '@/src/constants';
 
 interface CreatePostModalProps {
   onClose: () => void;

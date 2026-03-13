@@ -2,8 +2,8 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { ThemeProvider } from '@/context/theme/ThemeContext';
-import { AuthProvider } from '@/context/auth/AuthProvider';
+import { ThemeProvider } from '@/src/context/theme/ThemeContext';
+import { AuthProvider } from '@/src/context/auth/AuthProvider';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ToastContainer } from 'react-toastify';
 

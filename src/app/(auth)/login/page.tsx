@@ -3,11 +3,11 @@
 import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { SelectedRole, useLogin } from '@/hooks/useLogin';
-import { validateLogin } from '@/utils/validators/authValidator';
-import RoleSelectView from '@/components/layout/login/RoleSelector';
-import LoginForm from '@/components/layout/login/LoginForm';
-import { USER_ROLES } from '@/constants';
+import { SelectedRole, useLogin } from '@/src/hooks/useLogin';
+import { validateLogin } from '@/src/utils/validators/authValidator';
+import RoleSelectView from '@/src/components/layout/login/RoleSelector';
+import LoginForm from '@/src/components/layout/login/LoginForm';
+import { USER_ROLES } from '@/src/constants';
 
 const getRememberedLogin = () => {
   try {

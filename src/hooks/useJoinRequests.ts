@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { JoinRequest, RespondJoinRequestPayload } from '@/src/types';
-import { joinRequestService } from '@/services/joinRequestService';
+import { joinRequestService } from '@/src/services/joinRequestService';
 
 export const useJoinRequests = () => {
   const [data, setData] = useState<JoinRequest[]>([]);

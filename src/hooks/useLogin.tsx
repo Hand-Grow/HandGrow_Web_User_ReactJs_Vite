@@ -3,10 +3,10 @@ import { jwtDecode } from 'jwt-decode';
 import { validateLogin } from '../utils/validators/authValidator';
 import { handleApiError } from '../utils/errors/apiErrorHandler';
 
-import { useAuth } from '@/context/auth/useAuth';
-import { LoginCredentials } from '@/context/auth/auth.types';
-import { LoginJwtPayload } from '@/context/auth/jwt';
-import { USER_ROLES, UserRole } from '@/constants';
+import { useAuth } from '@/src/context/auth/useAuth';
+import { LoginCredentials } from '@/src/context/auth/auth.types';
+import { LoginJwtPayload } from '@/src/context/auth/jwt';
+import { USER_ROLES, UserRole } from '@/src/constants';
 
 export type SelectedRole = 'cooperative' | 'company' | null;
 

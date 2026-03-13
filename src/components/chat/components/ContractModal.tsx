@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DraftContractData, CreateContractPayload } from '@/src/types';
-import { contractAPI } from '@/services/contract/aiContractService';
-import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
+import { contractAPI } from '@/src/services/contract/aiContractService';
+import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
 
 interface Props {
   isOpen: boolean;

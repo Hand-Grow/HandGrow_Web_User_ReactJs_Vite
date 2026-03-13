@@ -1,6 +1,6 @@
 import React from 'react';
 import { Building2, Tractor, ChevronRight } from 'lucide-react';
-import { HandGrow } from '@/assets';
+import { HandGrow } from '@/public/assets';
 import Image from 'next/image';
 type Role = 'cooperative' | 'company';
 

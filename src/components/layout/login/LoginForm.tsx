@@ -1,10 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
-import InputField from '../../common/InputField';
-import PrimaryButton from '../../common/PrimaryButton';
 import { Lock, Eye, EyeOff, User } from 'lucide-react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { HandGrow } from '../../../assets/index';
+import { HandGrow } from '../../../../public/assets/index';
+import InputField from '../../common/InputField';
+import PrimaryButton from '../../common/PrimaryButton';
 
 interface LoginFormProps {
   email: string;

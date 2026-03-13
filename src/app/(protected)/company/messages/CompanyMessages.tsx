@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
 import { ChatRoom } from '@/src/types';
-import { chatApi } from '@/services/chat/chatApi';
+import { chatApi } from '@/src/services/chat/chatApi';
 import ConversationList from '@/src/components/chat/ConversationList';
 import ChatWindow from '@/src/components/chat/ChatWindow';
 

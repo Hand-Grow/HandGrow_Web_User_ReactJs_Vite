@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
+import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
 import { MarketplacePost } from '@/src/types';
 
 import {

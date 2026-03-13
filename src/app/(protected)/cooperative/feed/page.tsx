@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import MainLayout from '@/components/layout/MainLayout';
+import MainLayout from '@/src/components/layout/MainLayout';
 
-import { feedService } from '@/services/feedService';
+import { feedService } from '@/src/services/feedService';
 import { Post, PostType } from '@/src/types';
-import { authService } from '@/services/authService';
+import { authService } from '@/src/services/authService';
 import { useRouter } from 'next/navigation';
 
 import FeedCard from '@/src/components/feed/FeedCard';
@@ -18,7 +18,7 @@ import {
   PlusCircle,
   ShoppingCart,
 } from 'lucide-react';
-import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
+import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
 
 export default function FeedPage() {
   const [open, setOpen] = useState(false);
@@ -68,7 +68,7 @@ export default function FeedPage() {
       <div className="bg-gray-50 min-h-screen p-4 md:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8 space-y-6">
-            <div className="sticky top-0 z-20 space-y-4 pb-4 backdrop-blur bg-gray-50/90">
+            <div className="space-y-4 pb-4">
               <div
                 className="bg-linear-to-r from-green-500 via-emerald-500 to-green-600
                 h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
@@ -128,26 +128,27 @@ export default function FeedPage() {
                   </button>
                 ))}
               </div>
+              <div className="sticky top-4 z-20">
+                <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                    <Sprout size={18} />
+                  </div>
 
-              <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <Sprout size={18} />
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="flex-1 text-left bg-gray-100 hover:bg-gray-200
+      rounded-full px-4 py-2 text-gray-600 transition"
+                  >
+                    Bạn đang nghĩ gì?
+                  </button>
+
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600"
+                  >
+                    <PlusCircle size={18} />
+                  </button>
                 </div>
-
-                <button
-                  onClick={() => setOpen(true)}
-                  className="flex-1 text-left bg-gray-100 hover:bg-gray-200
-                  rounded-full px-4 py-2 text-gray-600 transition"
-                >
-                  Bạn đang nghĩ gì?
-                </button>
-
-                <button
-                  onClick={() => setOpen(true)}
-                  className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600"
-                >
-                  <PlusCircle size={18} />
-                </button>
               </div>
             </div>
 

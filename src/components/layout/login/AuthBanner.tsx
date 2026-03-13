@@ -1,4 +1,4 @@
-import { ImageExample } from '@/assets';
+import { ImageExample } from '@/public/assets';
 import Image from 'next/image';
 
 import React from 'react';

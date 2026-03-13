@@ -1,4 +1,4 @@
-import { UserRole } from '@/constants';
+import { UserRole } from '@/src/constants';
 import { JwtPayload } from 'jwt-decode';
 
 export interface CustomJwtPayload extends JwtPayload {

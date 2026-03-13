@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/constants/apiEndpoints';
+import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
 import httpClient from './http/httpClient';
 import axios from 'axios';
 
