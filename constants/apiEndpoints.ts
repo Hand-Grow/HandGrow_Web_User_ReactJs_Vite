@@ -86,5 +86,6 @@ export const API_ENDPOINTS = {
     AI_DRAFT: (roomId: string) => `/api/v1/contracts/ai-draft/${roomId}`,
     SAVE: '/api/v1/contracts',
     BY_ROOM: (roomId: string) => `/api/v1/contracts/room/${roomId}`,
+    MY_CONTRACTS: '/api/v1/contracts/my',
   },
 };

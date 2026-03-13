@@ -12,6 +12,7 @@ import ChatWindow from '@/src/components/chat/ChatWindow';
 export default function MessagesPage() {
   const searchParams = useSearchParams();
   const roomIdFromUrl = searchParams.get('roomId');
+  const [collapsed, setCollapsed] = useState(false);
 
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(
@@ -55,6 +56,8 @@ export default function MessagesPage() {
             selectedRoomId={selectedRoomId}
             viewerType="COOPERATIVE"
             onSelectRoom={setSelectedRoomId}
+            collapsed={collapsed}
+            onToggle={() => setCollapsed(!collapsed)}
           />
           <ChatWindow selectedRoom={selectedRoom} senderType="COOPERATIVE" />
         </>

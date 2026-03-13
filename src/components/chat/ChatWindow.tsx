@@ -6,7 +6,7 @@ import ChatInput from './ChatInput';
 import MessageBubble from './MessageBubble';
 
 import { ChatMessage, ChatRoom, DraftContractData } from '@/src/types';
-import { contractAPI } from '@/services/ai/aiContractService';
+import { contractAPI } from '@/services/contract/aiContractService';
 import ContractFormModal from './components/ContractModal';
 import { chatApi } from '@/services/chat/chatApi';
 

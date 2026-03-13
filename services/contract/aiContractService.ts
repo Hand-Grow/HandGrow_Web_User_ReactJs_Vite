@@ -1,6 +1,10 @@
 import { API_ENDPOINTS } from '@/constants';
 import httpClient from '@/services/http/httpClient';
-import { CreateContractPayload, DraftContractData } from '@/src/types';
+import {
+  Contract,
+  CreateContractPayload,
+  DraftContractData,
+} from '@/src/types';
 
 export const contractAPI = {
   aiDraftContract(roomId: string) {
@@ -16,5 +20,9 @@ export const contractAPI = {
 
   getContractByRoom(roomId: string) {
     return httpClient.get(API_ENDPOINTS.CONTRACTS.BY_ROOM(roomId));
+  },
+  getMyContracts: async (): Promise<Contract[]> => {
+    const res = await httpClient.get(API_ENDPOINTS.CONTRACTS.MY_CONTRACTS);
+    return res.data;
   },
 };

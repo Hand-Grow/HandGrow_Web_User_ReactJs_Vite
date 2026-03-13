@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DraftContractData, CreateContractPayload } from '@/src/types';
-import { contractAPI } from '@/services/ai/aiContractService';
+import { contractAPI } from '@/services/contract/aiContractService';
 import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
 
 interface Props {
