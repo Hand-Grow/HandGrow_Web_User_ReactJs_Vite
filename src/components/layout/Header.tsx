@@ -3,11 +3,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-import { useTheme } from '../../context/theme/useTheme';
-import { useAuth } from '../../context/auth/useAuth';
-import Button from '../common/PrimaryButton';
-import { UserRole } from '../../types/users';
+import { useTheme } from '@/context/theme/ThemeContext';
+import { useAuth } from '@/context/auth/useAuth';
+import { USER_ROLES } from '@/constants';
+import { Button } from '../ui/button';
 
 export const Header = () => {
   const { theme, toggleTheme } = useTheme();
@@ -25,8 +24,8 @@ export const Header = () => {
 
   const getHomePath = () => {
     if (!user) return null;
-    if (user.role === UserRole.COOP) return '/cooperative';
-    if (user.role === UserRole.ENTERPRISE) return '/company';
+    if (user.role === USER_ROLES.COOP) return '/cooperative';
+    if (user.role === USER_ROLES.ENTERPRISE) return '/company';
     return null;
   };
 

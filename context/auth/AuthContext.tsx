@@ -2,9 +2,9 @@ import { useState, useEffect, ReactNode } from 'react';
 import { AuthContext } from './auth.context';
 import { authService } from '../../services/authService';
 import { jwtDecode } from 'jwt-decode';
-import { AuthUser } from '../../types/users';
 import { CustomJwtPayload } from './jwt';
 import { LoginCredentials } from './auth.types';
+import { AuthUser } from '@/src/types';
 
 interface AuthProviderProps {
   children: ReactNode;

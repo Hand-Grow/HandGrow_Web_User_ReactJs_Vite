@@ -82,7 +82,9 @@ export const API_ENDPOINTS = {
     PRESIGNED_URL: (filename: string, contentType: string) =>
       `/api/v1/files/presigned-url?filename=${filename}&contentType=${contentType}`,
   },
-  AI: {
-    EXTRACT_CONTRACT: '/api/v1/ai/contracts/extract',
+  CONTRACTS: {
+    AI_DRAFT: (roomId: string) => `/api/v1/contracts/ai-draft/${roomId}`,
+    SAVE: '/api/v1/contracts',
+    BY_ROOM: (roomId: string) => `/api/v1/contracts/room/${roomId}`,
   },
 };

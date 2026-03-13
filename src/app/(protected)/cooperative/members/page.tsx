@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 
 import { toast } from 'react-hot-toast';
-import { FormModal } from '../../../../components/form-modal';
 import { useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { AuthContext } from '@/context/auth/auth.context';
 import { joinRequestService } from '@/services/joinRequestService';
@@ -27,7 +26,8 @@ import {
   JoinRequestStatus,
   RespondJoinRequestPayload,
   statusConfig,
-} from '@/types/joinRequest';
+} from '@/src/types';
+import { FormModal } from '@/src/components/form-modal';
 
 type TabId = 'all' | 'active' | 'pending' | 'inactive';
 

@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { authService } from '../../services/authService';
 import { AuthContext } from './auth.context';
 import { CustomJwtPayload, LoginResponse } from './jwt';
-import { UserProfile, UserRole, UserStatistics } from '../../types/users';
+import { UserProfile, UserRole, UserStatistics } from '@/src/types';
 import { LoginCredentials } from './auth.types';
 
 interface AuthProviderProps {

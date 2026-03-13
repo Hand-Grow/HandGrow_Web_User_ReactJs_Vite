@@ -1,5 +1,5 @@
+import { UserProfile } from '@/types/users';
 import { API_ENDPOINTS } from '../constants/apiEndpoints';
-import { UserProfile } from '../../types/users';
 import httpClient from './http/httpClient';
 
 export const userService = {

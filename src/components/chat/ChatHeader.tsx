@@ -8,7 +8,9 @@ interface Props {
 
 export default function ChatHeader({ room, viewerType }: Props) {
   const displayName =
-    viewerType === 'ENTERPRISE' ? room.cooperativeName : room.enterpriseName;
+    viewerType === 'ENTERPRISE'
+      ? room.cooperativeName
+      : room.enterpriseName || 'Doanh nghiệp';
   return (
     <div className="flex items-center justify-between p-4 border border-neutral-200 shadow-sm bg-white">
       <div className="flex items-center gap-3">

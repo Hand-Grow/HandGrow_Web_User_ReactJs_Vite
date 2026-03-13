@@ -1,4 +1,5 @@
-import { UserProfile } from '../../types/users';
+import { UserProfile } from '@/src/types';
+
 export interface AuthContextType {
   user: UserProfile | null;
   initializing: boolean;

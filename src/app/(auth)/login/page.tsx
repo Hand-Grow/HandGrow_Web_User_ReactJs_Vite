@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { SelectedRole, useLogin } from '@/hooks/useLogin';
 import { validateLogin } from '@/utils/validators/authValidator';
-import { UserRole } from '@/types/users';
 import RoleSelectView from '@/components/layout/login/RoleSelector';
 import LoginForm from '@/components/layout/login/LoginForm';
+import { USER_ROLES } from '@/constants';
 
 const getRememberedLogin = () => {
   try {
@@ -76,9 +76,9 @@ const Login = () => {
         localStorage.removeItem('remember_login');
       }
 
-      if (user.role === UserRole.COOP) {
+      if (user.role === USER_ROLES.COOP) {
         router.replace('/cooperative/dashboard');
-      } else if (user.role === UserRole.ENTERPRISE) {
+      } else if (user.role === USER_ROLES.ENTERPRISE) {
         router.replace('/company');
       } else {
         router.replace('/login');

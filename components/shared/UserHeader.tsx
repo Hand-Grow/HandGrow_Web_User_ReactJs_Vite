@@ -1,4 +1,4 @@
-import { Author } from '../../src/types/posts';
+import { Author } from '@/src/types';
 
 interface UserHeaderProps {
   author: Author;

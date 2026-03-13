@@ -46,8 +46,8 @@ const menuItems = [
     icon: <BarChart3 className="w-5 h-5" />,
   },
   {
-    label: 'Cá nhân',
-    href: '/cooperative/settings',
+    label: 'Hợp đồng',
+    href: '/cooperative/orders',
     icon: <User className="w-5 h-5" />,
   },
 ];

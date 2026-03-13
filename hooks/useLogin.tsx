@@ -3,17 +3,17 @@ import { jwtDecode } from 'jwt-decode';
 import { validateLogin } from '../utils/validators/authValidator';
 import { handleApiError } from '../utils/errors/apiErrorHandler';
 
-import { UserRole } from '../types/users';
 import { useAuth } from '@/context/auth/useAuth';
 import { LoginCredentials } from '@/context/auth/auth.types';
 import { LoginJwtPayload } from '@/context/auth/jwt';
+import { USER_ROLES, UserRole } from '@/constants';
 
 export type SelectedRole = 'cooperative' | 'company' | null;
 
 export const BACKEND_ROLE_MAP: Record<UserRole, UserRole> = {
-  COOP: UserRole.COOP,
-  ENTERPRISE: UserRole.ENTERPRISE,
-  FARMER: UserRole.FARMER,
+  COOP: USER_ROLES.COOP,
+  ENTERPRISE: USER_ROLES.ENTERPRISE,
+  FARMER: USER_ROLES.FARMER,
 };
 
 export interface LoginFormValues {
@@ -57,8 +57,8 @@ export const useLogin = (selectedRole: SelectedRole) => {
       }
 
       const isInvalidRole =
-        (selectedRole === 'cooperative' && mappedRole !== UserRole.COOP) ||
-        (selectedRole === 'company' && mappedRole !== UserRole.ENTERPRISE);
+        (selectedRole === 'cooperative' && mappedRole !== USER_ROLES.COOP) ||
+        (selectedRole === 'company' && mappedRole !== USER_ROLES.ENTERPRISE);
 
       if (isInvalidRole) {
         toast.error('Email hoặc số điện thoại không phù hợp');

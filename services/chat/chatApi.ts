@@ -1,5 +1,5 @@
-import httpClient from '../../../services/http/httpClient';
-import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
+import httpClient from '../http/httpClient';
+import { API_ENDPOINTS } from '../../constants/apiEndpoints';
 
 export const chatApi = {
   createRoom(bulkSaleId: string) {
