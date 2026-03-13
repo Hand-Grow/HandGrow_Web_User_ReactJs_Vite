@@ -121,10 +121,12 @@ export const feedService = {
 
   publishCampaign: async (
     campaignId: string,
-    expectedPrice: number
+    expectedPrice: number,
+    attachments: string[] = []
   ): Promise<void> => {
     await httpClient.post(API_ENDPOINTS.CAMPAIGN.PUBLISH_TO_B2B(campaignId), {
       expectedPrice,
+      attachments,
     });
   },
   async getMarketplacePosts(page = 0) {
