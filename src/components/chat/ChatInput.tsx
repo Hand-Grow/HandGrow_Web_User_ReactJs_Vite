@@ -3,9 +3,10 @@ import { useState } from 'react';
 
 interface Props {
   onSend: (text: string) => void;
+  onCreateContract: () => void;
 }
 
-export default function ChatInput({ onSend }: Props) {
+export default function ChatInput({ onSend, onCreateContract }: Props) {
   const [text, setText] = useState('');
 
   const handleSend = () => {
@@ -42,7 +43,10 @@ export default function ChatInput({ onSend }: Props) {
 
       {/* actions */}
       <div className="flex gap-3 text-xs">
-        <button className="border border-neutral-200 shadow-sm px-3 py-1.5 rounded-lg">
+        <button
+          onClick={onCreateContract}
+          className="border border-neutral-200 shadow-sm px-3 py-1.5 rounded-lg"
+        >
           📄 Tạo hợp đồng
         </button>
         <button className="border border-neutral-200 shadow-sm px-3 py-1.5 rounded-lg">

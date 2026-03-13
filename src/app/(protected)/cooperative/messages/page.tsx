@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
-import ConversationList from '../../company/messages/components/ConversationList';
-import ChatWindow from '../../company/messages/components/ChatWindow';
-import { chatApi } from '../../../../services/chat/chatApi';
-import { ChatRoom } from '../../../../services/chat/types';
 import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
+import { chatApi } from '@/src/services/chat/chatApi';
+import { ChatRoom } from '@/src/types';
+import ConversationList from '@/src/components/chat/ConversationList';
+import ChatWindow from '@/src/components/chat/ChatWindow';
 
 export default function MessagesPage() {
   const searchParams = useSearchParams();
@@ -26,12 +26,7 @@ export default function MessagesPage() {
       const res = await chatApi.getMyRooms();
       setRooms(res.data);
 
-      if (
-        roomIdFromUrl &&
-        !res.data.find((r: ChatRoom) => r.id === roomIdFromUrl)
-      ) {
-        // The room might not be fully fetched yet, but ideally it should be in the list
-      } else if (!roomIdFromUrl && res.data.length > 0) {
+      if (!roomIdFromUrl && res.data.length > 0) {
         setSelectedRoomId(res.data[0].id);
       }
     } catch (error) {
