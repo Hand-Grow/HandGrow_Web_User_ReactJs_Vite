@@ -1,4 +1,5 @@
-import { ChatRoom } from '../../../../../services/chat/types';
+import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
+import { ChatRoom } from '@/src/types';
 
 interface Props {
   room: ChatRoom;
@@ -15,6 +16,8 @@ export default function ConversationItem({
 }: Props) {
   const displayName =
     viewerType === 'ENTERPRISE' ? room.cooperativeName : room.enterpriseName;
+  const productLabel =
+    PRODUCE_LABELS[room.productName as ProduceType] ?? room.productName;
   return (
     <div
       onClick={onClick}
@@ -35,7 +38,7 @@ export default function ConversationItem({
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold truncate">{displayName}</p>
         <p className="text-xs text-neutral-500 truncate">
-          Về: {room.productName}
+          Về: {room.productName ? productLabel : 'Không rõ'}
         </p>
       </div>
 

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import ConversationList from './components/ConversationList';
-import ChatWindow from './components/ChatWindow';
-import { chatApi } from '../../../../services/chat/chatApi';
-import { ChatRoom } from '../../../../services/chat/types';
+
 import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
+import { ChatRoom } from '@/src/types';
+import { chatApi } from '@/src/services/chat/chatApi';
+import ConversationList from '@/src/components/chat/ConversationList';
+import ChatWindow from '@/src/components/chat/ChatWindow';
 
 export default function CompanyMessages() {
   const searchParams = useSearchParams();

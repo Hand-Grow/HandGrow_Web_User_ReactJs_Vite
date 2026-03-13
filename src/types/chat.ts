@@ -13,9 +13,15 @@ export interface ChatRoom {
 
 export interface ChatMessage {
   id: string;
+  roomId: string;
   senderId: string;
   senderType: 'ENTERPRISE' | 'COOPERATIVE' | 'SYSTEM';
   senderName: string;
   content: string;
   createdAt: string;
+}
+export interface AIContractSuggestion {
+  price?: number;
+  quantity?: number;
+  confidence?: number;
 }

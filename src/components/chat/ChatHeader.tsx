@@ -1,5 +1,5 @@
+import { ChatRoom } from '@/src/types';
 import { Phone, Video, MoreVertical } from 'lucide-react';
-import { ChatRoom } from '../../../../../services/chat/types';
 
 interface Props {
   room: ChatRoom;

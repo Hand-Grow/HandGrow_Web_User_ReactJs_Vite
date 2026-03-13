@@ -7,6 +7,7 @@ import {
   useEffect,
   useCallback,
 } from 'react';
+
 import {
   ThumbsUp,
   MessageCircle,
@@ -14,11 +15,11 @@ import {
   Sprout,
   Flame,
   CornerDownRight,
+  Calendar,
 } from 'lucide-react';
 
 import { CommentResponse, feedService } from '@/services/feedService';
 import { Post, PostType } from '@/src/types';
-
 import { PRODUCE_LABELS, ProduceType } from '@/constants';
 import PublishCampaignModal from './PublishCampaignModal';
 
@@ -31,7 +32,7 @@ type ApiType = 'announcement' | 'campaign';
 
 const typeConfig: Record<PostType, { label: string; color: string }> = {
   ANNOUNCEMENT: {
-    label: '📢 Thông báo',
+    label: 'Thông báo',
     color: 'bg-red-100 text-red-600',
   },
   CAMPAIGN: {
@@ -40,7 +41,25 @@ const typeConfig: Record<PostType, { label: string; color: string }> = {
   },
 };
 
+function timeAgo(dateString: string) {
+  const now = new Date();
+  const date = new Date(dateString);
+
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(seconds / 3600);
+  const days = Math.floor(seconds / 86400);
+
+  if (seconds < 60) return 'Vừa xong';
+  if (minutes < 60) return `${minutes} phút trước`;
+  if (hours < 24) return `${hours} giờ trước`;
+  if (days < 7) return `${days} ngày trước`;
+
+  return date.toLocaleDateString('vi-VN');
+}
+
 export default function FeedCard({ item, setFeed }: FeedCardProps) {
+  const [showGallery, setShowGallery] = useState(false);
   const [comment, setComment] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<CommentResponse[]>([]);
@@ -63,19 +82,6 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
 
   const isRecent =
     Date.now() - new Date(item.createdAt).getTime() < 24 * 60 * 60 * 1000;
-
-  const formatTimeAgo = (dateString: string) => {
-    const diff = Date.now() - new Date(dateString).getTime();
-
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (minutes < 1) return 'Vừa xong';
-    if (minutes < 60) return `${minutes} phút`;
-    if (hours < 24) return `${hours} giờ`;
-    return `${days} ngày`;
-  };
 
   const handleLike = async () => {
     try {
@@ -100,9 +106,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
   const loadComments = useCallback(async () => {
     try {
       setLoadingComment(true);
-
       const res = await feedService.getComments(apiType, item.id);
-
       setComments(res);
     } catch (err) {
       console.error(err);
@@ -127,19 +131,107 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
 
       setComments((prev) => [...prev, newComment]);
       setComment('');
-
-      setTimeout(() => {
-        const el = document.getElementById('comment-bottom');
-        el?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
     } catch (err) {
       console.error(err);
     }
   };
 
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowGallery(false);
+    };
+
+    if (showGallery) window.addEventListener('keydown', handleKey);
+
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [showGallery]);
+
+  const renderAttachments = () => {
+    const images = item.attachments || [];
+
+    if (images.length === 1) {
+      return (
+        <img
+          src={images[0]}
+          alt="attachment"
+          className="w-full max-h-[420px] object-cover cursor-pointer hover:scale-105 transition"
+          onClick={() => setShowGallery(true)}
+        />
+      );
+    }
+
+    if (images.length === 2) {
+      return (
+        <div className="grid grid-cols-2 gap-1">
+          {images.map((url, i) => (
+            <img
+              key={i}
+              src={url}
+              alt={`attachment-${i}`}
+              className="w-full h-72 object-cover cursor-pointer hover:scale-105 transition"
+              onClick={() => setShowGallery(true)}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    if (images.length === 3) {
+      return (
+        <div className="grid grid-cols-2 gap-1">
+          <img
+            src={images[0]}
+            alt="attachment"
+            className="w-full h-[300px] object-cover cursor-pointer hover:scale-105 transition"
+            onClick={() => setShowGallery(true)}
+          />
+
+          <div className="grid grid-rows-2 gap-1">
+            {images.slice(1).map((url, i) => (
+              <img
+                key={i}
+                src={url}
+                alt={`attachment-${i}`}
+                className="w-full h-[148px] object-cover cursor-pointer hover:scale-105 transition"
+                onClick={() => setShowGallery(true)}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-2 gap-1">
+        {images.slice(0, 4).map((url, i) => {
+          const remaining = images.length - 4;
+
+          return (
+            <div
+              key={i}
+              className="relative cursor-pointer"
+              onClick={() => setShowGallery(true)}
+            >
+              <img
+                src={url}
+                alt={`attachment-${i}`}
+                className="w-full h-56 object-cover hover:scale-105 transition"
+              />
+
+              {i === 3 && remaining > 0 && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-2xl font-semibold">
+                  +{remaining}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+  const images = item.attachments ?? [];
   return (
-    <div className="bg-white rounded-2xl shadow hover:shadow-xl transition border overflow-hidden">
-      {/* HEADER */}
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden">
       <div className="p-5 space-y-3 relative">
         <span
           className={`absolute top-4 right-4 px-3 py-1 text-xs rounded-full font-medium ${config.color}`}
@@ -155,41 +247,41 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         )}
 
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-green-200 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-green-200 flex items-center justify-center">
             <Sprout size={18} />
           </div>
 
           <div>
             <p className="font-semibold text-gray-800">Hợp tác xã</p>
-
-            <p className="text-xs text-gray-400">
-              {new Date(item.createdAt).toLocaleString('vi-VN')}
-            </p>
+            <p className="text-xs text-gray-400">{timeAgo(item.createdAt)}</p>
           </div>
         </div>
 
         {postType === 'CAMPAIGN' ? (
-          <div className="bg-green-50 p-3 rounded-xl space-y-2">
-            <div className="flex items-center gap-2 text-green-700 font-medium">
-              🌱 {productLabel}
+          <div className="bg-green-50 rounded-xl p-4 space-y-3">
+            <div className="text-green-700 font-semibold text-lg">
+              {productLabel}
             </div>
 
             {item.content && (
-              <p className="text-sm text-gray-700 mb-2">{item.content}</p>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {item.content}
+              </p>
             )}
 
-            <p className="text-sm text-gray-700">
-              HTX muốn thu gom sản phẩm này vào ngày
-              <span className="font-semibold text-green-700 ml-1">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Calendar size={16} className="text-green-600" />
+              Thu gom dự kiến:
+              <span className="font-semibold text-green-700">
                 {item.expectedDate
                   ? new Date(item.expectedDate).toLocaleDateString('vi-VN')
                   : 'N/A'}
               </span>
-            </p>
+            </div>
           </div>
         ) : (
           <>
-            <h3 className="font-semibold text-lg text-gray-800">
+            <h3 className="font-semibold text-lg text-gray-900">
               {item.title}
             </h3>
 
@@ -200,125 +292,109 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         )}
       </div>
 
-      {item.attachments && item.attachments.length > 0 && (
-        <div className="flex flex-col gap-1">
-          {item.attachments.map((url, i) => (
-            <img
-              key={i}
-              src={url}
-              alt={`attachment-${i}`}
-              className="w-full max-h-120 object-cover"
-            />
-          ))}
+      {images.length > 0 && (
+        <div className="w-full overflow-hidden"> {renderAttachments()} </div>
+      )}
+
+      {showGallery && (
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-6"
+          onClick={() => setShowGallery(false)}
+        >
+          <div
+            className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {item.attachments?.map((url, i) => (
+              <img
+                key={i}
+                src={url}
+                alt={`gallery-${i}`}
+                className="w-full object-cover rounded-lg hover:scale-105 transition"
+              />
+            ))}
+          </div>
         </div>
       )}
 
-      {item?.image && !item.attachments?.includes(item.image) && (
-        <img
-          src={item.image}
-          alt="post"
-          className="w-full max-h-105 object-cover"
-        />
-      )}
+      <div className="px-5 py-3 flex items-center justify-between text-sm border-t">
+        <button
+          onClick={handleLike}
+          className={`flex items-center gap-2 px-3 py-1 rounded-lg transition ${
+            item.liked ? 'text-blue-600 font-semibold' : 'hover:bg-gray-100'
+          }`}
+        >
+          <ThumbsUp size={16} />
+          {item.likeCount}
+        </button>
 
-      <div className="p-4 space-y-3">
+        <button
+          onClick={() => setShowComments(!showComments)}
+          className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-100 transition"
+        >
+          <MessageCircle size={16} />
+          {item.commentCount}
+        </button>
+
         {postType === 'CAMPAIGN' && (
           <button
             onClick={() => setPublishOpen(true)}
             disabled={item.isPublished}
-            className={`flex items-center gap-2 text-sm px-4 py-2 rounded-lg transition
-      ${
-        item.isPublished
-          ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-          : 'bg-green-600 text-white hover:bg-green-700'
-      }`}
+            className={`flex items-center gap-2 text-sm px-3 py-1 rounded-lg transition
+              ${
+                item.isPublished
+                  ? 'bg-gray-300 text-gray-600'
+                  : 'bg-green-600 text-white hover:bg-green-700'
+              }`}
           >
             <ShoppingCart size={16} />
-            {item.isPublished ? 'Đã đăng Marketplace' : 'Đăng bán sản phẩm'}
+            {item.isPublished ? 'Đã đăng Marketplace' : 'Đăng bán'}
           </button>
-        )}
-
-        <div className="flex justify-between border-t pt-3 text-sm">
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-2 px-3 py-1 rounded-lg transition ${
-              item.liked ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
-            }`}
-          >
-            <ThumbsUp size={16} />
-            {item.likeCount}
-          </button>
-
-          <button
-            onClick={() => setShowComments(!showComments)}
-            className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-100 transition"
-          >
-            <MessageCircle size={16} />
-            {item.commentCount}
-          </button>
-        </div>
-
-        {showComments && (
-          <div className="space-y-3 pt-3 border-t">
-            {loadingComment && (
-              <p className="text-sm text-gray-400">Đang tải bình luận...</p>
-            )}
-
-            {!loadingComment && comments.length === 0 && (
-              <p className="text-sm text-gray-400">Chưa có bình luận</p>
-            )}
-
-            {comments.map((c) => (
-              <div key={c.id} className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center shrink-0">
-                  <Sprout size={16} />
-                </div>
-
-                <div className="flex-1">
-                  <div className="bg-gray-100 rounded-xl px-3 py-2 text-sm">
-                    <p className="font-semibold text-gray-800 text-xs">
-                      {c.farmerName}
-                    </p>
-
-                    <p className="text-gray-700">{c.content}</p>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-xs text-gray-500 mt-1 pl-1">
-                    <span>{formatTimeAgo(c.createdAt)}</span>
-
-                    <button className="flex items-center gap-1 hover:text-blue-600 font-medium">
-                      <CornerDownRight size={12} />
-                      Reply
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <div className="flex gap-2 pt-2">
-              <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
-                <Sprout size={16} />
-              </div>
-
-              <input
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-green-500 outline-none"
-                placeholder="Viết bình luận..."
-              />
-
-              <button
-                onClick={handleComment}
-                className="text-blue-600 text-sm font-semibold hover:underline"
-              >
-                Gửi
-              </button>
-            </div>
-
-            <div id="comment-bottom" />
-          </div>
         )}
       </div>
+
+      {showComments && (
+        <div className="px-5 pb-5 space-y-3 border-t">
+          {comments.map((c) => (
+            <div key={c.id} className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
+                <Sprout size={14} />
+              </div>
+
+              <div className="flex-1">
+                <div className="bg-gray-100 rounded-xl px-3 py-2 text-sm">
+                  <p className="font-semibold text-xs text-gray-800">
+                    {c.farmerName}
+                  </p>
+
+                  <p>{c.content}</p>
+                </div>
+
+                <button className="text-xs text-gray-500 flex items-center gap-1 mt-1 hover:text-blue-600">
+                  <CornerDownRight size={12} />
+                  Reply
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <div className="flex gap-2 pt-2">
+            <input
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-green-500 outline-none"
+              placeholder="Viết bình luận..."
+            />
+
+            <button
+              onClick={handleComment}
+              className="text-blue-600 text-sm font-semibold"
+            >
+              Gửi
+            </button>
+          </div>
+        </div>
+      )}
 
       {publishOpen && (
         <PublishCampaignModal

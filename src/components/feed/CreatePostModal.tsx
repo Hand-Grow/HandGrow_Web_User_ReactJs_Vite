@@ -7,7 +7,9 @@ import {
   Sprout,
   Image as ImageIcon,
   Loader2,
+  Plus,
 } from 'lucide-react';
+
 import { Post, PostType } from '@/src/types';
 import { feedService } from '@/services/feedService';
 import { authService } from '@/services/authService';
@@ -25,8 +27,8 @@ export default function CreatePostModal({
 }: CreatePostModalProps) {
   const [type, setType] = useState<PostType>('ANNOUNCEMENT');
 
-  const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
   const [productName, setProductName] = useState<ProduceType>('RICE');
   const [expectedDate, setExpectedDate] = useState('');
@@ -35,7 +37,7 @@ export default function CreatePostModal({
   const [uploading, setUploading] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [coopId, setCoopId] = useState<string>('');
+  const [coopId, setCoopId] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,7 +46,6 @@ export default function CreatePostModal({
       const user = await authService.getProfile();
       setCoopId(user.id);
     };
-
     loadProfile();
   }, []);
 
@@ -54,8 +55,11 @@ export default function CreatePostModal({
 
     try {
       setUploading(true);
+
       const file = files[0];
+
       const url = await fileService.uploadFile(file);
+
       setAttachments((prev) => [...prev, url]);
     } catch (err) {
       console.error('Upload failed', err);
@@ -83,13 +87,13 @@ export default function CreatePostModal({
           attachments,
         });
       } else {
-        if (!productName || !expectedDate) return;
+        if (!expectedDate) return;
 
         newPost = await feedService.createCampaign(coopId, {
-          title,
-          content,
+          title: title || PRODUCE_LABELS[productName],
           productName,
           expectedDate,
+          content,
           attachments,
         });
       }
@@ -104,83 +108,68 @@ export default function CreatePostModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white w-105 max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl animate-in fade-in zoom-in p-6 space-y-5">
-        {/* Header */}
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white w-[420px] max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-6 space-y-5">
+        {/* HEADER */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Tạo bài đăng</h2>
 
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100">
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
             <X size={18} />
           </button>
         </div>
 
-        {/* Type */}
-        <div className="space-y-2">
-          <label className="text-sm text-gray-500">Loại bài đăng</label>
-
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => setType('ANNOUNCEMENT')}
-              className={`flex items-center gap-2 justify-center p-2 rounded-lg border ${
+        {/* TYPE */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => setType('ANNOUNCEMENT')}
+            className={`flex items-center justify-center gap-2 p-2 rounded-lg border text-sm
+              ${
                 type === 'ANNOUNCEMENT'
                   ? 'border-green-500 bg-green-50'
                   : 'border-gray-200'
               }`}
-            >
-              <Megaphone size={16} />
-              Thông báo
-            </button>
+          >
+            <Megaphone size={16} />
+            Thông báo
+          </button>
 
-            <button
-              onClick={() => setType('CAMPAIGN')}
-              className={`flex items-center gap-2 justify-center p-2 rounded-lg border ${
+          <button
+            onClick={() => setType('CAMPAIGN')}
+            className={`flex items-center justify-center gap-2 p-2 rounded-lg border text-sm
+              ${
                 type === 'CAMPAIGN'
                   ? 'border-green-500 bg-green-50'
                   : 'border-gray-200'
               }`}
-            >
-              <Sprout size={16} />
-              Thu gom
-            </button>
-          </div>
+          >
+            <Sprout size={16} />
+            Thu gom
+          </button>
         </div>
 
-        {/* Announcement fields */}
-        {type === 'ANNOUNCEMENT' && (
-          <div className="space-y-2">
-            <label className="text-sm text-gray-500">Tiêu đề</label>
-            <input
-              placeholder="Nhập tiêu đề..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
-            />
-          </div>
-        )}
+        {/* TITLE */}
+        <div>
+          <label className="text-sm text-gray-500">Tiêu đề</label>
 
-        {/* Campaign fields */}
+          <input
+            placeholder="Nhập tiêu đề..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500 outline-none"
+          />
+        </div>
+
+        {/* CAMPAIGN EXTRA */}
         {type === 'CAMPAIGN' && (
           <>
-            <div className="space-y-2">
-              <label className="text-sm text-gray-500">
-                Tiêu đề (Không bắt buộc)
-              </label>
-              <input
-                placeholder="Nhập tiêu đề..."
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm text-gray-500">Sản phẩm thu gom</label>
+            <div>
+              <label className="text-sm text-gray-500">Sản phẩm</label>
 
               <select
                 value={productName}
                 onChange={(e) => setProductName(e.target.value as ProduceType)}
-                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
+                className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500"
               >
                 {PRODUCE_VALUES.map((value) => (
                   <option key={value} value={value}>
@@ -190,21 +179,21 @@ export default function CreatePostModal({
               </select>
             </div>
 
-            <div className="space-y-2">
+            <div>
               <label className="text-sm text-gray-500">Ngày dự kiến</label>
 
               <input
                 type="date"
                 value={expectedDate}
                 onChange={(e) => setExpectedDate(e.target.value)}
-                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
+                className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500"
               />
             </div>
           </>
         )}
 
-        {/* Content */}
-        <div className="space-y-2">
+        {/* CONTENT */}
+        <div>
           <label className="text-sm text-gray-500">Nội dung</label>
 
           <textarea
@@ -212,47 +201,50 @@ export default function CreatePostModal({
             placeholder="Nhập nội dung bài đăng..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none"
+            className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500 outline-none"
           />
         </div>
 
-        {/* Attachments */}
+        {/* IMAGE UPLOAD */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-sm text-gray-500">Ảnh đính kèm</label>
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-500">Ảnh đính kèm</span>
+
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="text-xs text-green-600 flex items-center gap-1 hover:underline"
+              className="flex items-center gap-1 text-sm text-green-600 hover:underline"
             >
               {uploading ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : (
-                <ImageIcon size={14} />
+                <Plus size={14} />
               )}
               Thêm ảnh
             </button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              accept="image/*"
-            />
           </div>
 
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            accept="image/*"
+          />
+
+          {/* PREVIEW */}
           {attachments.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto pb-2">
+            <div className="grid grid-cols-3 gap-2">
               {attachments.map((url, i) => (
-                <div key={i} className="relative w-20 h-20 shrink-0">
+                <div key={i} className="relative group">
                   <img
                     src={url}
-                    alt="upload"
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-24 object-cover rounded-lg"
                   />
+
                   <button
                     onClick={() => removeAttachment(i)}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5"
+                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100"
                   >
                     <X size={12} />
                   </button>
@@ -262,11 +254,11 @@ export default function CreatePostModal({
           )}
         </div>
 
-        {/* Footer */}
+        {/* FOOTER */}
         <div className="flex justify-end gap-3 pt-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border hover:bg-gray-100 transition"
+            className="px-4 py-2 border rounded-lg hover:bg-gray-100"
           >
             Hủy
           </button>
@@ -274,7 +266,7 @@ export default function CreatePostModal({
           <button
             onClick={handleSubmit}
             disabled={loading || uploading}
-            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 transition shadow-sm"
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
           >
             {loading ? 'Đang đăng...' : 'Đăng bài'}
           </button>

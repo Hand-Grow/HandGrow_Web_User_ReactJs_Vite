@@ -18,6 +18,7 @@ import {
   PlusCircle,
   ShoppingCart,
 } from 'lucide-react';
+import { PRODUCE_LABELS, ProduceType } from '@/constants/produce';
 
 export default function FeedPage() {
   const [open, setOpen] = useState(false);
@@ -66,11 +67,8 @@ export default function FeedPage() {
     <MainLayout>
       <div className="bg-gray-50 min-h-screen p-4 md:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* LEFT FEED */}
           <div className="lg:col-span-8 space-y-6">
-            {/* STICKY HEADER AREA */}
             <div className="sticky top-0 z-20 space-y-4 pb-4 backdrop-blur bg-gray-50/90">
-              {/* HEADER */}
               <div
                 className="bg-linear-to-r from-green-500 via-emerald-500 to-green-600
                 h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
@@ -97,7 +95,6 @@ export default function FeedPage() {
                 </button>
               </div>
 
-              {/* FILTER */}
               <div className="flex gap-2 flex-wrap bg-white p-3 rounded-xl shadow">
                 {[
                   {
@@ -132,7 +129,6 @@ export default function FeedPage() {
                 ))}
               </div>
 
-              {/* CREATE POST */}
               <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                   <Sprout size={18} />
@@ -155,30 +151,25 @@ export default function FeedPage() {
               </div>
             </div>
 
-            {/* LOADING */}
             {loading && (
               <div className="text-center py-16 text-gray-400">
                 Đang tải bảng tin...
               </div>
             )}
 
-            {/* EMPTY */}
             {!loading && filteredFeed.length === 0 && (
               <div className="text-center py-16 text-gray-400">
                 Không có bài đăng
               </div>
             )}
 
-            {/* POSTS */}
             {!loading &&
               filteredFeed.map((item) => (
                 <FeedCard key={item.id} item={item} setFeed={setFeed} />
               ))}
           </div>
 
-          {/* SIDEBAR */}
-          <div className="lg:col-span-4 space-y-6 sticky top-6 h-fit">
-            {/* QUICK STATS */}
+          <div className="lg:col-span-4 space-y-6 sticky top-24 self-start">
             <div className="bg-white p-5 rounded-2xl shadow">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 📊 Thống kê nhanh
@@ -206,10 +197,9 @@ export default function FeedPage() {
               </div>
             </div>
 
-            {/* UPCOMING CAMPAIGN */}
             <div className="bg-white p-5 rounded-2xl shadow">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
-                🌱 Thu gom sắp tới
+                Thu gom sắp tới
               </h3>
 
               {campaignPosts.length === 0 && (
@@ -225,12 +215,14 @@ export default function FeedPage() {
                     {'productName' in post && (
                       <>
                         <p className="font-medium text-green-700 flex items-center gap-1">
-                          {post.productName}
+                          {PRODUCE_LABELS[post.productName as ProduceType] ??
+                            post.productName}
+                          {' · '}
                         </p>
 
-                        {'expectedDate' in post && (
+                        {post.expectedDate && (
                           <p className="text-xs text-gray-500">
-                            📅{' '}
+                            📅
                             {new Date(post.expectedDate).toLocaleDateString(
                               'vi-VN'
                             )}

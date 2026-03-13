@@ -1,6 +1,6 @@
 import { Search } from 'lucide-react';
 import ConversationItem from './ConversationItem';
-import { ChatRoom } from '../../../../../services/chat/types';
+import { ChatRoom } from '@/src/types';
 
 interface Props {
   rooms: ChatRoom[];
@@ -16,8 +16,7 @@ export default function ConversationList({
   onSelectRoom,
 }: Props) {
   return (
-    <div className="w-[360px] bg-white rounded-2xl border border-neutral-200 shadow-sm shadow-sm flex flex-col overflow-hidden">
-      {/* search */}
+    <div className="w-90 bg-white rounded-2xl border border-neutral-200 shadow-sm flex flex-col overflow-hidden">
       <div className="p-4 border-b">
         <div className="flex items-center bg-neutral-50 rounded-xl px-3 py-2">
           <Search size={16} className="text-neutral-400" />
@@ -28,7 +27,6 @@ export default function ConversationList({
         </div>
       </div>
 
-      {/* list */}
       <div className="flex-1 overflow-y-auto">
         {rooms.map((room) => (
           <ConversationItem
