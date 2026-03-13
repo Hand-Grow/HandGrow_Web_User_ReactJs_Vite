@@ -11,6 +11,7 @@ import {
   User,
   LogOut,
   ChevronDown,
+  Package,
 } from 'lucide-react';
 
 const menuItems = [
@@ -23,6 +24,11 @@ const menuItems = [
     label: 'Tìm kiếm nguồn cung',
     href: '/company/sourcing',
     icon: <Search className="w-5 h-5" />,
+  },
+  {
+    label: 'Yêu cầu mua',
+    href: '/company/sourcing/my-requests',
+    icon: <Package className="w-5 h-5" />,
   },
   {
     label: 'Tin nhắn',
@@ -45,6 +51,44 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [expanded, setExpanded] = useState(true);
+  const [userInfo, setUserInfo] = useState<{
+    name: string;
+    email: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const getUserInfo = () => {
+      try {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          // Get user info from token or localStorage
+          const name =
+            payload.name ||
+            payload.companyName ||
+            payload.sub ||
+            localStorage.getItem('companyName') ||
+            'Doanh nghiệp';
+          const email =
+            payload.email || localStorage.getItem('userEmail') || '';
+          setUserInfo({ name, email });
+        }
+      } catch (error) {
+        console.error('Error parsing token:', error);
+        // Fallback to localStorage if token parsing fails
+        const savedName = localStorage.getItem('companyName');
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedName || savedEmail) {
+          setUserInfo({
+            name: savedName || 'Doanh nghiệp',
+            email: savedEmail || '',
+          });
+        }
+      }
+    };
+
+    getUserInfo();
+  }, []);
 
   const handleLogout = () => {
     document.cookie = 'accessToken=; path=/; max-age=0';
@@ -66,13 +110,15 @@ export function Sidebar() {
     >
       <div className="p-4 border-b border-gray-200 flex items-center gap-3">
         <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">
-          AT
+          {userInfo?.name?.charAt(0)?.toUpperCase() || 'AT'}
         </div>
         {expanded && (
           <div>
-            <span className="text-sm font-bold text-gray-900">AgriTrade</span>
+            <span className="text-sm font-bold text-gray-900">
+              {userInfo?.name || 'AgriTrade'}
+            </span>
             <br />
-            <span className="text-xs text-gray-400">Sàn giao dịch B2B</span>
+            <span className="text-xs text-gray-400">Doanh nghiệp</span>
           </div>
         )}
       </div>

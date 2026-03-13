@@ -1,20 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Package, FileText } from 'lucide-react';
-
-interface FormData {
-  productName: string;
-  quantity: string;
-  unit: string;
-  expectedPrice: string;
-  deadline: string;
-  requirements: string;
-}
+import { toast } from 'react-toastify';
+import sourcingApi from '../../../../../services/sourcing/sourcingApi';
+import { CreateSourcingRequestForm } from '../../../../../services/sourcing/types';
 
 export default function SourcingHeader() {
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<CreateSourcingRequestForm>({
     productName: '',
     quantity: '',
     unit: 'kg',
@@ -23,26 +18,117 @@ export default function SourcingHeader() {
     requirements: '',
   });
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+      } catch (e) {
+        console.error('Token parse error:', e);
+      }
+    }
+  }, []);
+
+  const handleInputChange = (
+    field: keyof CreateSourcingRequestForm,
+    value: string
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form data:', formData);
-    // TODO: Gửi API để tạo yêu cầu mua
-    setShowModal(false);
-    setFormData({
-      productName: '',
-      quantity: '',
-      unit: 'kg',
-      expectedPrice: '',
-      deadline: '',
-      requirements: '',
-    });
+
+    if (!formData.productName.trim()) {
+      toast.error('Vui lòng nhập tên sản phẩm');
+      return;
+    }
+    if (!formData.quantity.trim()) {
+      toast.error('Vui lòng nhập số lượng');
+      return;
+    }
+    if (!formData.deadline.trim()) {
+      toast.error('Vui lòng chọn hạn chót');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      try {
+        const profileResponse = await sourcingApi.testUserAccess();
+      } catch (profileError) {
+        toast.error(
+          'Không thể truy cập thông tin user. Vui lòng đăng nhập lại.'
+        );
+        return;
+      }
+
+      const requestData = {
+        productName: formData.productName.trim(),
+        quantity: parseInt(formData.quantity),
+        unit: formData.unit,
+        expectedPrice: formData.expectedPrice
+          ? parseInt(formData.expectedPrice)
+          : null,
+        deadline: formData.deadline,
+        requirements: formData.requirements.trim() || null,
+      };
+
+      const response = await sourcingApi.create(requestData);
+
+      toast.success('Tạo yêu cầu mua thành công!');
+
+      setFormData({
+        productName: '',
+        quantity: '',
+        unit: 'kg',
+        expectedPrice: '',
+        deadline: '',
+        requirements: '',
+      });
+
+      setShowModal(false);
+
+      window.location.reload();
+    } catch (error: unknown) {
+      const axiosError = error as {
+        response?: {
+          status?: number;
+          data?: { message?: string };
+        };
+        message?: string;
+      };
+
+      if (axiosError.response?.status === 401) {
+        toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      } else if (axiosError.response?.status === 403) {
+        toast.error(
+          'Bạn không có quyền tạo yêu cầu mua. Vui lòng liên hệ admin.'
+        );
+      } else if (axiosError.response?.status === 400) {
+        const errorMessage =
+          axiosError.response?.data?.message || 'Dữ liệu không hợp lệ';
+        toast.error(errorMessage);
+      } else if (
+        axiosError.response?.status &&
+        axiosError.response.status >= 500
+      ) {
+        toast.error('Lỗi server. Vui lòng thử lại sau.');
+      } else {
+        const errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.message ||
+          'Tạo yêu cầu mua thất bại';
+        toast.error(errorMessage);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,11 +150,9 @@ export default function SourcingHeader() {
         </button>
       </div>
 
-      {/* Modal Form */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
-            {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
@@ -89,9 +173,7 @@ export default function SourcingHeader() {
               </button>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              {/* Tên sản phẩm */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Tên sản phẩm <span className="text-red-500">*</span>
@@ -108,7 +190,6 @@ export default function SourcingHeader() {
                 />
               </div>
 
-              {/* Số lượng và Đơn vị */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -136,14 +217,10 @@ export default function SourcingHeader() {
                   >
                     <option value="kg">Kg</option>
                     <option value="tấn">Tấn</option>
-                    <option value="cái">Cái</option>
-                    <option value="thùng">Thùng</option>
-                    <option value="bao">Bao</option>
                   </select>
                 </div>
               </div>
 
-              {/* Giá dự kiến */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Giá dự kiến (VNĐ)
@@ -159,7 +236,6 @@ export default function SourcingHeader() {
                 />
               </div>
 
-              {/* Hạn chót */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Hạn chót <span className="text-red-500">*</span>
@@ -175,7 +251,6 @@ export default function SourcingHeader() {
                 />
               </div>
 
-              {/* Yêu cầu thêm */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Yêu cầu thêm
@@ -191,7 +266,6 @@ export default function SourcingHeader() {
                 />
               </div>
 
-              {/* Buttons */}
               <div className="flex gap-3 pt-4 border-t border-gray-200">
                 <button
                   type="button"
@@ -202,10 +276,20 @@ export default function SourcingHeader() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                  disabled={loading}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <FileText className="w-4 h-4" />
-                  Tạo yêu cầu
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Đang tạo...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4" />
+                      Tạo yêu cầu
+                    </>
+                  )}
                 </button>
               </div>
             </form>
