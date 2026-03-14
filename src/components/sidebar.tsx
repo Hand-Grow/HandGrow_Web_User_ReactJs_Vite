@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
+  Newspaper,
 } from 'lucide-react';
 
 const menuItems = [
@@ -24,7 +25,7 @@ const menuItems = [
   {
     label: 'Bài đăng',
     href: '/cooperative/feed',
-    icon: MessageSquare,
+    icon: Newspaper,
   },
   {
     label: 'Mua chung',
