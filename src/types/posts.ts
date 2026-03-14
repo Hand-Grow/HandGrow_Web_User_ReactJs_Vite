@@ -92,7 +92,7 @@ export interface BasePost {
   productName?: string;
   expectedDate?: string;
   /* marketplace */
-  isPublished?: boolean;
+  published?: boolean;
 }
 
 export interface AnnouncementPost extends BasePost {

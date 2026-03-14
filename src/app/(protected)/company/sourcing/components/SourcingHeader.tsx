@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Package, FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
-import sourcingApi from '../../../../../services/sourcing/sourcingApi';
-import { CreateSourcingRequestForm } from '../../../../../services/sourcing/types';
+import sourcingApi from '@/src/services/sourcing/sourcingApi';
+import { CreateSourcingRequestForm } from '@/src/services/sourcing/types';
 
 export default function SourcingHeader() {
   const [showModal, setShowModal] = useState(false);
@@ -61,6 +61,7 @@ export default function SourcingHeader() {
 
       try {
         const profileResponse = await sourcingApi.testUserAccess();
+        console.log('User profile access test response:', profileResponse);
       } catch (profileError) {
         toast.error(
           'Không thể truy cập thông tin user. Vui lòng đăng nhập lại.'

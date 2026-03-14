@@ -1,9 +1,9 @@
 'use client';
 
+import sourcingApi from '@/src/services/sourcing/sourcingApi';
+import { SourcingRequestResponse } from '@/src/services/sourcing/types';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import sourcingApi from '../../../../services/sourcing/sourcingApi';
-import { SourcingRequestResponse } from '../../../../services/sourcing/types';
 
 export default function MyRequests() {
   const [requests, setRequests] = useState<SourcingRequestResponse[]>([]);

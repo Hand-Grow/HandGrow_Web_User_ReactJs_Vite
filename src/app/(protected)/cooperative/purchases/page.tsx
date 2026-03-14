@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { Plus, Search, Eye, Edit, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import MainLayout from '@/components/layout/MainLayout';
+import MainLayout from '@/src/components/layout/MainLayout';
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
-import { DialogHeader } from '@/components/ui/dialog';
-import InputField from '@/components/common/InputField';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { DialogHeader } from '@/src/components/ui/dialog';
+import InputField from '@/src/components/common/InputField';
 
 interface PurchaseOrder {
   id: string;

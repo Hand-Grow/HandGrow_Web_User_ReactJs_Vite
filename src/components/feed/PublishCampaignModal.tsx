@@ -2,8 +2,8 @@
 
 import { useState, useRef, ChangeEvent } from 'react';
 import { X, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { feedService } from '@/services/feedService';
-import { fileService } from '@/services/fileService';
+import { feedService } from '@/src/services/feedService';
+import { fileService } from '@/src/services/fileService';
 
 interface Props {
   campaignId: string;

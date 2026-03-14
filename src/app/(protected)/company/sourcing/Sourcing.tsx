@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import SourcingHeader from './components/SourcingHeader';
 import FilterBar from './components/FilterBar';
 import ProductGrid from './components/ProductGrid';
-import { marketplaceApi } from '../../../../../services/marketplace/marketplaceApi';
 import { toast } from 'react-toastify';
-import { PRODUCE_LABELS } from '../../../../../constants/produce';
-
+import { marketplaceApi } from '@/src/services/marketplace/marketplaceApi';
+import { PRODUCE_LABELS } from '@/src/constants';
 interface BulkSale {
   id: string;
   campaignId: string;

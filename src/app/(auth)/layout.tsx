@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import clsx from 'clsx';
-import AuthBanner from '@/components/layout/login/AuthBanner';
+import AuthBanner from '@/src/components/layout/login/AuthBanner';
 
 interface AuthLayoutProps {
   children: ReactNode;

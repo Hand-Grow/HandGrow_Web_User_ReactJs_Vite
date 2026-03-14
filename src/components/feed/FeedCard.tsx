@@ -18,9 +18,9 @@ import {
   Calendar,
 } from 'lucide-react';
 
-import { CommentResponse, feedService } from '@/services/feedService';
+import { CommentResponse, feedService } from '@/src/services/feedService';
 import { Post, PostType } from '@/src/types';
-import { PRODUCE_LABELS, ProduceType } from '@/constants';
+import { PRODUCE_LABELS, ProduceType } from '@/src/constants';
 import PublishCampaignModal from './PublishCampaignModal';
 
 interface FeedCardProps {
@@ -339,16 +339,16 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         {postType === 'CAMPAIGN' && (
           <button
             onClick={() => setPublishOpen(true)}
-            disabled={item.isPublished}
+            disabled={item.published}
             className={`flex items-center gap-2 text-sm px-3 py-1 rounded-lg transition
               ${
-                item.isPublished
+                item.published
                   ? 'bg-gray-300 text-gray-600'
                   : 'bg-green-600 text-white hover:bg-green-700'
               }`}
           >
             <ShoppingCart size={16} />
-            {item.isPublished ? 'Đã đăng Marketplace' : 'Đăng bán'}
+            {item.published ? 'Đã đăng Marketplace' : 'Đăng bán'}
           </button>
         )}
       </div>
@@ -403,7 +403,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
           onSuccess={() => {
             setFeed((prev) =>
               prev.map((p) =>
-                p.id === item.id ? { ...p, isPublished: true } : p
+                p.id === item.id ? { ...p, published: true } : p
               )
             );
           }}

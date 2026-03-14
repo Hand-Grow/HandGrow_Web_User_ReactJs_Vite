@@ -1,6 +1,6 @@
 'use client';
 
-import MainLayout from '@/components/layout/MainLayout';
+import MainLayout from '@/src/components/layout/MainLayout';
 import { Users, Package, Zap, TrendingUp, ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 /* ===== MOCK DATA ===== */
@@ -12,19 +12,19 @@ const statusCards = [
     color: 'bg-green-100 text-green-600',
   },
   {
-    label: 'Kiện hàng chứng',
+    label: 'Kiện hàng chung',
     value: 856,
     icon: <Package className="w-6 h-6" />,
     color: 'bg-orange-100 text-orange-600',
   },
   {
-    label: 'Đang sản xuất',
+    label: 'Đang thu gom',
     value: 342,
     icon: <Zap className="w-6 h-6" />,
     color: 'bg-purple-100 text-purple-600',
   },
   {
-    label: 'Bán cấp nhập',
+    label: 'Bán hợp đồng',
     value: 628,
     icon: <TrendingUp className="w-6 h-6" />,
     color: 'bg-emerald-100 text-emerald-600',

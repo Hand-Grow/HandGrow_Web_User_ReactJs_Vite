@@ -11,13 +11,12 @@ import {
 } from 'lucide-react';
 
 import { toast } from 'react-hot-toast';
-import { FormModal } from '../../../../components/form-modal';
 import { useContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { AuthContext } from '@/context/auth/auth.context';
-import { joinRequestService } from '@/services/joinRequestService';
-import MainLayout from '@/components/layout/MainLayout';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { AuthContext } from '@/src/context/auth/auth.context';
+import { joinRequestService } from '@/src/services/joinRequestService';
+import MainLayout from '@/src/components/layout/MainLayout';
+import { Input } from '@/src/components/ui/input';
+import { Button } from '@/src/components/ui/button';
 import {
   Member,
   MemberDetailModal,
@@ -27,7 +26,8 @@ import {
   JoinRequestStatus,
   RespondJoinRequestPayload,
   statusConfig,
-} from '@/types/joinRequest';
+} from '@/src/types';
+import { FormModal } from '@/src/components/form-modal';
 
 type TabId = 'all' | 'active' | 'pending' | 'inactive';
 

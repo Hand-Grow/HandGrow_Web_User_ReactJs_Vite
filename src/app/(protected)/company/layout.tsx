@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar from '@/components/layout/company/Sidebar';
+import Sidebar from '@/src/components/layout/company/Sidebar';
 
 export default function CompanyLayout({
   children,

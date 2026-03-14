@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { MapPin, Star, Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { PRODUCE_LABELS } from '../../../../../../constants/produce';
-import { chatApi } from '../../../../../services/chat/chatApi';
+import { PRODUCE_LABELS } from '@/src/constants';
+import { chatApi } from '@/src/services/chat/chatApi';
 
 interface ProductCardProps {
   product?: {

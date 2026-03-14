@@ -1,4 +1,4 @@
-import httpClient from '../../../services/http/httpClient';
+import httpClient from '../http/httpClient';
 import {
   SourcingRequest,
   SourcingRequestResponse,

@@ -1,11 +1,15 @@
+'use client';
+
 import { useCallback, useEffect, useState, useRef } from 'react';
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
 import MessageBubble from './MessageBubble';
-import { AIContractSuggestion, ChatMessage, ChatRoom } from '@/src/types';
+
+import { ChatMessage, ChatRoom, DraftContractData } from '@/src/types';
+import { contractAPI } from '@/src/services/contract/aiContractService';
+import ContractFormModal from './components/ContractModal';
 import { chatApi } from '@/src/services/chat/chatApi';
-import { aiContractService } from '@/src/services/ai/aiContractService';
-import ContractModal from './components/ContractModal';
+
 interface Props {
   selectedRoom: ChatRoom | undefined;
   senderType: 'ENTERPRISE' | 'COOPERATIVE';
@@ -14,11 +18,11 @@ interface Props {
 export default function ChatWindow({ selectedRoom, senderType }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [contractOpen, setContractOpen] = useState(false);
-  const [aiContract, setAiContract] = useState<
-    AIContractSuggestion | undefined
-  >(undefined);
-  const [loadingAI, setLoadingAI] = useState(false);
+
+  const [isDrafting, setIsDrafting] = useState(false);
+  const [draftData, setDraftData] = useState<DraftContractData | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
   const fetchMessages = useCallback(async () => {
     if (!selectedRoom?.id) return;
 
@@ -59,32 +63,50 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     }
   };
 
-  if (!selectedRoom) {
-    return (
-      <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
-        <p className="text-neutral-500">Chọn một cuộc hội thoại để bắt đầu</p>
-      </div>
-    );
-  }
-  const generateContractFromAI = async () => {
+  const handleDraftContract = async () => {
     if (!selectedRoom) return;
 
     try {
-      setLoadingAI(true);
+      setIsDrafting(true);
 
-      const messagesText = messages.map((m) => m.content);
+      const res = await contractAPI.aiDraftContract(selectedRoom.id);
 
-      const res = await aiContractService.extractContract({
-        roomId: selectedRoom.id,
-        messages: messagesText,
-      });
-
-      setAiContract(res.data);
-      setContractOpen(true);
-    } catch (error) {
-      console.error('AI extraction failed', error);
+      setDraftData(res.data);
+      setShowModal(true);
+    } catch (err) {
+      console.error('Draft contract failed', err);
     } finally {
-      setLoadingAI(false);
+      setIsDrafting(false);
+    }
+  };
+
+  if (!selectedRoom) {
+    return (
+      <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
+        <p className="text-neutral-500"> Chọn một cuộc hội thoại để bắt đầu </p>
+      </div>
+    );
+  }
+  const handleSendContract = async () => {
+    if (!selectedRoom?.id) return;
+
+    try {
+      const res = await contractAPI.getContractByRoom(selectedRoom.id);
+
+      const contract = res.data;
+
+      await chatApi.sendMessage(
+        selectedRoom.id,
+        JSON.stringify({
+          type: 'CONTRACT',
+          contractId: contract.id,
+        }),
+        senderType
+      );
+
+      fetchMessages();
+    } catch (error) {
+      console.error('Send contract failed', error);
     }
   };
   return (
@@ -103,22 +125,33 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
             mine={msg.senderType === senderType}
           />
         ))}
+
         <div ref={messagesEndRef} />
       </div>
-      {loadingAI && (
+
+      {isDrafting && (
         <div className="text-xs text-neutral-500 px-4 py-2">
-          🤖 AI đang phân tích cuộc thương lượng...
+          🤖 AI đang đọc cuộc thương lượng...
         </div>
       )}
+
       <ChatInput
         onSend={handleSendMessage}
-        onCreateContract={generateContractFromAI}
+        onCreateContract={handleDraftContract}
+        onSendContract={handleSendContract}
       />
-      <ContractModal
-        open={contractOpen}
-        onClose={() => setContractOpen(false)}
-        aiData={aiContract}
-      />
+
+      {draftData && (
+        <ContractFormModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          draft={draftData}
+          onSaved={async () => {
+            await handleSendContract();
+            fetchMessages();
+          }}
+        />
+      )}
     </div>
   );
 }
