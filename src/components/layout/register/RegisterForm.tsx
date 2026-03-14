@@ -1,8 +1,8 @@
-import InputField from '../../../../components/common/InputField';
-import PrimaryButton from '../../../../components/common/PrimaryButton';
 import React from 'react';
 import { Lock, Eye, EyeOff, User, Mail, Phone } from 'lucide-react';
 import { Province, Ward } from '@/src/types';
+import InputField from '../../common/InputField';
+import PrimaryButton from '../../common/PrimaryButton';
 
 interface RegisterFormProps {
   name: string;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { MapPin, Star, Loader2 } from 'lucide-react';
+import { MapPin, Star, Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { PRODUCE_LABELS } from '../../../../../constants/produce';
-import { chatApi } from '../../../../../../services/chat/chatApi';
+import { PRODUCE_LABELS } from '@/src/constants';
+import { chatApi } from '@/src/services/chat/chatApi';
 
 interface ProductCardProps {
   product?: {
@@ -46,23 +46,16 @@ const getDisplayName = (productName: string): string => {
 export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter();
   const [isCreatingChat, setIsCreatingChat] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   if (!product) {
     return (
-      <div className="bg-white rounded-2xl border shadow-sm hover:shadow-md transition overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div className="relative">
           <img
             src="https://picsum.photos/600/400"
             className="h-44 w-full object-cover"
           />
-          <div className="absolute top-3 left-3 flex gap-2">
-            <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded">
-              VietGAP
-            </span>
-            <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded">
-              Organic
-            </span>
-          </div>
         </div>
         <div className="p-4 space-y-2">
           <h3 className="font-semibold text-base">Lúa ST25</h3>
@@ -126,13 +119,17 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div
-      className="bg-white rounded-2xl border shadow-sm hover:shadow-md transition overflow-hidden cursor-pointer"
+      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden cursor-pointer"
       onClick={handleViewDetails}
     >
       <div className="relative">
         <img
           src={`https://picsum.photos/600/400?random=${product.id}`}
-          className="h-44 w-full object-cover"
+          className="h-44 w-full object-cover cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsImageModalOpen(true);
+          }}
         />
         <div className="absolute top-3 left-3">
           <span
@@ -151,6 +148,28 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {isImageModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setIsImageModalOpen(false)}
+        >
+          <div className="relative max-w-4xl max-h-full">
+            <img
+              src={`https://picsum.photos/1200/800?random=${product.id}`}
+              className="w-full h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 transition-colors"
+              onClick={() => setIsImageModalOpen(false)}
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="p-4 space-y-3">
         <div>
@@ -199,15 +218,6 @@ export default function ProductCard({ product }: ProductCardProps) {
               'Liên hệ'
             )}
           </button>
-
-          {/* <button
-            className="w-11 h-11 border rounded-xl flex items-center justify-center hover:bg-neutral-100 transition"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Star size={18} />
-          </button> */}
         </div>
       </div>
     </div>

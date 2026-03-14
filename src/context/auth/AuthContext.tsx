@@ -1,6 +1,6 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { AuthContext } from './auth.context';
-import { authService } from '../../services/authService';
+import { authService } from '@/src/services/authService';
 import { jwtDecode } from 'jwt-decode';
 import { CustomJwtPayload } from './jwt';
 import { LoginCredentials } from './auth.types';

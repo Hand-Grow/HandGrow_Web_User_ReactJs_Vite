@@ -3,7 +3,7 @@ import httpClient from './http/httpClient';
 import {
   JoinRequest,
   RespondJoinRequestPayload,
-} from '../../types/joinRequest';
+} from '@/src/types/joinRequest';
 
 export const joinRequestService = {
   getMyRequests: async (

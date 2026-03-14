@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { authService } from '../../services/authService';
+import { authService } from '@/src/services/authService';
 import { AuthContext } from './auth.context';
 import { CustomJwtPayload, LoginResponse } from './jwt';
 import { UserProfile, UserRole, UserStatistics } from '@/src/types';

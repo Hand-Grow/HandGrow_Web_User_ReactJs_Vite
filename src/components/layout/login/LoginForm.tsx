@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Lock, Eye, EyeOff, User } from 'lucide-react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { HandGrow } from '../../../../public/assets/index';
+import { HandGrow } from '@/public/assets';
 import InputField from '../../common/InputField';
 import PrimaryButton from '../../common/PrimaryButton';
 
