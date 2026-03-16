@@ -1,23 +1,28 @@
+export type ContractStatus = 'DRAFT' | 'SAVED';
 export interface DraftContractData {
+  id?: string;
   roomId: string;
   bulkSaleId: string;
   cooperativeId: string;
+  cooperativeName?: string;
   enterpriseId: string;
+  enterpriseName?: string;
   productName: string;
-  quantity: string;
-  unitPrice: string;
+  agreedQuantity: number;
+  agreedPrice: number;
   deliveryDate: string;
-  deliveryLocation: string;
-  aiGenerated: boolean;
+  terms?: string;
+  status?: ContractStatus;
+  createdAt?: string;
+  updatedAt?: string;
+  aiGenerated?: boolean;
 }
-
 export interface CreateContractPayload {
   roomId: string;
   agreedQuantity: number;
   agreedPrice: number;
   deliveryDate: string;
   terms?: string;
-  deliveryLocation?: string;
 }
 export interface Contract {
   id: string;
@@ -33,13 +38,10 @@ export interface Contract {
 
   agreedPrice: number;
   agreedQuantity: number;
-
   deliveryDate: string;
   terms: string;
-  documentUrl: string;
-
-  status: 'DRAFT' | 'PENDING' | 'ACTIVE' | 'COMPLETED';
-
+  documentUrl: string | null;
+  status: ContractStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,15 +50,7 @@ export const statusConfigContract = {
     label: 'Bản nháp',
     color: 'bg-gray-100 text-gray-700',
   },
-  PENDING: {
-    label: 'Chờ duyệt',
-    color: 'bg-orange-100 text-orange-700',
-  },
-  ACTIVE: {
-    label: 'Đang hiệu lực',
-    color: 'bg-green-100 text-green-700',
-  },
-  COMPLETED: {
+  SAVED: {
     label: 'Hoàn thành',
     color: 'bg-blue-100 text-blue-700',
   },

@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import { SelectedRole, useLogin } from '@/src/hooks/useLogin';
 import { validateLogin } from '@/src/utils/validators/authValidator';
 import RoleSelectView from '@/src/components/layout/login/RoleSelector';
@@ -44,16 +44,19 @@ const Login = () => {
   const onTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
+
   const rememberRef = useRef<HTMLInputElement>(null!);
 
   const [{ email, password, rememberMe }, setLoginState] =
     useState(getRememberedLogin());
 
   const { handleLogin } = useLogin(selectedRole);
+
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const error = validateLogin({ email, password });
+
     if (error) {
       toast.error(error);
       return;
@@ -75,6 +78,7 @@ const Login = () => {
       } else {
         localStorage.removeItem('remember_login');
       }
+      toast.success('Đăng nhập thành công');
 
       if (user.role === USER_ROLES.COOP) {
         router.replace('/cooperative/dashboard');
@@ -83,7 +87,7 @@ const Login = () => {
       } else {
         router.replace('/login');
       }
-    } catch (error) {
+    } catch (_) {
       toast.error('Đăng nhập thất bại');
     }
   };
@@ -110,12 +114,12 @@ const Login = () => {
       showPassword={showPassword}
       rememberRef={rememberRef}
       loading={loading}
-      onEmailChange={(value: string) => {
-        setLoginState((s) => ({ ...s, email: value }));
-      }}
-      onPasswordChange={(value: string) => {
-        setLoginState((s) => ({ ...s, password: value }));
-      }}
+      onEmailChange={(value: string) =>
+        setLoginState((s) => ({ ...s, email: value }))
+      }
+      onPasswordChange={(value: string) =>
+        setLoginState((s) => ({ ...s, password: value }))
+      }
       onRememberMeChange={() =>
         setLoginState((s) => ({
           ...s,
