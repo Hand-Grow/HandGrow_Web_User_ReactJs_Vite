@@ -61,6 +61,8 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.es2021,
+        process: 'readonly',
+        module: 'readonly',
       },
       parserOptions: {
         ecmaFeatures: { jsx: true },
