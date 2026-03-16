@@ -10,6 +10,9 @@ import { contractAPI } from '@/src/services/contract/aiContractService';
 import ContractFormModal from './components/ContractModal';
 import { chatApi } from '@/src/services/chat/chatApi';
 
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 interface Props {
   selectedRoom: ChatRoom | undefined;
   senderType: 'ENTERPRISE' | 'COOPERATIVE';
@@ -23,9 +26,10 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
   const [draftData, setDraftData] = useState<DraftContractData | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  const stompClientRef = useRef<Client | null>(null);
+
   const fetchMessages = useCallback(async () => {
     if (!selectedRoom?.id) return;
-
     try {
       const res = await chatApi.getMessages(selectedRoom.id, 0, 100);
       setMessages(res.data);
@@ -35,18 +39,66 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
   }, [selectedRoom?.id]);
 
   useEffect(() => {
-    setMessages([]);
-  }, [selectedRoom?.id]);
-
-  useEffect(() => {
-    if (!selectedRoom?.id) return;
+    if (!selectedRoom?.id) {
+      setMessages([]);
+      return;
+    }
 
     fetchMessages();
 
-    const interval = setInterval(fetchMessages, 3000);
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+    const socket = new SockJS(`${baseUrl}/ws`);
 
-    return () => clearInterval(interval);
-  }, [fetchMessages, selectedRoom?.id]);
+    const token = localStorage.getItem('accessToken');
+
+    const client = new Client({
+      webSocketFactory: () => socket,
+      connectHeaders: {
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+      reconnectDelay: 5000, // Rớt mạng tự gọi lại sau 5 giây
+      heartbeatIncoming: 4000, // Nhịp tim chống sập kết nối
+      heartbeatOutgoing: 4000,
+
+      onConnect: () => {
+        console.log(
+          '✅ Đã nối cáp WebSocket thành công vào phòng:',
+          selectedRoom.id
+        );
+
+        // 3. Đăng ký hóng tin nhắn (Subscribe) từ Topic của phòng này
+        client.subscribe(`/topic/room/${selectedRoom.id}`, (msg) => {
+          const newMessage: ChatMessage = JSON.parse(msg.body);
+
+          // Khi có tin nhắn mới từ mây rớt xuống, chỉ cần nối nó vào đuôi mảng hiện tại
+          setMessages((prev) => {
+            // Check nhẹ để tránh bị trùng lặp ID nếu React lỡ render 2 lần
+            if (prev.some((m) => m.id === newMessage.id)) return prev;
+            return [...prev, newMessage];
+          });
+        });
+      },
+      onStompError: (frame) => {
+        console.error('❌ Lỗi Broker STOMP: ' + frame.headers['message']);
+      },
+      onWebSocketError: (event) => {
+        console.error('❌ Lỗi kết nối mạng WS:', event);
+      },
+    });
+
+    // Kích hoạt đường ống
+    client.activate();
+    stompClientRef.current = client;
+
+    // 4. HÀNH ĐỘNG SINH TỬ: Dọn dẹp rác khi thoát phòng
+    return () => {
+      if (client.active) {
+        client.deactivate();
+        console.log('🛑 Đã rút cáp WebSocket phòng:', selectedRoom.id);
+      }
+    };
+  }, [selectedRoom?.id, fetchMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -56,8 +108,12 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     if (!selectedRoom || !text.trim()) return;
 
     try {
+      // Vẫn dùng API gọi qua HTTP để ném lên server lưu Database.
+      // Khi server lưu xong, TỰ NÓ SẼ BƠM TIN NHẮN qua WebSocket về lại cho mình (và người kia).
       await chatApi.sendMessage(selectedRoom.id, text, senderType);
-      fetchMessages();
+
+      // XÓA cái fetchMessages() ở đây! Không được spam load lại nguyên 100 tin nhắn nữa!
+      // WebSocket sẽ lo việc update UI.
     } catch (error) {
       console.error('Failed to send message', error);
     }
@@ -65,12 +121,9 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
 
   const handleDraftContract = async () => {
     if (!selectedRoom) return;
-
     try {
       setIsDrafting(true);
-
       const res = await contractAPI.aiDraftContract(selectedRoom.id);
-
       setDraftData(res.data);
       setShowModal(true);
     } catch (err) {
@@ -80,19 +133,10 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     }
   };
 
-  if (!selectedRoom) {
-    return (
-      <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
-        <p className="text-neutral-500"> Chọn một cuộc hội thoại để bắt đầu </p>
-      </div>
-    );
-  }
   const handleSendContract = async () => {
     if (!selectedRoom?.id) return;
-
     try {
       const res = await contractAPI.getContractByRoom(selectedRoom.id);
-
       const contract = res.data;
 
       await chatApi.sendMessage(
@@ -103,12 +147,20 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
         }),
         senderType
       );
-
-      fetchMessages();
+      // Xóa nốt chữ fetchMessages() ở đây
     } catch (error) {
       console.error('Send contract failed', error);
     }
   };
+
+  if (!selectedRoom) {
+    return (
+      <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
+        <p className="text-neutral-500"> Chọn một cuộc hội thoại để bắt đầu </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex flex-col overflow-hidden">
       <ChatHeader room={selectedRoom} viewerType={senderType} />
@@ -148,7 +200,6 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
           draft={draftData}
           onSaved={async () => {
             await handleSendContract();
-            fetchMessages();
           }}
         />
       )}
