@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { MapPin, Star, Loader2, X } from 'lucide-react';
+import {
+  MapPin,
+  Star,
+  Loader2,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Sprout,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { PRODUCE_LABELS } from '@/src/constants';
 import { chatApi } from '@/src/services/chat/chatApi';
+import { MarketplacePost } from '@/src/types/posts';
 
 interface ProductCardProps {
-  product?: {
-    id: string;
-    campaignId: string;
-    productName: string;
-    totalQuantity: number;
-    expectedPrice: number;
-    status: string;
-    coopName: string;
-    createdAt: string;
-  };
+  product?: MarketplacePost;
 }
 
 const getDisplayName = (productName: string): string => {
@@ -47,6 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter();
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   if (!product) {
     return (
@@ -56,6 +57,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             src="https://picsum.photos/600/400"
             className="h-44 w-full object-cover"
           />
+          <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+            1/1
+          </div>
         </div>
         <div className="p-4 space-y-2">
           <h3 className="font-semibold text-base">Lúa ST25</h3>
@@ -100,7 +104,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     try {
       setIsCreatingChat(true);
-      const res = await chatApi.createRoom(product.id);
+      const res = await chatApi.createRoom(product.id.toString());
       if (res.data && res.data.id) {
         router.push(`/company/messages?roomId=${res.data.id}`);
       } else {
@@ -118,49 +122,152 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div
-      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden cursor-pointer"
-      onClick={handleViewDetails}
-    >
-      <div className="relative">
-        <img
-          src={`https://picsum.photos/600/400?random=${product.id}`}
-          className="h-44 w-full object-cover cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsImageModalOpen(true);
-          }}
-        />
-        <div className="absolute top-3 left-3">
-          <span
-            className={`text-xs px-2 py-1 rounded ${
-              product.status === 'OPEN'
-                ? 'bg-green-100 text-green-700'
-                : 'bg-gray-100 text-gray-700'
-            }`}
-          >
-            {product.status === 'OPEN' ? 'Đang mở' : 'Đã đóng'}
-          </span>
+    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden relative">
+      {product.attachments && product.attachments.length > 0 && (
+        <div className="relative">
+          <div className="relative h-44 w-full">
+            <img
+              src={product.attachments[currentImageIndex]}
+              alt={`${product.productName} - Image ${currentImageIndex + 1}`}
+              className="h-44 w-full object-cover cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsImageModalOpen(true);
+              }}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = `https://picsum.photos/600/400?random=${product.id}`;
+              }}
+            />
+            {product.attachments.length > 1 && (
+              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                {currentImageIndex + 1}/{product.attachments.length}
+              </div>
+            )}
+            {product.attachments.length > 1 && (
+              <>
+                <button
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex((prev) =>
+                      prev === 0 ? product.attachments!.length - 1 : prev - 1
+                    );
+                  }}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex((prev) =>
+                      prev === product.attachments!.length - 1 ? 0 : prev + 1
+                    );
+                  }}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </>
+            )}
+          </div>
         </div>
-        <div className="absolute top-3 right-3">
-          <span className="bg-white/90 text-xs px-2 py-1 rounded text-gray-600">
-            {new Date(product.createdAt).toLocaleDateString('vi-VN')}
-          </span>
+      )}
+
+      {(!product.attachments || product.attachments.length === 0) && (
+        <div className="relative bg-gradient-to-br from-green-50 to-emerald-50 h-44 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-3">
+              <Sprout size={32} className="text-green-600" />
+            </div>
+            <p className="text-sm text-gray-600 font-medium">
+              Không có hình ảnh
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {getDisplayName(product.productName)}
+            </p>
+          </div>
         </div>
+      )}
+
+      <div className="absolute top-3 left-3">
+        <span
+          className={`text-xs px-2 py-1 rounded ${
+            product.status === 'OPEN'
+              ? 'bg-green-100 text-green-700'
+              : 'bg-gray-100 text-gray-700'
+          }`}
+        >
+          {product.status === 'OPEN' ? 'Đang mở' : 'Đã đóng'}
+        </span>
+      </div>
+      <div className="absolute top-3 right-3">
+        <span className="bg-white/90 text-xs px-2 py-1 rounded text-gray-600">
+          {new Date(product.createdAt).toLocaleDateString('vi-VN')}
+        </span>
       </div>
 
-      {/* Image Modal */}
       {isImageModalOpen && (
         <div
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
           onClick={() => setIsImageModalOpen(false)}
         >
           <div className="relative max-w-4xl max-h-full">
-            <img
-              src={`https://picsum.photos/1200/800?random=${product.id}`}
-              className="w-full h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className="relative">
+              {product.attachments && product.attachments.length > 0 ? (
+                <img
+                  src={product.attachments[currentImageIndex]}
+                  alt={`${product.productName} - Image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-contain rounded-lg max-h-[80vh]"
+                  onClick={(e) => e.stopPropagation()}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `https://picsum.photos/1200/800?random=${product.id}`;
+                  }}
+                />
+              ) : (
+                <img
+                  src={`https://picsum.photos/1200/800?random=${product.id}`}
+                  alt={product.productName}
+                  className="w-full h-full object-contain rounded-lg max-h-[80vh]"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              )}
+
+              {product.attachments && product.attachments.length > 1 && (
+                <>
+                  <button
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex((prev) =>
+                        prev === 0 ? product.attachments!.length - 1 : prev - 1
+                      );
+                    }}
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex((prev) =>
+                        prev === product.attachments!.length - 1 ? 0 : prev + 1
+                      );
+                    }}
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </>
+              )}
+
+              {product.attachments && product.attachments.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1 rounded">
+                  {currentImageIndex + 1} / {product.attachments.length}
+                </div>
+              )}
+            </div>
+
             <button
               className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 transition-colors"
               onClick={() => setIsImageModalOpen(false)}

@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/constants/apiEndpoints';
+import { API_ENDPOINTS } from '@/src/constants/index';
 import httpClient from '../http/httpClient';
 export const authApi = {
   login(payload) {
