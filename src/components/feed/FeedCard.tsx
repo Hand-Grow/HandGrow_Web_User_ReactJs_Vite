@@ -154,7 +154,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         <img
           src={images[0]}
           alt="attachment"
-          className="w-full max-h-[420px] object-cover cursor-pointer hover:scale-105 transition"
+          className="w-full max-h-105 object-cover cursor-pointer hover:scale-105 transition"
           onClick={() => setShowGallery(true)}
         />
       );
@@ -182,7 +182,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
           <img
             src={images[0]}
             alt="attachment"
-            className="w-full h-[300px] object-cover cursor-pointer hover:scale-105 transition"
+            className="w-full h-75 object-cover cursor-pointer hover:scale-105 transition"
             onClick={() => setShowGallery(true)}
           />
 
@@ -192,7 +192,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
                 key={i}
                 src={url}
                 alt={`attachment-${i}`}
-                className="w-full h-[148px] object-cover cursor-pointer hover:scale-105 transition"
+                className="w-full h-37 object-cover cursor-pointer hover:scale-105 transition"
                 onClick={() => setShowGallery(true)}
               />
             ))}
