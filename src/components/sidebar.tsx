@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -10,47 +10,46 @@ import {
   MessageSquare,
   BarChart3,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
-  FileText,
+  ChevronDown,
   Newspaper,
+  FileText,
 } from 'lucide-react';
 
 const menuItems = [
   {
     label: 'Trang chủ',
     href: '/cooperative/dashboard',
-    icon: Home,
+    icon: <Home className="w-5 h-5" />,
   },
   {
     label: 'Bài đăng',
     href: '/cooperative/feed',
-    icon: Newspaper,
+    icon: <Newspaper className="w-5 h-5" />,
   },
   {
     label: 'Mua chung',
     href: '/cooperative/purchases',
-    icon: ShoppingCart,
+    icon: <ShoppingCart className="w-5 h-5" />,
   },
   {
     label: 'Quản lý thành viên',
     href: '/cooperative/members',
-    icon: Users,
+    icon: <Users className="w-5 h-5" />,
   },
   {
     label: 'Tin nhắn',
     href: '/cooperative/messages',
-    icon: MessageSquare,
+    icon: <MessageSquare className="w-5 h-5" />,
   },
   {
     label: 'Báo cáo',
     href: '/cooperative/reports',
-    icon: BarChart3,
+    icon: <BarChart3 className="w-5 h-5" />,
   },
   {
     label: 'Hợp đồng',
     href: '/cooperative/orders',
-    icon: FileText,
+    icon: <FileText className="w-5 h-5" />,
   },
 ];
 
@@ -64,18 +63,23 @@ export function Sidebar() {
     router.push('/login');
   };
 
+  useEffect(() => {
+    const main = document.querySelector('main');
+    if (main) {
+      main.style.paddingLeft = expanded ? '16rem' : '5rem';
+    }
+  }, [expanded]);
+
   return (
     <aside
       className={`bg-white border-r border-gray-200 transition-all duration-300 ${
         expanded ? 'w-64' : 'w-20'
       } min-h-screen flex flex-col fixed top-0 left-0 h-screen z-50`}
     >
-      {/* LOGO */}
       <div className="p-4 border-b border-gray-200 flex items-center gap-3">
         <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">
           HTX
         </div>
-
         {expanded && (
           <span className="text-sm font-bold text-gray-900">
             HTX nông nghiệp
@@ -83,43 +87,33 @@ export function Sidebar() {
         )}
       </div>
 
-      {/* MENU */}
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
-          const Icon = item.icon;
           const isActive = pathname === item.href;
 
           return (
             <Link
               key={item.href}
               href={item.href}
-              prefetch
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                 isActive
                   ? 'bg-emerald-100 text-emerald-700 font-semibold'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <Icon className="w-5 h-5 shrink-0" />
-
+              {item.icon}
               {expanded && <span className="text-sm">{item.label}</span>}
             </Link>
           );
         })}
       </nav>
 
-      {/* FOOTER */}
       <div className="p-4 border-t border-gray-200 space-y-2">
         <button
-          onClick={() => setExpanded(!expanded)}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+          onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? (
-            <ChevronLeft className="w-5 h-5" />
-          ) : (
-            <ChevronRight className="w-5 h-5" />
-          )}
-
+          <ChevronDown className="w-5 h-5" />
           {expanded && <span className="text-sm">Thu gọn</span>}
         </button>
 
@@ -134,5 +128,3 @@ export function Sidebar() {
     </aside>
   );
 }
-
-export default Sidebar;
