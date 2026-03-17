@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -11,7 +12,9 @@ export function middleware(request: NextRequest) {
   );
 
   if (isProtected && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(
+      new URL(`/login?lang=${i18next.language || 'vi'}`, request.url)
+    );
   }
 
   return NextResponse.next();

@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import type { AxiosError } from 'axios';
-import { Province, Ward } from '@/types/location';
 import { locationApi } from '@/src/services/location/locationApi';
 import { toast } from 'react-toastify';
 import { authApi } from '@/src/services/auth/authApi';
 import CompanyRegisterForm from '@/src/components/layout/register/CompanyRegisterForm';
+import i18next from 'i18next';
+import { Province, Ward } from '@/src/types';
+import { useRouter } from 'next/router';
 
 const RegisterEnterprise: React.FC = () => {
   const [companyName, setCompanyName] = useState<string>('');
@@ -15,7 +17,7 @@ const RegisterEnterprise: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-
+  const router = useRouter();
   const [province, setProvince] = useState<string>('');
   const [commune, setCommune] = useState<string>('');
 
@@ -86,8 +88,8 @@ const RegisterEnterprise: React.FC = () => {
       toast.success('Đăng ký thành công');
 
       setTimeout(() => {
-        window.location.href = '/login';
-      }, 700);
+        router.push(`/login?lang=${i18next.language || 'vi'}`);
+      }, 800);
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
       toast.error(error.response?.data?.message || 'Đăng ký thất bại');

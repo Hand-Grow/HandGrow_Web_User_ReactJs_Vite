@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import Sidebar from './Sidebar';
-import Header from './Header';
+import Header from '../Header';
 
 interface CompanyLayoutProps {
   children: ReactNode;

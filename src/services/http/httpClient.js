@@ -1,4 +1,5 @@
 import axios from 'axios';
+import i18next from 'i18next';
 import toast from 'react-hot-toast';
 
 const httpClient = axios.create({
@@ -45,7 +46,7 @@ httpClient.interceptors.response.use(
         toast.error('Session expired. Please login again.');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        window.location.href = `/login?lang=${i18next.language || 'vi'}`;
         break;
 
       case 403:

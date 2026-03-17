@@ -28,6 +28,7 @@ import {
   statusConfig,
 } from '@/src/types';
 import { FormModal } from '@/src/components/form-modal';
+import { useTranslation } from 'react-i18next';
 
 type TabId = 'all' | 'active' | 'pending' | 'inactive';
 
@@ -40,7 +41,7 @@ interface StatCardProps {
 export default function MembersPage() {
   const authContext = useContext(AuthContext);
   const user = authContext?.user;
-
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
@@ -86,7 +87,7 @@ export default function MembersPage() {
       setMembers(res.map(mapApiToMember));
     } catch (error) {
       console.error('Fetch error:', error);
-      toast.error('Không thể tải danh sách thành viên');
+      toast.error(t('MEMBERS.TOAST.LOAD_ERROR'));
     } finally {
       setLoading(false);
     }
@@ -104,14 +105,13 @@ export default function MembersPage() {
       const payload: RespondJoinRequestPayload = {
         approved: isApproved,
         responseMessage: isApproved
-          ? 'Chào mừng bạn đã trở thành thành viên!'
-          : 'Yêu cầu của bạn đã bị từ chối.',
+          ? t('MEMBERS.TOAST.APPROVE_SUCCESS')
+          : t('MEMBERS.TOAST.REJECT_SUCCESS'),
       };
 
       await joinRequestService.respond(requestId, payload);
       toast.success(`Đã ${actionText} thành viên thành công!`);
 
-      // Tải lại để cập nhật bảng và Stats
       await fetchMembers();
     } catch (error) {
       console.error('API Error:', error);
@@ -145,7 +145,7 @@ export default function MembersPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Quản lý thành viên
+            {t('MEMBERS.TITLE')}
           </h1>
           <p className="text-gray-600 mt-1">
             Hợp tác xã: {user?.fullName || 'Cửa hàng HTX'}
@@ -154,25 +154,25 @@ export default function MembersPage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard
-            label="Tổng cộng"
+            label={t('MEMBERS.STATUS.TOTAL')}
             value={stats.total}
             icon={<Users />}
             color="bg-blue-100 text-blue-700"
           />
           <StatCard
-            label="Hoạt động"
+            label={t('MEMBERS.STATUS.ACTIVE')}
             value={stats.active}
             icon={<CheckCircle />}
             color="bg-emerald-100 text-emerald-700"
           />
           <StatCard
-            label="Chờ duyệt"
+            label={t('MEMBERS.STATUS.PENDING')}
             value={stats.pending}
             icon={<Clock />}
             color="bg-orange-100 text-orange-700"
           />
           <StatCard
-            label="Từ chối"
+            label={t('MEMBERS.STATUS.REJECTED')}
             value={stats.rejected}
             icon={<XCircle />}
             color="bg-red-100 text-red-700"
@@ -194,7 +194,7 @@ export default function MembersPage() {
               onClick={() => setShowAddModal(true)}
               className="bg-green-600 hover:bg-green-700"
             >
-              <Plus className="w-5 h-5 mr-2" /> Thêm thành viên
+              <Plus className="w-5 h-5 mr-2" /> {t('MEMBERS.ACTION.ADD')}
             </Button>
           </div>
 
@@ -210,12 +210,12 @@ export default function MembersPage() {
                 }`}
               >
                 {id === 'all'
-                  ? 'Tất cả'
+                  ? t('MEMBERS.FILTER.ALL')
                   : id === 'active'
-                    ? 'Hoạt động'
+                    ? t('MEMBERS.FILTER.ACTIVE')
                     : id === 'pending'
-                      ? 'Chờ duyệt'
-                      : 'Từ chối'}
+                      ? t('MEMBERS.FILTER.PENDING')
+                      : t('MEMBERS.FILTER.REJECTED')}
               </button>
             ))}
           </div>
@@ -225,20 +225,19 @@ export default function MembersPage() {
               <thead className="bg-emerald-50 text-sm">
                 <tr>
                   <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
-                    {' '}
-                    Thành viên
+                    {t('MEMBERS.TABLE.NAME')}
                   </th>
                   <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
-                    Liên hệ
+                    {t('MEMBERS.TABLE.PHONE')}
                   </th>
                   <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
-                    Địa chỉ
+                    {t('MEMBERS.TABLE.LOCATION')}
                   </th>
                   <th className="text-left py-3 px-4 font-semibold text-emerald-800 uppercase">
-                    Trạng thái
+                    {t('MEMBERS.TABLE.STATUS')}
                   </th>
                   <th className="text-center py-3 px-4 font-semibold text-emerald-800 uppercase">
-                    Hành động
+                    {t('MEMBERS.TABLE.ACTION')}
                   </th>
                 </tr>
               </thead>
@@ -316,7 +315,7 @@ export default function MembersPage() {
             </table>
             {filteredMembers.length === 0 && !loading && (
               <div className="text-center py-10 text-gray-500 italic">
-                Không tìm thấy dữ liệu
+                {t('MEMBERS.EMPTY')}
               </div>
             )}
           </div>
@@ -333,20 +332,22 @@ export default function MembersPage() {
       <FormModal
         open={showAddModal}
         onOpenChange={setShowAddModal}
-        title="Mời thành viên mới"
-        submitLabel={loading ? 'Đang xử lý...' : 'Gửi yêu cầu'}
+        title={t('MEMBERS.ADD_MODAL_TITLE')}
+        submitLabel={
+          loading ? t('MEMBERS.SUBMIT_LOADING') : t('MEMBERS.SUBMIT')
+        }
         onSubmit={async () => {
           if (!formData.name || !formData.phone)
-            return toast.error('Thiếu thông tin bắt buộc');
+            return toast.error(t('MEMBERS.ADD_VALIDATION_ERROR'));
           try {
             setLoading(true);
-            toast.success('Đã gửi yêu cầu tham gia thành công!');
+            toast.success(t('MEMBERS.ADD_SUCCESS'));
             setShowAddModal(false);
             setFormData({ name: '', email: '', phone: '', address: '' });
             fetchMembers();
           } catch (error) {
             console.error(error);
-            toast.error('Lỗi khi gửi yêu cầu');
+            toast.error(t('MEMBERS.ADD_ERROR'));
           } finally {
             setLoading(false);
           }
@@ -354,19 +355,19 @@ export default function MembersPage() {
       >
         <div className="space-y-4 pt-2">
           <Input
-            placeholder="Tên thành viên *"
+            placeholder={t('MEMBERS.FORM.NAME')}
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
           <Input
-            placeholder="Số điện thoại *"
+            placeholder={t('MEMBERS.FORM.PHONE')}
             value={formData.phone}
             onChange={(e) =>
               setFormData({ ...formData, phone: e.target.value })
             }
           />
           <Input
-            placeholder="Địa chỉ"
+            placeholder={t('MEMBERS.FORM.ADDRESS')}
             value={formData.address}
             onChange={(e) =>
               setFormData({ ...formData, address: e.target.value })

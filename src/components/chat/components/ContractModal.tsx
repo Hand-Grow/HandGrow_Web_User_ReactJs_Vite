@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { DraftContractData, CreateContractPayload } from '@/src/types';
 import { contractAPI } from '@/src/services/contract/aiContractService';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export default function ContractFormModal({
   const [price, setPrice] = useState<number>(0);
   const [date, setDate] = useState('');
   const [terms, setTerms] = useState('');
-
+  const { t } = useTranslation();
   useEffect(() => {
     if (draft) {
       setQuantity(draft.agreedQuantity || 0);
@@ -57,10 +58,10 @@ export default function ContractFormModal({
       <div className="bg-white w-225 max-w-[95vw] rounded-xl p-6 space-y-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold flex items-center gap-2">
-            Tạo hợp đồng
+            {t('CHAT.CREATE_CONTRACT')}
             {draft.aiGenerated && (
               <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
-                ✨ AI Generated
+                {t('CHAT.AI_DRAFTING')}
               </span>
             )}
           </h2>
@@ -68,23 +69,7 @@ export default function ContractFormModal({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-sm text-gray-600">Doanh nghiệp</label>
-            <input
-              value={draft.enterpriseName}
-              disabled
-              className="border rounded p-2 w-full bg-gray-100"
-            />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600">Hợp tác xã</label>
-            <input
-              value={draft.cooperativeName}
-              disabled
-              className="border rounded p-2 w-full bg-gray-100"
-            />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600">Sản phẩm</label>
+            <label className="text-sm text-gray-600">{t('CHAT.PRODUCT')}</label>
             <input
               value={productLabel}
               disabled
@@ -93,7 +78,9 @@ export default function ContractFormModal({
           </div>
 
           <div>
-            <label className="text-sm text-gray-600">Ngày giao</label>
+            <label className="text-sm text-gray-600">
+              {t('CHAT.DELIVERY_DATE')}
+            </label>
             <input
               type="date"
               value={date}
@@ -102,7 +89,9 @@ export default function ContractFormModal({
             />
           </div>
           <div>
-            <label className="text-sm text-gray-600">Sản lượng (kg)</label>
+            <label className="text-sm text-gray-600">
+              {t('CHAT.QUANTITY')}
+            </label>
             <input
               type="number"
               value={quantity}
@@ -111,7 +100,7 @@ export default function ContractFormModal({
             />
           </div>
           <div>
-            <label className="text-sm text-gray-600">Đơn giá (VND/kg)</label>
+            <label className="text-sm text-gray-600">{t('CHAT.PRICE')}</label>
             <input
               type="number"
               value={price}
@@ -120,14 +109,14 @@ export default function ContractFormModal({
             />
           </div>
           <div className="col-span-2 bg-green-50 border border-green-200 rounded p-3">
-            <p className="text-sm text-gray-600">Tổng giá trị hợp đồng</p>
+            <p className="text-sm text-gray-600">{t('CHAT.TOTAL_VALUE')}</p>
             <p className="text-lg font-semibold text-green-700">
-              {totalValue.toLocaleString()} đ
+              {totalValue.toLocaleString()} {t('CHAT.CURRENCY')}
             </p>
           </div>
 
           <div className="col-span-2">
-            <label className="text-sm text-gray-600">Điều khoản hợp đồng</label>
+            <label className="text-sm text-gray-600">{t('CHAT.TERMS')}</label>
             <textarea
               rows={4}
               value={terms}
@@ -138,14 +127,14 @@ export default function ContractFormModal({
         </div>
         <div className="flex justify-end gap-3">
           <button onClick={onClose} className="px-4 py-2 border rounded">
-            Hủy
+            {t('CHAT.CANCEL')}
           </button>
 
           <button
             onClick={handleSave}
             className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
           >
-            Lưu hợp đồng
+            {t('CHAT.SAVE')}
           </button>
         </div>
       </div>

@@ -2,7 +2,6 @@
 
 import { authService } from '@/src/services/authService';
 import { userService } from '@/src/services/userService';
-import { UserProfile } from '@/types/users';
 import {
   LogOut,
   FileText,
@@ -16,6 +15,8 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { UserProfile } from '../types';
+import i18next from 'i18next';
 
 export default function ProfileContent() {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -39,7 +40,7 @@ export default function ProfileContent() {
 
   const handleLogout = () => {
     authService.logout();
-    router.push('/login');
+    router.push(`/login?lang=${i18next.language}`);
   };
 
   if (loading) {

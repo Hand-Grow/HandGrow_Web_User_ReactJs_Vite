@@ -4,13 +4,16 @@ import { useEffect, useState } from 'react';
 import { Plus, ChevronRight, FileText } from 'lucide-react';
 
 import MainLayout from '@/src/components/layout/MainLayout';
-import { Contract, statusConfigContract } from '@/src/types';
+import { Contract, statusConfigContract, ContractStatus } from '@/src/types';
 import { contractAPI } from '@/src/services/contract/aiContractService';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function ContractsPage() {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchContracts();
@@ -20,8 +23,8 @@ export default function ContractsPage() {
     try {
       const data = await contractAPI.getMyContracts();
       setContracts(data);
-    } catch (error) {
-      console.error('Load contracts failed', error);
+    } catch (_) {
+      toast.error(t('ORDERS.ERROR_LOAD'));
     } finally {
       setLoading(false);
     }
@@ -32,28 +35,30 @@ export default function ContractsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Hợp đồng HTX</h1>
-            <p className="text-gray-600 mt-1">
-              Quản lý tất cả các hợp đồng mua bán nông sản
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {t('ORDERS.TITLE')}
+            </h1>
+            <p className="text-gray-600 mt-1">{t('ORDERS.SUBTITLE')}</p>
           </div>
 
           <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
             <Plus className="w-5 h-5" />
-            Tạo hợp đồng
+            {t('ORDERS.CREATE')}
           </button>
         </div>
 
         <div className="space-y-3">
-          {loading && <p className="text-gray-500">Đang tải hợp đồng...</p>}
+          {loading && <p className="text-gray-500">{t('ORDERS.LOADING')}</p>}
           {!loading && contracts.length === 0 && (
-            <p className="text-gray-500">Chưa có hợp đồng nào</p>
+            <p className="text-gray-500">{t('ORDERS.EMPTY')}</p>
           )}
           {contracts.map((contract) => {
             const productLabel =
               PRODUCE_LABELS[contract.productName as ProduceType] ??
               contract.productName;
             const totalValue = contract.agreedPrice * contract.agreedQuantity;
+            const statusConfig =
+              statusConfigContract[contract.status as ContractStatus];
             return (
               <div
                 key={contract.id}
@@ -67,11 +72,14 @@ export default function ContractsPage() {
                       </h3>
 
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
-                          statusConfigContract[contract.status].color
-                        }`}
+                        className={`px-2 py-1 rounded text-xs font-medium ${statusConfig.color}`}
                       >
-                        {statusConfigContract[contract.status].label}
+                        {/* Hiển thị label đã dịch hoặc status gốc */}
+                        {statusConfig.label === 'DRAFT'
+                          ? t('ORDERS.STATUS.DRAFT')
+                          : statusConfig.label === 'SAVED'
+                            ? t('ORDERS.STATUS.SAVED')
+                            : statusConfig.label}
                       </span>
                     </div>
                     {contract.terms && (
@@ -85,42 +93,44 @@ export default function ContractsPage() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm mb-3">
                   <div>
-                    <p className="text-gray-500">Doanh nghiệp</p>
+                    <p className="text-gray-500">{t('ORDERS.ENTERPRISE')}</p>
                     <p className="font-medium text-gray-900">
                       {contract.enterpriseName}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Hợp tác xã</p>
+                    <p className="text-gray-500">{t('ORDERS.COOPERATIVE')}</p>
                     <p className="font-medium text-gray-900">
                       {contract.cooperativeName}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Sản lượng</p>
+                    <p className="text-gray-500">{t('ORDERS.QUANTITY')}</p>
                     <p className="font-medium text-gray-900">
                       {contract.agreedQuantity.toLocaleString()} kg
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-gray-500">Đơn giá</p>
+                    <p className="text-gray-500">{t('ORDERS.PRICE')}</p>
                     <p className="font-medium text-gray-900">
                       {contract.agreedPrice.toLocaleString()} đ
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-gray-500">Tổng giá trị</p>
+                    <p className="text-gray-500">{t('ORDERS.TOTAL_VALUE')}</p>
                     <p className="font-semibold text-green-700">
                       {totalValue.toLocaleString()} đ
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-gray-500">Ngày giao</p>
+                    <p className="text-gray-500">{t('ORDERS.DELIVERY_DATE')}</p>
                     <p className="font-medium text-gray-900">
-                      {new Date(contract.deliveryDate).toLocaleDateString()}
+                      {new Date(contract.deliveryDate).toLocaleDateString(
+                        'vi-VN'
+                      )}
                     </p>
                   </div>
                 </div>
@@ -133,7 +143,7 @@ export default function ContractsPage() {
                       rel="noreferrer"
                       className="hover:underline"
                     >
-                      Xem file hợp đồng
+                      {t('ORDERS.VIEW_DOCUMENT')}
                     </a>
                   </div>
                 )}

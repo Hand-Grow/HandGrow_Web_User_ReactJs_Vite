@@ -1,5 +1,6 @@
 import { Send, Paperclip, Smile } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onSend: (text: string) => void;
@@ -13,7 +14,7 @@ export default function ChatInput({
   onSendContract,
 }: Props) {
   const [text, setText] = useState('');
-
+  const { t } = useTranslation();
   const handleSend = () => {
     if (text.trim()) {
       onSend(text);
@@ -27,7 +28,7 @@ export default function ChatInput({
         <Paperclip size={18} className="text-neutral-400" />
 
         <input
-          placeholder="Nhập tin nhắn..."
+          placeholder={t('CHAT.TYPE_MESSAGE')}
           className="flex-1 bg-transparent outline-none text-sm"
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -51,19 +52,16 @@ export default function ChatInput({
           onClick={onCreateContract}
           className="border border-neutral-200 shadow-sm px-3 py-1.5 rounded-lg"
         >
-          📄 Tạo hợp đồng
+          {t('CHAT.CREATE_CONTRACT')}
         </button>
         <button className="border border-neutral-200 shadow-sm px-3 py-1.5 rounded-lg">
-          💰 Báo giá
-        </button>
-        <button className="border border-neutral-200 shadow-sm px-3 py-1.5 rounded-lg">
-          📦 Yêu cầu mẫu
+          {t('CHAT.REQUEST_SAMPLE')}
         </button>
         <button
           onClick={onSendContract}
           className="border border-neutral-200 shadow-sm px-3 py-1.5 rounded-lg"
         >
-          📑 Gửi hợp đồng
+          {t('CHAT.SEND_CONTRACT')}
         </button>
       </div>
     </div>

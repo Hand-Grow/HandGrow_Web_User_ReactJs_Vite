@@ -49,7 +49,6 @@ const products: Product[] = [
 export default function ProductSection() {
   return (
     <div>
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold">Nông sản khả dụng</h3>
 

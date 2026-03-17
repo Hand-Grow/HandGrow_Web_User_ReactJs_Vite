@@ -25,4 +25,7 @@ export const contractAPI = {
     const res = await httpClient.get(API_ENDPOINTS.CONTRACTS.MY_CONTRACTS);
     return res.data;
   },
+  signContract: (contractId: string) => {
+    return httpClient.post(`${API_ENDPOINTS.CONTRACTS.SIGN(contractId)}`);
+  },
 };

@@ -13,6 +13,7 @@ import {
   ChevronDown,
   Package,
 } from 'lucide-react';
+import i18next from 'i18next';
 
 type MenuItem = {
   label: string;
@@ -121,7 +122,7 @@ function SidebarComponent() {
     document.cookie = 'accessToken=; path=/; max-age=0';
     localStorage.removeItem('accessToken');
 
-    router.push('/login');
+    router.push(`/login?lang=${i18next.language}`);
   };
 
   return (

@@ -8,6 +8,7 @@ import { validateLogin } from '@/src/utils/validators/authValidator';
 import RoleSelectView from '@/src/components/layout/login/RoleSelector';
 import LoginForm from '@/src/components/layout/login/LoginForm';
 import { USER_ROLES } from '@/src/constants';
+import i18next from 'i18next';
 
 const getRememberedLogin = () => {
   try {
@@ -85,7 +86,7 @@ const Login = () => {
       } else if (user.role === USER_ROLES.ENTERPRISE) {
         router.replace('/company');
       } else {
-        router.replace('/login');
+        router.replace(`/login?lang=${i18next.language || 'vi'}`);
       }
     } catch (_) {
       toast.error('Đăng nhập thất bại');

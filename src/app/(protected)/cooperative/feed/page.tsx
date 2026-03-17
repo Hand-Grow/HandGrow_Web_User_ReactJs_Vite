@@ -20,7 +20,12 @@ import {
 } from 'lucide-react';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
 import { showToast } from '@/src/utils/toast';
+
+import { useTranslation } from 'react-i18next';
+
 export default function FeedPage() {
+  const { t } = useTranslation();
+
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<PostType | 'ALL'>('ALL');
 
@@ -42,7 +47,7 @@ export default function FeedPage() {
       } catch (err) {
         console.error('Load feed failed:', err);
         showToast('error', {
-          message: 'Không thể tải bảng tin. Vui lòng thử lại',
+          message: t('FEED.ERROR_LOAD'),
         });
       } finally {
         setLoading(false);
@@ -60,7 +65,7 @@ export default function FeedPage() {
   const handleCreatePost = (post: Post) => {
     setFeed((prev) => [post, ...prev]);
     showToast('success', {
-      message: 'Đăng bài thành công',
+      message: t('FEED.POST_SUCCESS'),
     });
   };
 
@@ -81,12 +86,10 @@ export default function FeedPage() {
               >
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold">
-                    Bảng tin HTX
+                    {t('FEED.TITLE')}
                   </h2>
 
-                  <p className="text-sm opacity-90">
-                    Cập nhật thông báo và chiến dịch thu gom
-                  </p>
+                  <p className="text-sm opacity-90">{t('FEED.SUBTITLE')}</p>
                 </div>
 
                 <Sprout size={40} className="opacity-80" />
@@ -97,7 +100,7 @@ export default function FeedPage() {
                   hover:bg-gray-100 hover:scale-105 transition"
                 >
                   <ShoppingCart size={16} />
-                  Marketplace
+                  {t('FEED.MARKETPLACE')}
                 </button>
               </div>
 
@@ -105,17 +108,17 @@ export default function FeedPage() {
                 {[
                   {
                     key: 'ALL',
-                    label: 'Tất cả',
+                    label: t('FEED.FILTER.ALL'),
                     icon: <Newspaper size={16} />,
                   },
                   {
                     key: 'ANNOUNCEMENT',
-                    label: 'Thông báo',
+                    label: t('FEED.FILTER.ANNOUNCEMENT'),
                     icon: <Megaphone size={16} />,
                   },
                   {
                     key: 'CAMPAIGN',
-                    label: 'Thu gom',
+                    label: t('FEED.FILTER.CAMPAIGN'),
                     icon: <Sprout size={16} />,
                   },
                 ].map((tab) => (
@@ -134,6 +137,7 @@ export default function FeedPage() {
                   </button>
                 ))}
               </div>
+
               <div className="sticky top-4 z-20">
                 <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -145,7 +149,7 @@ export default function FeedPage() {
                     className="flex-1 text-left bg-gray-100 hover:bg-gray-200
       rounded-full px-4 py-2 text-gray-600 transition"
                   >
-                    Bạn đang nghĩ gì?
+                    {t('FEED.THINKING')}
                   </button>
 
                   <button
@@ -160,13 +164,13 @@ export default function FeedPage() {
 
             {loading && (
               <div className="text-center py-16 text-gray-400">
-                Đang tải bảng tin...
+                {t('FEED.LOADING')}
               </div>
             )}
 
             {!loading && filteredFeed.length === 0 && (
               <div className="text-center py-16 text-gray-400">
-                Không có bài đăng
+                {t('FEED.EMPTY_POST')}
               </div>
             )}
 
@@ -179,38 +183,42 @@ export default function FeedPage() {
           <div className="lg:col-span-4 space-y-6 sticky top-24 self-start">
             <div className="bg-white p-5 rounded-2xl shadow">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
-                📊 Thống kê nhanh
+                {t('FEED.QUICK_STATS')}
               </h3>
 
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="bg-gray-50 rounded-xl p-3">
                   <p className="text-lg font-bold">{feed.length}</p>
-                  <p className="text-xs text-gray-500">Tổng bài</p>
+                  <p className="text-xs text-gray-500">
+                    {t('FEED.TOTAL_POSTS')}
+                  </p>
                 </div>
 
                 <div className="bg-green-50 rounded-xl p-3">
                   <p className="text-lg font-bold text-green-600">
                     {campaignCount}
                   </p>
-                  <p className="text-xs text-gray-500">Thu gom</p>
+                  <p className="text-xs text-gray-500">{t('FEED.CAMPAIGNS')}</p>
                 </div>
 
                 <div className="bg-red-50 rounded-xl p-3">
                   <p className="text-lg font-bold text-red-600">
                     {announcementCount}
                   </p>
-                  <p className="text-xs text-gray-500">Thông báo</p>
+                  <p className="text-xs text-gray-500">
+                    {t('FEED.ANNOUNCEMENTS')}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="bg-white p-5 rounded-2xl shadow">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
-                Thu gom sắp tới
+                {t('FEED.UPCOMING_CAMPAIGN')}
               </h3>
 
               {campaignPosts.length === 0 && (
-                <p className="text-sm text-gray-400">Chưa có đợt thu gom</p>
+                <p className="text-sm text-gray-400">{t('FEED.NO_CAMPAIGN')}</p>
               )}
 
               <div className="space-y-3">

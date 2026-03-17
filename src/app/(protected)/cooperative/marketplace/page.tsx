@@ -10,6 +10,7 @@ import { Store, PackageSearch, Clock, Filter } from 'lucide-react';
 
 import MarketplaceCard from '@/src/components/feed/MarketplaceModal';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
+import { useTranslation } from 'react-i18next';
 
 const getProduceLabel = (value?: string) => {
   return PRODUCE_LABELS[value as ProduceType] ?? value ?? 'Khác';
@@ -17,6 +18,7 @@ const getProduceLabel = (value?: string) => {
 export default function MarketplacePage() {
   const [posts, setPosts] = useState<MarketplacePost[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   const [search, setSearch] = useState('');
   const [timeFilter, setTimeFilter] = useState<number | null>(null);
@@ -89,11 +91,9 @@ export default function MarketplacePage() {
 
             <div>
               <h1 className="text-xl md:text-2xl font-bold">
-                Marketplace Nông sản
+                {t('MARKETPLACE.TITLE')}
               </h1>
-              <p className="text-sm opacity-90">
-                Các lô hàng đang mở bán từ hợp tác xã
-              </p>
+              <p className="text-sm opacity-90">{t('MARKETPLACE.SUBTITLE')}</p>
             </div>
           </div>
 
@@ -113,7 +113,7 @@ export default function MarketplacePage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               type="text"
-              placeholder="Tìm kiếm nông sản..."
+              placeholder={t('MARKETPLACE.SEARCH_PLACEHOLDER')}
               className="w-full text-sm outline-none bg-transparent"
             />
           </div>
@@ -127,7 +127,7 @@ export default function MarketplacePage() {
               onChange={(e) => setProductFilter(e.target.value)}
               className="text-sm bg-transparent outline-none"
             >
-              <option value="all">Tất cả sản phẩm</option>
+              <option value="all">{t('MARKETPLACE.FILTER.ALL')}</option>
 
               {productOptions.map((product) => (
                 <option key={product} value={product}>
@@ -181,9 +181,12 @@ export default function MarketplacePage() {
           <div className="text-center py-20 text-gray-400">
             <Store size={42} className="mx-auto mb-4 opacity-40" />
 
-            <p className="text-lg font-medium"> Không tìm thấy sản phẩm</p>
+            <p className="text-lg font-medium">
+              {' '}
+              {t('MARKETPLACE.EMPTY.TITLE')}{' '}
+            </p>
 
-            <p className="text-sm"> Hãy thử thay đổi bộ lọc </p>
+            <p className="text-sm"> {t('MARKETPLACE.EMPTY.SUBTITLE')} </p>
           </div>
         )}
 

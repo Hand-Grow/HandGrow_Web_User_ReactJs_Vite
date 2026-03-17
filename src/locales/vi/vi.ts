@@ -1,0 +1,265 @@
+export const vi = {
+  DASHBOARD: {
+    HOME_TITLE: 'Trang chủ HTX',
+    HOME_SUBTITLE: 'Chào mừng bạn đến với hệ thống quản lý hợp tác xã',
+
+    STATUS: {
+      TOTAL_MEMBERS: 'Tổng thành viên',
+      TOTAL_PACKAGES: 'Kiện hàng chung',
+      COLLECTING: 'Đang thu gom',
+      CONTRACT_SALES: 'Bán hợp đồng',
+      MONTH_COMPARE: '+12% so với tháng trước',
+    },
+
+    TRANSACTIONS: {
+      TITLE: 'Đơn mua chung',
+      SUBTITLE: 'Danh sách giao dịch',
+      VIEW_ALL: 'Xem tất cả',
+      PROCESSING: 'Đang xử lý',
+    },
+
+    MESSAGES: {
+      TITLE: 'Tin nhắn mới',
+    },
+
+    ACTIONS: {
+      TITLE: 'Hành động nhanh',
+      SUBTITLE: 'Các chức năng thường dùng',
+      CREATE_ORDER: 'Tạo đơn mua hàng',
+      MANAGE_MEMBERS: 'Quản lý thành viên',
+      PRODUCTION_STATS: 'Thống kê sản xuất',
+    },
+  },
+  FEED: {
+    TITLE: 'Bảng tin HTX',
+    SUBTITLE: 'Cập nhật thông báo và chiến dịch thu gom',
+    MARKETPLACE: 'Marketplace',
+    THINKING: 'Bạn đang nghĩ gì?',
+    LOADING: 'Đang tải bảng tin...',
+    EMPTY_POST: 'Không có bài đăng',
+    POST_SUCCESS: 'Đăng bài thành công',
+    ERROR_LOAD: 'Không thể tải bảng tin. Vui lòng thử lại',
+    QUICK_STATS: '📊 Thống kê nhanh',
+    TOTAL_POSTS: 'Tổng bài',
+    CAMPAIGNS: 'Thu gom',
+    ANNOUNCEMENTS: 'Thông báo',
+    UPCOMING_CAMPAIGN: 'Thu gom sắp tới',
+    NO_CAMPAIGN: 'Chưa có đợt thu gom',
+    NEW: 'Mới',
+    EXPECTED_CAMPAIGN: 'Thu gom dự kiến:',
+    PUBLISH: 'Đăng bán',
+    PUBLISHED: 'Đã đăng Marketplace',
+
+    WRITE_COMMENT: 'Viết bình luận...',
+    SEND: 'Gửi',
+    REPLY: 'Trả lời',
+
+    TIME: {
+      JUST_NOW: 'Vừa xong',
+      MINUTES_one: '{{count}} phút trước',
+      MINUTES_other: '{{count}} phút trước',
+
+      HOURS_one: '{{count}} giờ trước',
+      HOURS_other: '{{count}} giờ trước',
+
+      DAYS_one: '{{count}} ngày trước',
+      DAYS_other: '{{count}} ngày trước',
+    },
+    ERROR_IMAGE: 'Không thể tải ảnh. Vui lòng thử lại',
+    UPLOADING: 'Đang tải lên...',
+    POST: 'Đăng bài',
+    CONTENT_PLACEHOLDER: 'Nhập nội dung bài đăng...',
+    TITLE_POST: 'Tiêu đề',
+    TITLE_POST_PLACEHOLDER: 'Nhập tiêu đề bài đăng...',
+    ANNOUNCEMENT: 'Thông báo',
+    CAMPAIGN: 'Thu gom',
+    PRODUCT: 'Sản phẩm',
+    EXPECTED_DATE: 'Ngày dự kiến',
+    ATTACHMENTS: 'Ảnh đính kèm',
+    ADD_IMAGE: 'Thêm ảnh',
+
+    FILTER: {
+      ALL: 'Tất cả',
+      ANNOUNCEMENT: 'Thông báo',
+      CAMPAIGN: 'Thu gom',
+    },
+  },
+  MEMBERS: {
+    TITLE: 'Quản lý thành viên',
+    SUBTITLE: 'Danh sách nông dân tham gia hợp tác xã',
+
+    SEARCH_PLACEHOLDER: 'Tìm kiếm thành viên',
+
+    FILTER: {
+      ALL: 'Tất cả',
+      ACTIVE: 'Đang hoạt động',
+      PENDING: 'Chờ duyệt',
+      APPROVED: 'Đã duyệt',
+      REJECTED: 'Từ chối',
+    },
+
+    TABLE: {
+      NAME: 'Tên',
+      PHONE: 'Số điện thoại',
+      LOCATION: 'Địa chỉ',
+      STATUS: 'Trạng thái',
+      ACTION: 'Hành động',
+    },
+
+    STATUS: {
+      TOTAL: 'Tổng',
+      ACTIVE: 'Đang hoạt động',
+      PENDING: 'Chờ duyệt',
+      APPROVED: 'Đã duyệt',
+      REJECTED: 'Từ chối',
+    },
+
+    ACTION: {
+      ADD: 'Thêm thành viên',
+      APPROVE: 'Duyệt',
+      REJECT: 'Từ chối',
+      VIEW: 'Xem',
+    },
+
+    EMPTY: 'Không có thành viên',
+
+    TOAST: {
+      APPROVE_SUCCESS: 'Duyệt thành viên thành công',
+      REJECT_SUCCESS: 'Từ chối thành viên',
+      LOAD_ERROR: 'Không thể tải danh sách thành viên',
+    },
+  },
+  MARKETPLACE: {
+    TITLE: 'Marketplace',
+    SUBTITLE: 'Danh sách sản phẩm thu gom từ hợp tác xã',
+
+    SEARCH_PLACEHOLDER: 'Tìm sản phẩm',
+
+    FILTER: {
+      ALL: 'Tất cả',
+      AVAILABLE: 'Đang bán',
+      SOLD: 'Đã bán',
+    },
+
+    PRODUCT: {
+      NAME: 'Tên sản phẩm',
+      QUANTITY: 'Số lượng',
+      PRICE: 'Giá',
+      LOCATION: 'Khu vực',
+      DATE: 'Ngày đăng',
+    },
+
+    ACTION: {
+      VIEW: 'Xem chi tiết',
+      NEGOTIATE: 'Đàm phán',
+    },
+
+    EMPTY: {
+      TITLE: 'Không tìm thấy sản phẩm',
+      SUBTITLE: 'Hãy thử thay đổi bộ lọc',
+    },
+
+    TOAST: {
+      LOAD_ERROR: 'Không thể tải marketplace',
+    },
+  },
+  CHAT: {
+    DRAFT_ERROR: 'Không thể tạo bản nháp hợp đồng. Vui lòng thử lại',
+    TITLE: 'Tin nhắn',
+    SUBTITLE: 'Giao tiếp giữa hợp tác xã và doanh nghiệp',
+    SELECT_ROOM: 'Chọn một cuộc hội thoại để bắt đầu',
+    AI_DRAFTING: '🤖 AI đang soạn thảo hợp đồng...',
+    CREATE_CONTRACT: 'Tạo hợp đồng',
+    REQUEST_SAMPLE: 'Yêu cầu mẫu',
+    SEND_CONTRACT: 'Gửi hợp đồng',
+    CANCEL: 'Hủy',
+    SAVE: 'Lưu hợp đồng',
+    TERMS: 'Điều khoản hợp đồng',
+    TOTAL_VALUE: 'Tổng giá trị',
+    CURRENCY: 'VND',
+    PRODUCT: 'Sản phẩm',
+    DELIVERY_DATE: 'Ngày giao',
+    QUANTITY: 'Sản lượng',
+    PRICE: 'Đơn giá',
+    CONTRACT: 'Hợp đồng',
+    MESSAGE: 'Tin nhắn',
+    TYPE_MESSAGE: 'Nhập tin nhắn...',
+    LOAD_SUCCESS: 'Tải danh sách chat thành công!',
+    LOAD_ERROR: 'Không thể tải danh sách chat!',
+    FETCH_MESSAGES_ERROR: 'Không thể tải tin nhắn!',
+    ROOM_LOADED: 'Đã tải phòng chat!',
+    SENDING: 'Đang gửi tin nhắn...',
+    SEND_SUCCESS: 'Gửi tin nhắn thành công!',
+    SEND_ERROR: 'Gửi tin nhắn thất bại!',
+    DRAFT_SUCCESS: 'Soạn thảo hợp đồng thành công!',
+    SENDING_CONTRACT: 'Đang gửi hợp đồng...',
+    SEND_CONTRACT_SUCCESS: 'Gửi hợp đồng thành công!',
+    SEND_CONTRACT_ERROR: 'Gửi hợp đồng thất bại!',
+    CONTRACT_SAVED: 'Lưu hợp đồng thành công!',
+    CONTRACT_SAVE_ERROR: 'Lưu hợp đồng thất bại!',
+    NO_ROOM_SELECTED: 'Chưa chọn phòng chat!',
+    CONTRACT_NOT_FOUND: 'Không tìm thấy hợp đồng cho phòng chat này!',
+    CONTRACT_NO_PERMISSION: 'Bạn không có quyền gửi hợp đồng này!',
+    CONTRACT_EMPTY: 'Dữ liệu hợp đồng trống!',
+  },
+  CONTRACT: {
+    LOAD_ERROR: 'Không thể tải hợp đồng',
+    TITLE: 'Hợp đồng mua chung',
+    SUBTITLE: 'Danh sách hợp đồng giữa hợp tác xã và doanh nghiệp',
+    CREATE: 'Tạo hợp đồng mới',
+    LOADING: 'Đang tải hợp đồng...',
+    EMPTY: 'Chưa có hợp đồng nào',
+
+    ENTERPRISE: 'Doanh nghiệp',
+    COOPERATIVE: 'Hợp tác xã',
+    QUANTITY: 'Sản lượng',
+    PRICE: 'Đơn giá',
+    TOTAL_VALUE: 'Tổng giá trị',
+    VIEW_DOCUMENT: 'Xem file hợp đồng',
+    TOAST: {
+      CREATE_SUCCESS: 'Tạo hợp đồng thành công',
+      CREATE_ERROR: 'Không thể tạo hợp đồng. Vui lòng thử lại',
+    },
+    TITLE_CONTRACT: 'HỢP ĐỒNG',
+    PRODUCT: 'Sản phẩm',
+    DELIVERY_DATE: 'Ngày giao hàng',
+    VIEW_DETAILS: 'Xem chi tiết',
+    SIGN_BUTTON: 'Ký hợp đồng',
+    STATUS: {
+      PENDING_ENTERPRISE: 'Chờ doanh nghiệp ký',
+      PENDING_COOP: 'Chờ HTX ký',
+      SIGNED: 'Đã ký',
+      CANCELLED: 'Đã hủy',
+    },
+  },
+  HEADER: {
+    HOME: 'Trang chủ',
+    ABOUT: 'Giới thiệu',
+    SERVICES: 'Dịch vụ',
+    NEWS: 'Tin tức',
+    CONTACT: 'Liên hệ',
+  },
+  ORDERS: {
+    TITLE: 'Hợp đồng',
+    SUBTITLE: 'Quản lý tất cả hợp đồng mua bán',
+    CREATE: 'Tạo hợp đồng',
+    LOADING: 'Đang tải hợp đồng...',
+    EMPTY: 'Chưa có hợp đồng nào',
+    ERROR_LOAD: 'Không thể tải danh sách hợp đồng',
+    ENTERPRISE: 'Doanh nghiệp',
+    COOPERATIVE: 'Hợp tác xã',
+    QUANTITY: 'Số lượng',
+    PRICE: 'Đơn giá',
+    TOTAL_VALUE: 'Tổng giá trị',
+    DELIVERY_DATE: 'Ngày giao hàng',
+    VIEW_DOCUMENT: 'Xem tài liệu',
+    STATUS: {
+      PENDING_ENTERPRISE_SIGNATURE: 'Chờ doanh nghiệp ký',
+      PENDING_COOPERATIVE_SIGNATURE: 'Chờ HTX ký',
+      SIGNED: 'Đã ký',
+      CANCELLED: 'Đã hủy',
+      DRAFT: 'Bản nháp',
+      EXPIRED: 'Hết hạn',
+    },
+  },
+};
