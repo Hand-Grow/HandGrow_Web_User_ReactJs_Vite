@@ -10,10 +10,15 @@ import {
   FileText,
   User,
   LogOut,
-  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Package,
 } from 'lucide-react';
 import i18next from 'i18next';
+
+interface SidebarProps {
+  onExpandChange?: (expanded: boolean) => void;
+}
 
 type MenuItem = {
   label: string;
@@ -54,7 +59,7 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-function SidebarComponent() {
+function SidebarComponent({ onExpandChange }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -103,62 +108,56 @@ function SidebarComponent() {
     getUserInfo();
   }, []);
 
-  // Prefetch toàn bộ page khi load
+  const toggleExpand = () => {
+    const newState = !expanded;
+    setExpanded(newState);
+    onExpandChange?.(newState);
+
+    window.dispatchEvent(
+      new CustomEvent('sidebarChange', { detail: { expanded: newState } })
+    );
+  };
+
   useEffect(() => {
     menuItems.forEach((item) => {
       router.prefetch(item.href);
     });
   }, [router]);
 
-  // Update padding main content
-  useEffect(() => {
-    const main = document.querySelector('main');
-    if (main) {
-      main.style.paddingLeft = expanded ? '16rem' : '5rem';
-    }
-  }, [expanded]);
-
   const handleLogout = () => {
     document.cookie = 'accessToken=; path=/; max-age=0';
     localStorage.removeItem('accessToken');
-
-    router.push(`/login?lang=${i18next.language}`);
+    router.push(`/login?lang=${i18next.language || 'vi'}`);
   };
 
   return (
-    <aside
-      className={`bg-white border-r border-gray-200 transition-all duration-300 ${
-        expanded ? 'w-64' : 'w-20'
-      } min-h-screen flex flex-col fixed top-0 left-0 h-screen z-50`}
-    >
+    <aside className="bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-4rem)]">
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center gap-3">
-        <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">
+        <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
           {userInfo?.name?.charAt(0)?.toUpperCase() || 'AT'}
         </div>
 
         {expanded && (
-          <div>
-            <span className="text-sm font-bold text-gray-900">
+          <div className="truncate">
+            <span className="text-sm font-bold text-gray-900 block truncate">
               {userInfo?.name || 'AgriTrade'}
             </span>
-            <br />
             <span className="text-xs text-gray-400">Doanh nghiệp</span>
           </div>
         )}
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
-
           const isActive =
             pathname === item.href ||
             (pathname.startsWith(item.href + '/') &&
               !menuItems.some(
                 (i) => i.href !== item.href && pathname.startsWith(i.href)
               ));
+
           return (
             <Link
               key={item.href}
@@ -170,36 +169,39 @@ function SidebarComponent() {
                   ? 'bg-emerald-100 text-emerald-700 font-semibold'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
+              title={!expanded ? item.label : ''}
             >
-              <Icon className="w-5 h-5" />
-
-              {expanded && <span className="text-sm">{item.label}</span>}
+              <Icon className="w-5 h-5 shrink-0" />
+              {expanded && (
+                <span className="text-sm truncate">{item.label}</span>
+              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer */}
       <div className="p-4 border-t border-gray-200 space-y-2">
         <button
-          onClick={() => setExpanded(!expanded)}
+          onClick={toggleExpand}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+          title={!expanded ? 'Thu gọn' : ''}
         >
-          <ChevronDown
-            className={`w-5 h-5 transition-transform ${
-              expanded ? '' : 'rotate-180'
-            }`}
-          />
-
-          {expanded && <span className="text-sm">Thu gọn</span>}
+          {expanded ? (
+            <>
+              <ChevronLeft className="w-5 h-5 shrink-0" />
+              <span className="text-sm">Thu gọn</span>
+            </>
+          ) : (
+            <ChevronRight className="w-5 h-5 shrink-0 mx-auto" />
+          )}
         </button>
 
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+          title={!expanded ? 'Đăng xuất' : ''}
         >
-          <LogOut className="w-5 h-5" />
-
+          <LogOut className="w-5 h-5 shrink-0" />
           {expanded && <span className="text-sm">Đăng xuất</span>}
         </button>
       </div>

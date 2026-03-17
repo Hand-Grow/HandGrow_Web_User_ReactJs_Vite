@@ -42,7 +42,6 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
 
   const fetchMessages = useCallback(async () => {
     if (!selectedRoom?.id) return;
-
     try {
       const res = await chatApi.getMessages(selectedRoom.id, 0, 100);
       setMessages(res.data);
@@ -53,11 +52,10 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
   }, [selectedRoom?.id, t]);
 
   useEffect(() => {
-    setMessages([]);
-  }, [selectedRoom?.id]);
-
-  useEffect(() => {
-    if (!selectedRoom?.id) return;
+    if (!selectedRoom?.id) {
+      setMessages([]);
+      return;
+    }
 
     fetchMessages();
     toast.success(t('CHAT.ROOM_LOADED') || 'Đã tải phòng chat!');
@@ -77,6 +75,8 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     const toastId = toast.loading(t('CHAT.SENDING') || 'Đang gửi tin nhắn...');
 
     try {
+      // Vẫn dùng API gọi qua HTTP để ném lên server lưu Database.
+      // Khi server lưu xong, TỰ NÓ SẼ BƠM TIN NHẮN qua WebSocket về lại cho mình (và người kia).
       await chatApi.sendMessage(selectedRoom.id, text, senderType);
       await fetchMessages();
 
@@ -99,9 +99,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
 
     try {
       setIsDrafting(true);
-
       const res = await contractAPI.aiDraftContract(selectedRoom.id);
-
       setDraftData(res.data);
       setShowModal(true);
 
@@ -190,6 +188,15 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
   const isMine = (msgSenderType: string) => {
     return msgSenderType === senderType;
   };
+
+  if (!selectedRoom) {
+    return (
+      <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
+        <p className="text-neutral-500"> Chọn một cuộc hội thoại để bắt đầu </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex flex-col overflow-hidden">
       <ChatHeader room={selectedRoom} viewerType={senderType} />

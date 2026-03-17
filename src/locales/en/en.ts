@@ -1,5 +1,3 @@
-import { Signal } from 'lucide-react';
-
 export const en = {
   DASHBOARD: {
     HOME_TITLE: 'Cooperative Dashboard',

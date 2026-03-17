@@ -69,7 +69,6 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
     setExpanded(newState);
     onExpandChange?.(newState);
 
-    // Dispatch event cho layout (cách khác nếu không dùng props)
     window.dispatchEvent(
       new CustomEvent('sidebarChange', { detail: { expanded: newState } })
     );

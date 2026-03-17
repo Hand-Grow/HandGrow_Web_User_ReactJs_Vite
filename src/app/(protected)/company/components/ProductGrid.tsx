@@ -1,18 +1,8 @@
 import ProductCard from './ProductCard';
-
-interface Product {
-  id: string;
-  campaignId: string;
-  productName: string;
-  totalQuantity: number;
-  expectedPrice: number;
-  status: string;
-  coopName: string;
-  createdAt: string;
-}
+import { MarketplacePost } from '@/src/types/posts';
 
 interface ProductGridProps {
-  products?: Product[];
+  products?: MarketplacePost[];
   loading?: boolean;
 }
 
@@ -46,8 +36,8 @@ export default function ProductGrid({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {products.map((product, index) => (
-        <ProductCard key={product.id || index} product={product} />
+      {products.map((product) => (
+        <ProductCard key={product.id.toString()} product={product} />
       ))}
     </div>
   );

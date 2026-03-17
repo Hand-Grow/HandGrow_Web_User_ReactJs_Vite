@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
-import { Province, Ward } from '@/src/types/location';
+import { Province, Ward } from '@/src/types/index';
 import { validateRegister } from '@/src/utils/validators/authValidator';
 import RegisterForm from '@/src/components/layout/register/RegisterForm';
 import { locationApi } from '@/src/services/location/locationApi';

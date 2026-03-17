@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import SourcingHeader from './components/SourcingHeader';
-import FilterBar from './components/FilterBar';
-import ProductGrid from './components/ProductGrid';
+import SourcingHeader from '../components/SourcingHeader';
+import FilterBar from '../components/FilterBar';
 import { toast } from 'react-toastify';
 import { marketplaceApi } from '@/src/services/marketplace/marketplaceApi';
 import { PRODUCE_LABELS } from '@/src/constants';
+import ProductGrid from '../components/ProductGrid';
 interface BulkSale {
   id: string;
   campaignId: string;
