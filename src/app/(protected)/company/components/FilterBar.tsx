@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PRODUCE_LABELS, PRODUCE_VALUES } from '@/src/constants';
+
 interface FilterBarProps {
   onFilterChange?: (filters: { product: string; search: string }) => void;
   onSearchChange?: (searchValue: string) => void;
@@ -38,6 +38,7 @@ export default function FilterBar({
   onFilterChange,
   onSearchChange,
 }: FilterBarProps) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('Tất cả');
 
@@ -64,7 +65,7 @@ export default function FilterBar({
       <div className="flex items-center border rounded-xl px-4 py-3 bg-white">
         <Search size={18} className="text-neutral-400" />
         <input
-          placeholder="Tìm kiếm tên hợp tác xã"
+          placeholder={t('FILTER.SEARCH_PLACEHOLDER')}
           value={searchTerm}
           onChange={handleSearch}
           className="ml-3 outline-none w-full text-sm"
@@ -73,21 +74,29 @@ export default function FilterBar({
 
       <div className="space-y-4 text-sm">
         <div>
-          <p className="text-neutral-500 mb-2">Loại nông sản</p>
+          <p className="text-neutral-500 mb-2">{t('FILTER.PRODUCT_TYPE')}</p>
           <div className="flex flex-wrap gap-2">
-            {['Tất cả', ...PRODUCE_VALUES].map((product) => (
-              <Chip
-                key={product}
-                label={
-                  product === 'Tất cả'
-                    ? product
-                    : PRODUCE_LABELS[product as keyof typeof PRODUCE_LABELS] ||
-                      product
-                }
-                active={selectedProduct === product}
-                onClick={() => handleProductSelect(product)}
-              />
-            ))}
+            {[t('FILTER.ALL'), ...PRODUCE_VALUES].map((product, index) => {
+              if (index === 0) {
+                return (
+                  <Chip
+                    key="all"
+                    label={product}
+                    active={selectedProduct === 'Tất cả'}
+                    onClick={() => handleProductSelect('FILTER.Tất cả')}
+                  />
+                );
+              }
+              const productKey = product as keyof typeof PRODUCE_LABELS;
+              return (
+                <Chip
+                  key={product}
+                  label={PRODUCE_LABELS[productKey] || product}
+                  active={selectedProduct === product}
+                  onClick={() => handleProductSelect(product)}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

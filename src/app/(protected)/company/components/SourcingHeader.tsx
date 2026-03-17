@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Package, FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import sourcingApi from '@/src/services/sourcing/sourcingApi';
 import { CreateSourcingRequestForm } from '@/src/services/sourcing/types';
 
 export default function SourcingHeader() {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CreateSourcingRequestForm>({
@@ -44,15 +46,15 @@ export default function SourcingHeader() {
     e.preventDefault();
 
     if (!formData.productName.trim()) {
-      toast.error('Vui lòng nhập tên sản phẩm');
+      toast.error(t('SOURCING.FORM.VALIDATION.PRODUCT_NAME_REQUIRED'));
       return;
     }
     if (!formData.quantity.trim()) {
-      toast.error('Vui lòng nhập số lượng');
+      toast.error(t('SOURCING.FORM.VALIDATION.QUANTITY_REQUIRED'));
       return;
     }
     if (!formData.deadline.trim()) {
-      toast.error('Vui lòng chọn hạn chót');
+      toast.error(t('SOURCING.FORM.VALIDATION.DEADLINE_REQUIRED'));
       return;
     }
 
@@ -60,7 +62,7 @@ export default function SourcingHeader() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (selectedDate < today) {
-      toast.error('Hạn chót không thể là ngày đã qua');
+      toast.error(t('SOURCING.FORM.VALIDATION.DEADLINE_PAST'));
       return;
     }
 
@@ -71,9 +73,7 @@ export default function SourcingHeader() {
         const profileResponse = await sourcingApi.testUserAccess();
         console.log('User profile access test response:', profileResponse);
       } catch (profileError) {
-        toast.error(
-          'Không thể truy cập thông tin user. Vui lòng đăng nhập lại.'
-        );
+        toast.error(t('SOURCING.TOAST.ACCESS_ERROR'));
         return;
       }
 
@@ -90,7 +90,7 @@ export default function SourcingHeader() {
 
       const response = await sourcingApi.create(requestData);
 
-      toast.success('Tạo yêu cầu mua thành công!');
+      toast.success(t('SOURCING.TOAST.CREATE_SUCCESS'));
 
       setFormData({
         productName: '',
@@ -114,25 +114,24 @@ export default function SourcingHeader() {
       };
 
       if (axiosError.response?.status === 401) {
-        toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        toast.error(t('SOURCING.TOAST.UNAUTHORIZED'));
       } else if (axiosError.response?.status === 403) {
-        toast.error(
-          'Bạn không có quyền tạo yêu cầu mua. Vui lòng liên hệ admin.'
-        );
+        toast.error(t('SOURCING.TOAST.FORBIDDEN'));
       } else if (axiosError.response?.status === 400) {
         const errorMessage =
-          axiosError.response?.data?.message || 'Dữ liệu không hợp lệ';
+          axiosError.response?.data?.message ||
+          t('SOURCING.TOAST.INVALID_DATA');
         toast.error(errorMessage);
       } else if (
         axiosError.response?.status &&
         axiosError.response.status >= 500
       ) {
-        toast.error('Lỗi server. Vui lòng thử lại sau.');
+        toast.error(t('SOURCING.TOAST.SERVER_ERROR'));
       } else {
         const errorMessage =
           axiosError.response?.data?.message ||
           axiosError.message ||
-          'Tạo yêu cầu mua thất bại';
+          t('SOURCING.TOAST.CREATE_FAILED');
         toast.error(errorMessage);
       }
     } finally {
@@ -144,10 +143,8 @@ export default function SourcingHeader() {
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">Tìm kiếm nguồn cung</h1>
-          <p className="text-sm text-neutral-500">
-            Khám phá các nguồn nông sản chất lượng
-          </p>
+          <h1 className="text-xl font-bold">{t('SOURCING.TITLE')}</h1>
+          <p className="text-sm text-neutral-500">{t('SOURCING.SUBTITLE')}</p>
         </div>
 
         <button
@@ -155,7 +152,7 @@ export default function SourcingHeader() {
           className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          Tạo yêu cầu mua
+          {t('SOURCING.CREATE_BUTTON')}
         </button>
       </div>
 
@@ -168,9 +165,11 @@ export default function SourcingHeader() {
                   <Package className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold">Tạo yêu cầu mua mới</h2>
+                  <h2 className="text-lg font-bold">
+                    {t('SOURCING.MODAL.TITLE')}
+                  </h2>
                   <p className="text-sm text-gray-500">
-                    Điền thông tin chi tiết về yêu cầu của bạn
+                    {t('SOURCING.MODAL.SUBTITLE')}
                   </p>
                 </div>
               </div>
@@ -188,7 +187,8 @@ export default function SourcingHeader() {
             >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tên sản phẩm <span className="text-red-500">*</span>
+                  {t('SOURCING.FORM.PRODUCT_NAME')}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -198,14 +198,15 @@ export default function SourcingHeader() {
                     handleInputChange('productName', e.target.value)
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="Ví dụ: Cà phê Arabica"
+                  placeholder={t('SOURCING.FORM.PRODUCT_NAME_PLACEHOLDER')}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Số lượng <span className="text-red-500">*</span>
+                    {t('SOURCING.FORM.QUANTITY')}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -215,27 +216,28 @@ export default function SourcingHeader() {
                       handleInputChange('quantity', e.target.value)
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="1000"
+                    placeholder={t('SOURCING.FORM.QUANTITY_PLACEHOLDER')}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Đơn vị <span className="text-red-500">*</span>
+                    {t('SOURCING.FORM.UNIT')}
+                    <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.unit}
                     onChange={(e) => handleInputChange('unit', e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
-                    <option value="kg">Kg</option>
-                    <option value="tấn">Tấn</option>
+                    <option value="kg">{t('SOURCING.FORM.UNITS.KG')}</option>
+                    <option value="tấn">{t('SOURCING.FORM.UNITS.TON')}</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Giá dự kiến (VNĐ)
+                  {t('SOURCING.FORM.EXPECTED_PRICE')}
                 </label>
                 <input
                   type="number"
@@ -244,13 +246,14 @@ export default function SourcingHeader() {
                     handleInputChange('expectedPrice', e.target.value)
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="50000"
+                  placeholder={t('SOURCING.FORM.EXPECTED_PRICE_PLACEHOLDER')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hạn chót <span className="text-red-500">*</span>
+                  {t('SOURCING.FORM.DEADLINE')}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -259,14 +262,14 @@ export default function SourcingHeader() {
                   onChange={(e) =>
                     handleInputChange('deadline', e.target.value)
                   }
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().split('SOURCING.T')[0]}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Yêu cầu thêm
+                  {t('SOURCING.FORM.REQUIREMENTS')}
                 </label>
                 <textarea
                   value={formData.requirements}
@@ -275,7 +278,7 @@ export default function SourcingHeader() {
                   }
                   rows={4}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                  placeholder="Nhập các yêu cầu cụ thể về chất lượng, quy cách, thời gian giao hàng..."
+                  placeholder={t('SOURCING.FORM.REQUIREMENTS_PLACEHOLDER')}
                 />
               </div>
 
@@ -285,7 +288,7 @@ export default function SourcingHeader() {
                   onClick={() => setShowModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Hủy
+                  {t('SOURCING.FORM.CANCEL')}
                 </button>
                 <button
                   type="submit"
@@ -295,12 +298,12 @@ export default function SourcingHeader() {
                   {loading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Đang tạo...
+                      {t('SOURCING.FORM.CREATING')}
                     </>
                   ) : (
                     <>
                       <FileText className="w-4 h-4" />
-                      Tạo yêu cầu
+                      {t('SOURCING.FORM.CREATE')}
                     </>
                   )}
                 </button>

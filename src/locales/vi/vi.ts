@@ -1,4 +1,16 @@
 export const vi = {
+  COMMON: {
+    CURRENCY: 'đ',
+    UNIT: {
+      KG: 'kg',
+      TON: 'tấn',
+    },
+    AND: 'và',
+    PER: '/',
+    LOADING: 'Đang tải...',
+    EMPTY: 'Không có dữ liệu',
+    ERROR: 'Có lỗi xảy ra',
+  },
   DASHBOARD: {
     HOME_TITLE: 'Trang chủ HTX',
     HOME_SUBTITLE: 'Chào mừng bạn đến với hệ thống quản lý hợp tác xã',
@@ -22,14 +34,40 @@ export const vi = {
       TITLE: 'Tin nhắn mới',
     },
 
-    ACTIONS: {
-      TITLE: 'Hành động nhanh',
-      SUBTITLE: 'Các chức năng thường dùng',
+    QUICK_ACTIONS: {
+      TITLE: 'Thao tác nhanh',
+      CREATE_PURCHASE_REQUEST: 'Tạo yêu cầu mua mới',
+      SEARCH_SUPPLY: 'Tìm kiếm nguồn cung',
       CREATE_ORDER: 'Tạo đơn mua hàng',
       MANAGE_MEMBERS: 'Quản lý thành viên',
       PRODUCTION_STATS: 'Thống kê sản xuất',
     },
+
+    ACTIVITIES: {
+      TITLE: 'Hoạt động gần đây',
+      CONTRACT_CONFIRMED: 'Hợp đồng {{contractId}} đã xác nhận',
+      NEW_MESSAGE: 'Tin nhắn mới từ HTX {{cooperative}}',
+      DELIVERY_SUCCESS: 'Giao hàng thành công',
+      TIME: {
+        JUST_NOW: 'Vừa xong',
+        MINUTES_AGO: '{{count}} phút trước',
+        HOURS_AGO: '{{count}} giờ trước',
+        DAYS_AGO: '{{count}} ngày trước',
+      },
+    },
+
+    METRICS: {
+      TOTAL_POSTS: 'Tổng tin đăng',
+      ACTIVE_COOPERATIVES: 'HTX hoạt động',
+      AVAILABLE_TONS: 'Tấn khả dụng',
+      MONTHLY_REVENUE: 'Doanh thu tháng',
+      INCREASE: '+{{value}}',
+      DECREASE: '-{{value}}',
+      NUMBER: '{{count}}',
+      CURRENCY: '{{value}}',
+    },
   },
+
   FEED: {
     TITLE: 'Bảng tin HTX',
     SUBTITLE: 'Cập nhật thông báo và chiến dịch thu gom',
@@ -49,22 +87,9 @@ export const vi = {
     EXPECTED_CAMPAIGN: 'Thu gom dự kiến:',
     PUBLISH: 'Đăng bán',
     PUBLISHED: 'Đã đăng Marketplace',
-
     WRITE_COMMENT: 'Viết bình luận...',
     SEND: 'Gửi',
     REPLY: 'Trả lời',
-
-    TIME: {
-      JUST_NOW: 'Vừa xong',
-      MINUTES_one: '{{count}} phút trước',
-      MINUTES_other: '{{count}} phút trước',
-
-      HOURS_one: '{{count}} giờ trước',
-      HOURS_other: '{{count}} giờ trước',
-
-      DAYS_one: '{{count}} ngày trước',
-      DAYS_other: '{{count}} ngày trước',
-    },
     ERROR_IMAGE: 'Không thể tải ảnh. Vui lòng thử lại',
     UPLOADING: 'Đang tải lên...',
     POST: 'Đăng bài',
@@ -78,17 +103,25 @@ export const vi = {
     ATTACHMENTS: 'Ảnh đính kèm',
     ADD_IMAGE: 'Thêm ảnh',
 
+    TIME: {
+      JUST_NOW: 'Vừa xong',
+      MINUTES_AGO: '{{count}} phút trước',
+      HOURS_AGO: '{{count}} giờ trước',
+      DAYS_AGO: '{{count}} ngày trước',
+    },
+
     FILTER: {
       ALL: 'Tất cả',
       ANNOUNCEMENT: 'Thông báo',
       CAMPAIGN: 'Thu gom',
     },
   },
+
   MEMBERS: {
     TITLE: 'Quản lý thành viên',
     SUBTITLE: 'Danh sách nông dân tham gia hợp tác xã',
-
     SEARCH_PLACEHOLDER: 'Tìm kiếm thành viên',
+    EMPTY: 'Không có thành viên',
 
     FILTER: {
       ALL: 'Tất cả',
@@ -121,19 +154,26 @@ export const vi = {
       VIEW: 'Xem',
     },
 
-    EMPTY: 'Không có thành viên',
-
     TOAST: {
       APPROVE_SUCCESS: 'Duyệt thành viên thành công',
       REJECT_SUCCESS: 'Từ chối thành viên',
       LOAD_ERROR: 'Không thể tải danh sách thành viên',
     },
   },
+
   MARKETPLACE: {
     TITLE: 'Marketplace',
     SUBTITLE: 'Danh sách sản phẩm thu gom từ hợp tác xã',
-
     SEARCH_PLACEHOLDER: 'Tìm sản phẩm',
+    NO_IMAGE: 'Chưa có ảnh',
+    COOPERATIVE: 'HTX',
+    QUANTITY: 'Số lượng',
+    DESCRIPTION: 'Mô tả',
+    CONTACT_FOR_PRICE: 'Liên hệ',
+    VIEW_DETAILS: 'Xem chi tiết',
+    POSTED_DATE: 'Đăng ngày: {{date}}',
+    PRICE_FORMAT: '{{price}}đ/{{unit}}',
+    QUANTITY_FORMAT: '{{quantity}} {{unit}}',
 
     FILTER: {
       ALL: 'Tất cả',
@@ -147,6 +187,11 @@ export const vi = {
       PRICE: 'Giá',
       LOCATION: 'Khu vực',
       DATE: 'Ngày đăng',
+    },
+
+    STATUS: {
+      OPEN: 'Đang mở',
+      CLOSED: 'Đã đóng',
     },
 
     ACTION: {
@@ -163,11 +208,12 @@ export const vi = {
       LOAD_ERROR: 'Không thể tải marketplace',
     },
   },
+
   CHAT: {
-    DRAFT_ERROR: 'Không thể tạo bản nháp hợp đồng. Vui lòng thử lại',
     TITLE: 'Tin nhắn',
     SUBTITLE: 'Giao tiếp giữa hợp tác xã và doanh nghiệp',
     SELECT_ROOM: 'Chọn một cuộc hội thoại để bắt đầu',
+    TYPE_MESSAGE: 'Nhập tin nhắn...',
     AI_DRAFTING: '🤖 AI đang soạn thảo hợp đồng...',
     CREATE_CONTRACT: 'Tạo hợp đồng',
     REQUEST_SAMPLE: 'Yêu cầu mẫu',
@@ -183,62 +229,68 @@ export const vi = {
     PRICE: 'Đơn giá',
     CONTRACT: 'Hợp đồng',
     MESSAGE: 'Tin nhắn',
-    TYPE_MESSAGE: 'Nhập tin nhắn...',
-    LOAD_SUCCESS: 'Tải danh sách chat thành công!',
-    LOAD_ERROR: 'Không thể tải danh sách chat!',
-    FETCH_MESSAGES_ERROR: 'Không thể tải tin nhắn!',
+    LOADING: 'Đang tải danh sách chat...',
     ROOM_LOADED: 'Đã tải phòng chat!',
     SENDING: 'Đang gửi tin nhắn...',
-    SEND_SUCCESS: 'Gửi tin nhắn thành công!',
-    SEND_ERROR: 'Gửi tin nhắn thất bại!',
-    DRAFT_SUCCESS: 'Soạn thảo hợp đồng thành công!',
-    SENDING_CONTRACT: 'Đang gửi hợp đồng...',
-    SEND_CONTRACT_SUCCESS: 'Gửi hợp đồng thành công!',
-    SEND_CONTRACT_ERROR: 'Gửi hợp đồng thất bại!',
-    CONTRACT_SAVED: 'Lưu hợp đồng thành công!',
-    CONTRACT_SAVE_ERROR: 'Lưu hợp đồng thất bại!',
     NO_ROOM_SELECTED: 'Chưa chọn phòng chat!',
     CONTRACT_NOT_FOUND: 'Không tìm thấy hợp đồng cho phòng chat này!',
     CONTRACT_NO_PERMISSION: 'Bạn không có quyền gửi hợp đồng này!',
     CONTRACT_EMPTY: 'Dữ liệu hợp đồng trống!',
+
+    ERROR: {
+      FETCH_ROOMS: 'Lỗi khi tải danh sách phòng chat:',
+      FETCH_MESSAGES: 'Lỗi khi tải tin nhắn:',
+      SEND_MESSAGE: 'Lỗi khi gửi tin nhắn:',
+      CREATE_CONTRACT: 'Lỗi khi tạo hợp đồng:',
+    },
+
+    TOAST: {
+      LOAD_SUCCESS: 'Tải danh sách chat thành công!',
+      LOAD_ERROR: 'Không thể tải danh sách phòng chat',
+      FETCH_MESSAGES_ERROR: 'Không thể tải tin nhắn!',
+      SEND_SUCCESS: 'Gửi tin nhắn thành công!',
+      SEND_ERROR: 'Gửi tin nhắn thất bại!',
+      DRAFT_SUCCESS: 'Soạn thảo hợp đồng thành công!',
+      DRAFT_ERROR: 'Không thể tạo bản nháp hợp đồng. Vui lòng thử lại',
+      SEND_CONTRACT_SUCCESS: 'Gửi hợp đồng thành công!',
+      SEND_CONTRACT_ERROR: 'Gửi hợp đồng thất bại!',
+      CONTRACT_SAVED: 'Lưu hợp đồng thành công!',
+      CONTRACT_SAVE_ERROR: 'Lưu hợp đồng thất bại!',
+    },
   },
+
   CONTRACT: {
-    LOAD_ERROR: 'Không thể tải hợp đồng',
     TITLE: 'Hợp đồng mua chung',
     SUBTITLE: 'Danh sách hợp đồng giữa hợp tác xã và doanh nghiệp',
     CREATE: 'Tạo hợp đồng mới',
     LOADING: 'Đang tải hợp đồng...',
     EMPTY: 'Chưa có hợp đồng nào',
-
+    LOAD_ERROR: 'Không thể tải hợp đồng',
+    TITLE_CONTRACT: 'HỢP ĐỒNG',
     ENTERPRISE: 'Doanh nghiệp',
     COOPERATIVE: 'Hợp tác xã',
+    PRODUCT: 'Sản phẩm',
     QUANTITY: 'Sản lượng',
     PRICE: 'Đơn giá',
     TOTAL_VALUE: 'Tổng giá trị',
-    VIEW_DOCUMENT: 'Xem file hợp đồng',
-    TOAST: {
-      CREATE_SUCCESS: 'Tạo hợp đồng thành công',
-      CREATE_ERROR: 'Không thể tạo hợp đồng. Vui lòng thử lại',
-    },
-    TITLE_CONTRACT: 'HỢP ĐỒNG',
-    PRODUCT: 'Sản phẩm',
     DELIVERY_DATE: 'Ngày giao hàng',
+    VIEW_DOCUMENT: 'Xem file hợp đồng',
     VIEW_DETAILS: 'Xem chi tiết',
     SIGN_BUTTON: 'Ký hợp đồng',
+
     STATUS: {
       PENDING_ENTERPRISE: 'Chờ doanh nghiệp ký',
       PENDING_COOP: 'Chờ HTX ký',
       SIGNED: 'Đã ký',
       CANCELLED: 'Đã hủy',
     },
+
+    TOAST: {
+      CREATE_SUCCESS: 'Tạo hợp đồng thành công',
+      CREATE_ERROR: 'Không thể tạo hợp đồng. Vui lòng thử lại',
+    },
   },
-  HEADER: {
-    HOME: 'Trang chủ',
-    ABOUT: 'Giới thiệu',
-    SERVICES: 'Dịch vụ',
-    NEWS: 'Tin tức',
-    CONTACT: 'Liên hệ',
-  },
+
   ORDERS: {
     TITLE: 'Hợp đồng',
     SUBTITLE: 'Quản lý tất cả hợp đồng mua bán',
@@ -253,6 +305,7 @@ export const vi = {
     TOTAL_VALUE: 'Tổng giá trị',
     DELIVERY_DATE: 'Ngày giao hàng',
     VIEW_DOCUMENT: 'Xem tài liệu',
+
     STATUS: {
       PENDING_ENTERPRISE_SIGNATURE: 'Chờ doanh nghiệp ký',
       PENDING_COOPERATIVE_SIGNATURE: 'Chờ HTX ký',
@@ -260,6 +313,149 @@ export const vi = {
       CANCELLED: 'Đã hủy',
       DRAFT: 'Bản nháp',
       EXPIRED: 'Hết hạn',
+    },
+  },
+
+  PRODUCTS: {
+    AVAILABLE_TITLE: 'Nông sản khả dụng',
+    VIEW_ALL: 'Xem tất cả →',
+    DETAILS: 'Xem chi tiết & đặt hàng →',
+    ORIGIN: '• {{origin}}',
+    GRADE: 'Loại A: {{a}}%, Loại B: {{b}}%, Loại C: {{c}}%',
+    QUANTITY_AVAILABLE: '{{quantity}} tấn có sẵn',
+    PRICE_PER_KG: '{{price}} đ/kg',
+
+    TAGS: {
+      VIETGAP: 'VietGAP',
+      ORGANIC: 'Organic',
+    },
+  },
+
+  HEADER: {
+    HOME: 'Trang chủ',
+    ABOUT: 'Giới thiệu',
+    SERVICES: 'Dịch vụ',
+    NEWS: 'Tin tức',
+    CONTACT: 'Liên hệ',
+  },
+
+  SIDEBAR: {
+    HOME: 'Trang chủ',
+    SEARCH_SUPPLY: 'Tìm kiếm nguồn cung',
+    PURCHASE_REQUESTS: 'Yêu cầu mua',
+    MESSAGES: 'Tin nhắn',
+    CONTRACTS: 'Hợp đồng',
+    PROFILE: 'Cá nhân',
+    BUSINESS: 'Doanh nghiệp',
+    DEFAULT_COMPANY_NAME: 'Doanh nghiệp',
+    COLLAPSE: 'Thu gọn',
+    EXPAND: 'Mở rộng',
+    LOGOUT: 'Đăng xuất',
+  },
+
+  FILTER: {
+    SEARCH_PLACEHOLDER: 'Tìm kiếm tên hợp tác xã',
+    PRODUCT_TYPE: 'Loại nông sản',
+    ALL: 'Tất cả',
+    CLEAR: 'Xóa bộ lọc',
+    APPLY: 'Áp dụng',
+    RESULT_COUNT: '{{count}} kết quả',
+    NO_RESULTS: 'Không tìm thấy kết quả nào',
+  },
+
+  SOURCING: {
+    TITLE: 'Tìm kiếm nguồn cung',
+    SUBTITLE: 'Khám phá các nguồn nông sản chất lượng',
+    CREATE_BUTTON: 'Tạo yêu cầu mua',
+    PRICE_NEGOTIABLE: 'Thỏa thuận',
+
+    MY_REQUESTS: {
+      TITLE: 'Yêu cầu mua của tôi',
+      SUBTITLE: 'Quản lý các yêu cầu mua đã tạo',
+      REQUEST_ID: 'Mã yêu cầu',
+      QUANTITY: 'Số lượng',
+      EXPECTED_PRICE: 'Giá dự kiến',
+      DEADLINE: 'Hạn chót',
+      CREATED_AT: 'Ngày tạo',
+      UPDATED_AT: 'Cập nhật',
+      COUNT: '{{count}} yêu cầu',
+    },
+
+    STATUS: {
+      OPEN: 'Đang mở',
+      CLOSED: 'Đã đóng',
+      CANCELLED: 'Đã hủy',
+    },
+
+    UNITS: {
+      KG: 'kg',
+      TON: 'tấn',
+    },
+
+    EMPTY: {
+      TITLE: 'Chưa có yêu cầu mua nào',
+      SUBTITLE: 'Tạo yêu cầu mua đầu tiên để bắt đầu tìm kiếm nguồn cung',
+    },
+
+    MODAL: {
+      TITLE: 'Tạo yêu cầu mua mới',
+      SUBTITLE: 'Điền thông tin chi tiết về yêu cầu của bạn',
+    },
+
+    FORM: {
+      PRODUCT_NAME: 'Tên sản phẩm',
+      PRODUCT_NAME_PLACEHOLDER: 'Ví dụ: Cà phê Arabica',
+      QUANTITY: 'Số lượng',
+      QUANTITY_PLACEHOLDER: '1000',
+      UNIT: 'Đơn vị',
+      UNITS: {
+        KG: 'Kg',
+        TON: 'Tấn',
+      },
+      EXPECTED_PRICE: 'Giá dự kiến (VNĐ)',
+      EXPECTED_PRICE_PLACEHOLDER: '50000',
+      DEADLINE: 'Hạn chót',
+      REQUIREMENTS: 'Yêu cầu thêm',
+      REQUIREMENTS_PLACEHOLDER:
+        'Nhập các yêu cầu cụ thể về chất lượng, quy cách, thời gian giao hàng...',
+      CANCEL: 'Hủy',
+      CREATE: 'Tạo yêu cầu',
+      CREATING: 'Đang tạo...',
+
+      VALIDATION: {
+        PRODUCT_NAME_REQUIRED: 'Vui lòng nhập tên sản phẩm',
+        QUANTITY_REQUIRED: 'Vui lòng nhập số lượng',
+        DEADLINE_REQUIRED: 'Vui lòng chọn hạn chót',
+        DEADLINE_PAST: 'Hạn chót không thể là ngày đã qua',
+      },
+    },
+
+    TOAST: {
+      NOT_FOUND: 'Không tìm thấy API endpoint',
+      CREATE_SUCCESS: 'Tạo yêu cầu mua thành công!',
+      CREATE_FAILED: 'Tạo yêu cầu mua thất bại',
+      FETCH_ERROR: 'Lỗi khi tải danh sách yêu cầu mua',
+      ACCESS_ERROR:
+        'Không thể truy cập thông tin user. Vui lòng đăng nhập lại.',
+      UNAUTHORIZED: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+      FORBIDDEN: 'Bạn không có quyền tạo yêu cầu mua. Vui lòng liên hệ admin.',
+      INVALID_DATA: 'Dữ liệu không hợp lệ',
+      SERVER_ERROR: 'Lỗi server. Vui lòng thử lại sau.',
+    },
+    PRODUCTS: {
+      FOUND_COUNT: 'Tìm thấy {{count}} sản phẩm',
+      FOUND_COUNT_other: 'Tìm thấy {{count}} sản phẩm',
+    },
+
+    SORT: {
+      RELEVANT: 'Liên quan nhất',
+      PRICE_ASC: 'Giá thấp → cao',
+      PRICE_DESC: 'Giá cao → thấp',
+      CONTACT_PRICE: 'Giá liên hệ',
+    },
+    ERROR: {
+      FETCH_REQUESTS: 'Lỗi khi tải danh sách yêu cầu mua:',
+      FETCH_PRODUCTS: 'Lỗi khi tải danh sách sản phẩm:',
     },
   },
 };

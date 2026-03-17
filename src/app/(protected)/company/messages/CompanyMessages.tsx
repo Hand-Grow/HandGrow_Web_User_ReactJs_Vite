@@ -1,6 +1,8 @@
+'use client';
+
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
 import { ChatRoom } from '@/src/types';
@@ -9,8 +11,9 @@ import ConversationList from '@/src/components/chat/ConversationList';
 import ChatWindow from '@/src/components/chat/ChatWindow';
 
 export default function CompanyMessages() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
-  const roomIdFromUrl = searchParams.get('roomId');
+  const roomIdFromUrl = searchParams.get('CHAT.roomId');
 
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(
@@ -33,12 +36,12 @@ export default function CompanyMessages() {
         setSelectedRoomId(res.data[0].id);
       }
     } catch (error) {
-      console.error('Lỗi khi tải danh sách phòng chat:', error);
-      toast.error('Không thể tải danh sách phòng chat');
+      console.error(t('CHAT.ERROR.FETCH_ROOMS'), error);
+      toast.error(t('CHAT.TOAST.LOAD_ERROR'));
     } finally {
       setLoading(false);
     }
-  }, [roomIdFromUrl]);
+  }, [roomIdFromUrl, t]);
 
   useEffect(() => {
     fetchRooms();

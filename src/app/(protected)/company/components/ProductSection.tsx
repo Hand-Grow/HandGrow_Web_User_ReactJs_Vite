@@ -1,6 +1,7 @@
 'use client';
 
 import { Image as ImageIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Product = {
   name: string;
@@ -8,7 +9,11 @@ type Product = {
   origin: string;
   price: string;
   quantity: string;
-  grade: string;
+  grade: {
+    a: string;
+    b: string;
+    c: string;
+  };
 };
 
 const products: Product[] = [
@@ -18,7 +23,7 @@ const products: Product[] = [
     origin: 'An Giang',
     price: '9,000',
     quantity: '450',
-    grade: 'Loại A: 70%, Loại B: 25%, Loại C: 5%',
+    grade: { a: '70', b: '25', c: '5' },
   },
   {
     name: 'Gạo Jasmine',
@@ -26,7 +31,7 @@ const products: Product[] = [
     origin: 'Đồng Tháp',
     price: '12,000',
     quantity: '320',
-    grade: 'Loại A: 80%, Loại B: 15%, Loại C: 5%',
+    grade: { a: '80', b: '15', c: '5' },
   },
   {
     name: 'Lúa Nàng Hoa',
@@ -34,7 +39,7 @@ const products: Product[] = [
     origin: 'Kiên Giang',
     price: '11,000',
     quantity: '280',
-    grade: 'Loại A: 75%, Loại B: 20%, Loại C: 5%',
+    grade: { a: '75', b: '20', c: '5' },
   },
   {
     name: 'Gạo ST24',
@@ -42,18 +47,39 @@ const products: Product[] = [
     origin: 'Sóc Trăng',
     price: '8,500',
     quantity: '200',
-    grade: 'Loại A: 70%, Loại B: 25%, Loại C: 5%',
+    grade: { a: '70', b: '25', c: '5' },
   },
 ];
 
 export default function ProductSection() {
+  const { t } = useTranslation();
+
+  const formatGrade = (grade: Product['grade']) => {
+    return t('PRODUCTS.GRADE', {
+      a: grade.a,
+      b: grade.b,
+      c: grade.c,
+    });
+  };
+
+  const getTagTranslation = (tag: string) => {
+    switch (tag) {
+      case 'VietGAP':
+        return t('PRODUCTS.TAGS.VIETGAP');
+      case 'Organic':
+        return t('PRODUCTS.TAGS.ORGANIC');
+      default:
+        return tag;
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold">Nông sản khả dụng</h3>
+        <h3 className="text-xl font-bold">{t('PRODUCTS.AVAILABLE_TITLE')}</h3>
 
         <button className="text-emerald-600 font-semibold text-sm hover:underline">
-          Xem tất cả →
+          {t('PRODUCTS.VIEW_ALL')}
         </button>
       </div>
 
@@ -92,17 +118,21 @@ export default function ProductSection() {
                       key={idx}
                       className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md font-medium"
                     >
-                      {tag}
+                      {getTagTranslation(tag)}
                     </span>
                   ))}
 
-                  <span className="text-neutral-500">• {p.origin}</span>
+                  <span className="text-neutral-500">
+                    {t('PRODUCTS.ORIGIN', { origin: p.origin })}
+                  </span>
                 </div>
 
-                <p className="text-xs text-neutral-500 mb-2">{p.grade}</p>
+                <p className="text-xs text-neutral-500 mb-2">
+                  {formatGrade(p.grade)}
+                </p>
 
                 <button className="text-emerald-600 text-sm font-semibold hover:underline">
-                  Xem chi tiết & đặt hàng →
+                  {t('PRODUCTS.DETAILS')}
                 </button>
               </div>
             </div>
@@ -110,11 +140,11 @@ export default function ProductSection() {
             {/* RIGHT */}
             <div className="text-right flex flex-col justify-between">
               <p className="text-orange-500 font-bold text-lg">
-                {p.price} đ/kg
+                {t('PRODUCTS.PRICE_PER_KG', { price: p.price })}
               </p>
 
               <p className="text-xs text-neutral-500">
-                {p.quantity} tấn có sẵn
+                {t('PRODUCTS.QUANTITY_AVAILABLE', { quantity: p.quantity })}
               </p>
             </div>
           </div>

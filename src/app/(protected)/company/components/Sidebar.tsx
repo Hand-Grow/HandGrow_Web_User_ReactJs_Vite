@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Package,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 interface SidebarProps {
@@ -21,45 +22,46 @@ interface SidebarProps {
 }
 
 type MenuItem = {
-  label: string;
+  labelKey: string;
   href: string;
   icon: React.ElementType;
 };
 
 const menuItems: MenuItem[] = [
   {
-    label: 'Trang chủ',
+    labelKey: 'SIDEBAR.HOME',
     href: '/company/dashboard',
     icon: Home,
   },
   {
-    label: 'Tìm kiếm nguồn cung',
+    labelKey: 'SIDEBAR.SEARCH_SUPPLY',
     href: '/company/sourcing',
     icon: Search,
   },
   {
-    label: 'Yêu cầu mua',
+    labelKey: 'SIDEBAR.PURCHASE_REQUESTS',
     href: '/company/sourcing/my-requests',
     icon: Package,
   },
   {
-    label: 'Tin nhắn',
+    labelKey: 'SIDEBAR.MESSAGES',
     href: '/company/messages',
     icon: MessageCircle,
   },
   {
-    label: 'Hợp đồng',
+    labelKey: 'SIDEBAR.CONTRACTS',
     href: '/company/contracts',
     icon: FileText,
   },
   {
-    label: 'Cá nhân',
+    labelKey: 'SIDEBAR.PROFILE',
     href: '/company/profile',
     icon: User,
   },
 ];
 
 function SidebarComponent({ onExpandChange }: SidebarProps) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -83,7 +85,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
             payload.companyName ||
             payload.sub ||
             localStorage.getItem('companyName') ||
-            'Doanh nghiệp';
+            t('SIDEBAR.DEFAULT_COMPANY_NAME');
 
           const email =
             payload.email || localStorage.getItem('userEmail') || '';
@@ -98,7 +100,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
 
         if (savedName || savedEmail) {
           setUserInfo({
-            name: savedName || 'Doanh nghiệp',
+            name: savedName || t('SIDEBAR.DEFAULT_COMPANY_NAME'),
             email: savedEmail || '',
           });
         }
@@ -106,7 +108,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
     };
 
     getUserInfo();
-  }, []);
+  }, [t]);
 
   const toggleExpand = () => {
     const newState = !expanded;
@@ -143,7 +145,9 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
             <span className="text-sm font-bold text-gray-900 block truncate">
               {userInfo?.name || 'AgriTrade'}
             </span>
-            <span className="text-xs text-gray-400">Doanh nghiệp</span>
+            <span className="text-xs text-gray-400">
+              {t('SIDEBAR.BUSINESS')}
+            </span>
           </div>
         )}
       </div>
@@ -169,11 +173,11 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
                   ? 'bg-emerald-100 text-emerald-700 font-semibold'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
-              title={!expanded ? item.label : ''}
+              title={!expanded ? t(item.labelKey) : ''}
             >
               <Icon className="w-5 h-5 shrink-0" />
               {expanded && (
-                <span className="text-sm truncate">{item.label}</span>
+                <span className="text-sm truncate">{t(item.labelKey)}</span>
               )}
             </Link>
           );
@@ -184,12 +188,12 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
         <button
           onClick={toggleExpand}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
-          title={!expanded ? 'Thu gọn' : ''}
+          title={!expanded ? t('SIDEBAR.COLLAPSE') : ''}
         >
           {expanded ? (
             <>
               <ChevronLeft className="w-5 h-5 shrink-0" />
-              <span className="text-sm">Thu gọn</span>
+              <span className="text-sm">{t('SIDEBAR.COLLAPSE')}</span>
             </>
           ) : (
             <ChevronRight className="w-5 h-5 shrink-0 mx-auto" />
@@ -199,10 +203,10 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
-          title={!expanded ? 'Đăng xuất' : ''}
+          title={!expanded ? t('SIDEBAR.LOGOUT') : ''}
         >
           <LogOut className="w-5 h-5 shrink-0" />
-          {expanded && <span className="text-sm">Đăng xuất</span>}
+          {expanded && <span className="text-sm">{t('SIDEBAR.LOGOUT')}</span>}
         </button>
       </div>
     </aside>

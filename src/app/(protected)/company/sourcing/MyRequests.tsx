@@ -3,9 +3,11 @@
 import sourcingApi from '@/src/services/sourcing/sourcingApi';
 import { SourcingRequestResponse } from '@/src/services/sourcing/types';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 export default function MyRequests() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<SourcingRequestResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -23,8 +25,8 @@ export default function MyRequests() {
 
       setRequests(data);
     } catch (error) {
-      console.error('Error fetching requests:', error);
-      toast.error('Lỗi khi tải danh sách yêu cầu mua');
+      console.error(t('SOURCING.ERROR.FETCH_REQUESTS'), error);
+      toast.error(t('SOURCING.TOAST.FETCH_ERROR'));
     } finally {
       setLoading(false);
     }
@@ -46,11 +48,11 @@ export default function MyRequests() {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'OPEN':
-        return 'Đang mở';
+        return t('SOURCING.STATUS.OPEN');
       case 'CLOSED':
-        return 'Đã đóng';
+        return t('SOURCING.STATUS.CLOSED');
       case 'CANCELLED':
-        return 'Đã hủy';
+        return t('SOURCING.STATUS.CANCELLED');
       default:
         return status;
     }
@@ -65,8 +67,8 @@ export default function MyRequests() {
   };
 
   const formatPrice = (price: number | null) => {
-    if (price === null) return 'Thỏa thuận';
-    return new Intl.NumberFormat('vi-VN', {
+    if (price === null) return t('SOURCING.PRICE_NEGOTIABLE');
+    return new Intl.NumberFormat('SOURCING.vi-VN', {
       style: 'currency',
       currency: 'VND',
     }).format(price);
@@ -84,12 +86,16 @@ export default function MyRequests() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">Yêu cầu mua của tôi</h1>
+          <h1 className="text-xl font-bold">
+            {t('SOURCING.MY_REQUESTS.TITLE')}
+          </h1>
           <p className="text-sm text-neutral-500">
-            Quản lý các yêu cầu mua đã tạo
+            {t('SOURCING.MY_REQUESTS.SUBTITLE')}
           </p>
         </div>
-        <p className="text-sm text-neutral-500">{requests.length} yêu cầu</p>
+        <p className="text-sm text-neutral-500">
+          {t('SOURCING.MY_REQUESTS.COUNT', { count: requests.length })}
+        </p>
       </div>
 
       {requests.length === 0 ? (
@@ -110,11 +116,9 @@ export default function MyRequests() {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            Chưa có yêu cầu mua nào
+            {t('SOURCING.EMPTY.TITLE')}
           </h3>
-          <p className="text-gray-500 mb-6">
-            Tạo yêu cầu mua đầu tiên để bắt đầu tìm kiếm nguồn cung
-          </p>
+          <p className="text-gray-500 mb-6"> {t('SOURCING.EMPTY.SUBTITLE')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -129,7 +133,8 @@ export default function MyRequests() {
                     {request.productName}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Mã yêu cầu: #{request.id.slice(-8)}
+                    {t('SOURCING.MY_REQUESTS.REQUEST_ID')}:#
+                    {request.id.slice(-8)}
                   </p>
                 </div>
                 <span
@@ -143,22 +148,30 @@ export default function MyRequests() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Số lượng:</span>
+                  <span className="text-gray-500">
+                    {t('SOURCING.MY_REQUESTS.QUANTITY')}:
+                  </span>
                   <span className="font-medium">
-                    {new Intl.NumberFormat('vi-VN').format(request.quantity)}{' '}
-                    {request.unit}
+                    {new Intl.NumberFormat('SOURCING.vi-VN').format(
+                      request.quantity
+                    )}{' '}
+                    {t(`UNITS.${request.unit.toUpperCase()}`)}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Giá dự kiến:</span>
+                  <span className="text-gray-500">
+                    {t('SOURCING.MY_REQUESTS.EXPECTED_PRICE')}:
+                  </span>
                   <span className="font-medium text-green-600">
                     {formatPrice(request.expectedPrice)}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Hạn chót:</span>
+                  <span className="text-gray-500">
+                    {t('SOURCING.MY_REQUESTS.DEADLINE')}:
+                  </span>
                   <span className="font-medium">
                     {formatDate(request.deadline)}
                   </span>
@@ -174,9 +187,15 @@ export default function MyRequests() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-                <span>Ngày tạo: {formatDate(request.createdAt)}</span>
+                <span>
+                  {t('SOURCING.MY_REQUESTS.CREATED_AT')}:
+                  {formatDate(request.createdAt)}
+                </span>
                 {request.updatedAt !== request.createdAt && (
-                  <span>Cập nhật: {formatDate(request.updatedAt)}</span>
+                  <span>
+                    {t('SOURCING.MY_REQUESTS.UPDATED_AT')}:
+                    {formatDate(request.updatedAt)}
+                  </span>
                 )}
               </div>
             </div>

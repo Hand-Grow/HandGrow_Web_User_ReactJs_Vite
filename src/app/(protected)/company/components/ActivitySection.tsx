@@ -1,23 +1,43 @@
-import { CheckCircle2, Truck, AlertCircle } from 'lucide-react';
+'use client';
 
-const activities = [
+import { useTranslation } from 'react-i18next';
+import { CheckCircle2, Truck, AlertCircle } from 'lucide-react';
+import React from 'react';
+
+type Activity = {
+  icon: React.ElementType;
+  textKey: string;
+  timeKey: string;
+  timeValues?: Record<string, string | number>;
+};
+
+const activities: Activity[] = [
   {
     icon: CheckCircle2,
-    text: 'Hợp đồng HD-2024-001 đã xác nhận',
-    time: '2 giờ trước',
+    textKey: 'DASHBOARD.ACTIVITIES.CONTRACT_CONFIRMED',
+    timeKey: 'DASHBOARD.ACTIVITIES.TIME.HOURS_AGO',
+    timeValues: { count: 2 },
   },
   {
     icon: AlertCircle,
-    text: 'Tin nhắn mới từ HTX Tân Thành',
-    time: '5 giờ trước',
+    textKey: 'DASHBOARD.ACTIVITIES.NEW_MESSAGE',
+    timeKey: 'DASHBOARD.ACTIVITIES.TIME.HOURS_AGO',
+    timeValues: { count: 5 },
   },
-  { icon: Truck, text: 'Giao hàng thành công', time: '1 ngày trước' },
+  {
+    icon: Truck,
+    textKey: 'DASHBOARD.ACTIVITIES.DELIVERY_SUCCESS',
+    timeKey: 'DASHBOARD.ACTIVITIES.TIME.DAYS_AGO',
+    timeValues: { count: 1 },
+  },
 ];
 
 export default function ActivitySection() {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6">
-      <h3 className="font-bold mb-5">Hoạt động gần đây</h3>
+      <h3 className="font-bold mb-5">{t('DASHBOARD.ACTIVITIES.TITLE')}</h3>
 
       <div className="space-y-4">
         {activities.map((a, i) => {
@@ -30,8 +50,15 @@ export default function ActivitySection() {
               </div>
 
               <div>
-                <p className="text-sm font-medium">{a.text}</p>
-                <p className="text-xs text-neutral-500">{a.time}</p>
+                <p className="text-sm font-medium">
+                  {t(a.textKey, {
+                    contractId: 'HD-2024-001',
+                    cooperative: 'Tân Thành',
+                  })}
+                </p>
+                <p className="text-xs text-neutral-500">
+                  {t(a.timeKey, a.timeValues)}
+                </p>
               </div>
             </div>
           );

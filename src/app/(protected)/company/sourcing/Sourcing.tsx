@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SourcingHeader from '../components/SourcingHeader';
 import FilterBar from '../components/FilterBar';
 import { toast } from 'react-toastify';
 import { marketplaceApi } from '@/src/services/marketplace/marketplaceApi';
-import { PRODUCE_LABELS } from '@/src/constants';
+import { PRODUCE_LABELS, PRODUCE_VALUES, ProduceType } from '@/src/constants';
 import ProductGrid from '../components/ProductGrid';
+
 interface BulkSale {
   id: string;
   campaignId: string;
@@ -16,9 +18,13 @@ interface BulkSale {
   status: 'OPEN' | 'CLOSED';
   coopName: string;
   createdAt: string;
+  images?: string[];
+  description?: string;
+  unit?: string;
 }
 
 export default function SourcingPage() {
+  const { t } = useTranslation();
   const [bulkSales, setBulkSales] = useState<BulkSale[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<{
@@ -78,79 +84,54 @@ export default function SourcingPage() {
           return dateB - dateA;
         });
       }
-
       if (searchTerm) {
         sortedData = sortedData.filter((item) =>
           item.coopName.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
-
       if (filters.product && filters.product !== '') {
-        const selectedLabel =
-          filters.product === 'Tất cả'
-            ? ''
-            : PRODUCE_LABELS[filters.product as keyof typeof PRODUCE_LABELS] ||
-              filters.product;
+        if (filters.product === 'Tất cả') {
+          // Không filter
+        } else if (PRODUCE_VALUES.includes(filters.product as ProduceType)) {
+          const selectedProduct = filters.product as ProduceType;
 
-        if (selectedLabel) {
-          const searchLabel = selectedLabel.toLowerCase();
-
-          const englishKeywords: Record<string, string[]> = {
-            'lúa gạo': ['RICE', 'Lúa gạo'],
-            ngô: ['CORN', 'Ngô'],
-            'rau củ': ['VEGETABLES', 'Rau củ'],
-            'trái cây': ['FRUITS', 'Trái cây'],
-            'cà phê': ['COFFEE', 'Cà phê'],
-            chè: ['TEA', 'Chè'],
-            'cao su': ['RUBBER', 'Cao su'],
-            mía: ['SUGARCANE', 'Mía'],
-            sắn: ['CASSAVA', 'Sắn'],
-            tiêu: ['PEPPER', 'Tiêu'],
-            dừa: ['COCONUT', 'Dừa'],
-            điều: ['CASHEW', 'Điều'],
-            'thủy sản': ['AQUACULTURE', 'Thủy sản'],
-            'chăn nuôi': ['LIVESTOCK', 'Chăn nuôi'],
-          };
-
-          const keywords = englishKeywords[searchLabel] || [searchLabel];
-
-          if (filters.product === 'OTHER') {
-            const definedKeywords = Object.values(englishKeywords).flat();
+          if (selectedProduct === 'OTHER') {
             sortedData = sortedData.filter((item) => {
-              const productName = item.productName.toUpperCase();
-              return !definedKeywords.some(
-                (keyword) => productName === keyword
-              );
+              const productType = item.productName as ProduceType;
+              return productType === 'OTHER';
             });
           } else {
-            sortedData = sortedData.filter((item) => {
-              const productName = item.productName.toUpperCase();
-              return keywords.some((keyword) =>
-                productName.includes(keyword.toUpperCase())
+            sortedData = sortedData.filter(
+              (item) => item.productName === selectedProduct
+            );
+          }
+        } else {
+          const entry = Object.entries(PRODUCE_LABELS).find(
+            ([_, label]) => label === filters.product
+          );
+
+          if (entry) {
+            const [produceType] = entry as [ProduceType, string];
+
+            if (produceType === 'OTHER') {
+              sortedData = sortedData.filter((item) => {
+                const productType = item.productName as ProduceType;
+                return productType === 'OTHER';
+              });
+            } else {
+              sortedData = sortedData.filter(
+                (item) => item.productName === produceType
               );
-            });
+            }
           }
         }
       }
 
       setBulkSales(sortedData);
     } catch (error) {
-      console.error('❌ Full error object:', error);
-      console.error('❌ Error message:', (error as Error).message);
-      console.error(
-        '❌ Error response:',
-        (
-          error as {
-            response?: { status?: number; data?: { message?: string } };
-          }
-        ).response
-      );
-      console.error(
-        '❌ Error status:',
-        (error as { response?: { status?: number } }).response?.status
-      );
+      console.error(t('SOURCING.ERROR.FETCH_PRODUCTS'), error);
 
-      let errorMessage = 'Lỗi khi tải danh sách sản phẩm';
+      let errorMessage = t('SOURCING.TOAST.FETCH_ERROR');
 
       const errorResponse = error as {
         response?: {
@@ -158,12 +139,13 @@ export default function SourcingPage() {
           data?: { message?: string };
         };
       };
+
       if (errorResponse.response?.status === 401) {
-        errorMessage = 'Phiên đăng nhập đã hết hạn';
+        errorMessage = t('SOURCING.TOAST.UNAUTHORIZED');
       } else if (errorResponse.response?.status === 403) {
-        errorMessage = 'Bạn không có quyền truy cập';
+        errorMessage = t('SOURCING.TOAST.FORBIDDEN');
       } else if (errorResponse.response?.status === 404) {
-        errorMessage = 'Không tìm thấy API endpoint';
+        errorMessage = t('SOURCING.TOAST.NOT_FOUND');
       } else if (errorResponse.response?.data?.message) {
         errorMessage = String(errorResponse.response.data.message ?? '');
       } else if ((error as Error).message) {
@@ -204,7 +186,7 @@ export default function SourcingPage() {
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-neutral-500">
-          Tìm thấy {bulkSales.length} sản phẩm
+          {t('SOURCING.PRODUCTS.FOUND_COUNT', { count: bulkSales.length })}
         </p>
 
         <select
@@ -220,20 +202,16 @@ export default function SourcingPage() {
             )
           }
         >
-          <option value="relevant">Liên quan nhất</option>
-          <option value="price_asc">Giá thấp → cao</option>
-          <option value="price_desc">Giá cao → thấp</option>
-          <option value="contact_price">Giá liên hệ</option>
+          <option value="relevant">{t('SOURCING.SORT.RELEVANT')}</option>
+          <option value="price_asc">{t('SOURCING.SORT.PRICE_ASC')}</option>
+          <option value="price_desc">{t('SOURCING.SORT.PRICE_DESC')}</option>
+          <option value="contact_price">
+            {t('SOURCING.SORT.CONTACT_PRICE')}
+          </option>
         </select>
       </div>
 
-      <ProductGrid
-        products={bulkSales.map((sale) => ({
-          ...sale,
-          expectedPrice: sale.expectedPrice ?? 0,
-        }))}
-        loading={loading}
-      />
+      <ProductGrid products={bulkSales} loading={loading} />
     </div>
   );
 }
