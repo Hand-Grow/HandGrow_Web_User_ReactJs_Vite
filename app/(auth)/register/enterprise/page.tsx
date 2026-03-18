@@ -9,7 +9,7 @@ import { authApi } from '@/src/services/auth/authApi';
 import CompanyRegisterForm from '@/src/components/layout/register/CompanyRegisterForm';
 import i18next from 'i18next';
 import { Province, Ward } from '@/src/types';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const RegisterEnterprise: React.FC = () => {
   const [companyName, setCompanyName] = useState<string>('');

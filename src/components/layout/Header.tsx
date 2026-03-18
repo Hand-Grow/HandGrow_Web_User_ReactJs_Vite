@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -21,7 +21,34 @@ import {
 } from 'lucide-react';
 import { ViFlag, EngFlag } from '@/public/assets';
 
-export const Header = () => {
+const languages = [
+  { code: 'vi', name: 'Tiếng Việt', flag: ViFlag },
+  { code: 'en', name: 'English', flag: EngFlag },
+];
+
+// 1. COMPONENT SKELETON ĐỂ CHỜ LOADING (Lấy từ code cũ của bạn)
+function HeaderSkeleton() {
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/60 dark:bg-gray-900/95 dark:border-gray-800">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="text-2xl font-bold bg-linear-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+              HandGrow
+            </span>
+          </Link>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-20 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+// 2. LÕI LOGIC CỦA HEADER
+function HeaderContent() {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -40,11 +67,6 @@ export const Header = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const languages = [
-    { code: 'vi', name: 'Tiếng Việt', flag: ViFlag },
-    { code: 'en', name: 'English', flag: EngFlag },
-  ];
 
   const handleLogout = () => {
     logout();
@@ -101,7 +123,7 @@ export const Header = () => {
       params.set('lang', lang);
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
-    if (lang !== i18n.language) {
+    if (lang && lang !== i18n.language) {
       i18n.changeLanguage(lang);
     }
   }, [searchParams, pathname, i18n, router]);
@@ -110,24 +132,7 @@ export const Header = () => {
     languages.find((lang) => lang.code === i18n.language) || languages[0];
 
   if (!mounted) {
-    return (
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/60 dark:bg-gray-900/95 dark:border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold bg-linear-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-                HandGrow
-              </span>
-            </Link>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
-              <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-      </header>
-    );
+    return <HeaderSkeleton />;
   }
 
   return (
@@ -224,7 +229,7 @@ export const Header = () => {
                 >
                   <div className="relative">
                     <img
-                      src={user.avatar || '/avatar-default.png'}
+                      src="/avatar-default.png"
                       alt={user.fullName}
                       className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-emerald-500"
                     />
@@ -347,6 +352,15 @@ export const Header = () => {
         )}
       </div>
     </header>
+  );
+}
+
+// 3. XUẤT COMPONENT ĐÃ ĐƯỢC BỌC GIÁP
+export const Header = () => {
+  return (
+    <Suspense fallback={<HeaderSkeleton />}>
+      <HeaderContent />
+    </Suspense>
   );
 };
 
