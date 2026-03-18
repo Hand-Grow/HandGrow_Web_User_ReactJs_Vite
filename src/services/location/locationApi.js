@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
+import { API_ENDPOINTS } from '@/src/constants/index';
 import axios from 'axios';
 export const locationApi = {
   getProvinces() {

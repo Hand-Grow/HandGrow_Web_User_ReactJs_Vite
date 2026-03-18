@@ -18,8 +18,8 @@ import {
   Calendar,
 } from 'lucide-react';
 
-import { CommentResponse, feedService } from '@/src/services/feedService';
-import { Post, PostType } from '@/src/types';
+import { feedService } from '@/src/services/feedService';
+import { CommentResponse, Post, PostType } from '@/src/types';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants';
 import PublishCampaignModal from './PublishCampaignModal';
 

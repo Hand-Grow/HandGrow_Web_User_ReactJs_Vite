@@ -5,6 +5,7 @@ import { X, Plus, Package, FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
 import sourcingApi from '@/src/services/sourcing/sourcingApi';
 import { CreateSourcingRequestForm } from '@/src/services/sourcing/types';
+import { Button } from '@/src/components/ui/button';
 
 export default function SourcingHeader() {
   const [showModal, setShowModal] = useState(false);
@@ -53,6 +54,14 @@ export default function SourcingHeader() {
     }
     if (!formData.deadline.trim()) {
       toast.error('Vui lòng chọn hạn chót');
+      return;
+    }
+
+    const selectedDate = new Date(formData.deadline);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      toast.error('Hạn chót không thể là ngày đã qua');
       return;
     }
 
@@ -142,18 +151,18 @@ export default function SourcingHeader() {
           </p>
         </div>
 
-        <button
+        <Button
           onClick={() => setShowModal(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+          className="bg-green-600 hover:bg-green-700"
         >
           <Plus className="w-4 h-4" />
           Tạo yêu cầu mua
-        </button>
+        </Button>
       </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden m-4 flex flex-col">
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
@@ -174,7 +183,10 @@ export default function SourcingHeader() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form
+              onSubmit={handleSubmit}
+              className="p-6 space-y-6 overflow-y-auto flex-1"
+            >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Tên sản phẩm <span className="text-red-500">*</span>
@@ -248,6 +260,7 @@ export default function SourcingHeader() {
                   onChange={(e) =>
                     handleInputChange('deadline', e.target.value)
                   }
+                  min={new Date().toISOString().split('T')[0]}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
@@ -268,17 +281,19 @@ export default function SourcingHeader() {
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-gray-200">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  disabled={loading}
                 >
                   Hủy
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
+                  className="flex-1 bg-green-600 hover:bg-green-700"
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -291,7 +306,7 @@ export default function SourcingHeader() {
                       Tạo yêu cầu
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
