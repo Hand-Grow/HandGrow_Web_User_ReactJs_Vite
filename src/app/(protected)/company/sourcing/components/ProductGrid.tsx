@@ -1,18 +1,8 @@
 import ProductCard from './ProductCard';
-
-interface Product {
-  id: string;
-  campaignId: string;
-  productName: string;
-  totalQuantity: number;
-  expectedPrice: number;
-  status: string;
-  coopName: string;
-  createdAt: string;
-}
+import { MarketplacePost } from '@/src/types/posts';
 
 interface ProductGridProps {
-  products?: Product[];
+  products?: MarketplacePost[];
   loading?: boolean;
 }
 

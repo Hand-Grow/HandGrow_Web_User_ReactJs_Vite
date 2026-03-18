@@ -5,6 +5,7 @@ import { X, Plus, Package, FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
 import sourcingApi from '@/src/services/sourcing/sourcingApi';
 import { CreateSourcingRequestForm } from '@/src/services/sourcing/types';
+import { Button } from '@/src/components/ui/button';
 
 export default function SourcingHeader() {
   const [showModal, setShowModal] = useState(false);
@@ -150,13 +151,13 @@ export default function SourcingHeader() {
           </p>
         </div>
 
-        <button
+        <Button
           onClick={() => setShowModal(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+          className="bg-green-600 hover:bg-green-700"
         >
           <Plus className="w-4 h-4" />
           Tạo yêu cầu mua
-        </button>
+        </Button>
       </div>
 
       {showModal && (
@@ -280,17 +281,19 @@ export default function SourcingHeader() {
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-gray-200">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  disabled={loading}
                 >
                   Hủy
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
+                  className="flex-1 bg-green-600 hover:bg-green-700"
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -303,7 +306,7 @@ export default function SourcingHeader() {
                       Tạo yêu cầu
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           </div>

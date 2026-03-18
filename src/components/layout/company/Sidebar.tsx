@@ -12,6 +12,7 @@ import {
   LogOut,
   ChevronDown,
   Package,
+  Boxes,
 } from 'lucide-react';
 
 type MenuItem = {
@@ -25,6 +26,11 @@ const menuItems: MenuItem[] = [
     label: 'Trang chủ',
     href: '/company/dashboard',
     icon: Home,
+  },
+  {
+    label: 'Quản lý sản phẩm',
+    href: '/company/products',
+    icon: Boxes,
   },
   {
     label: 'Tìm kiếm nguồn cung',
