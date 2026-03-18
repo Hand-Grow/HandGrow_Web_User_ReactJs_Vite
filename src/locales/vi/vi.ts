@@ -342,6 +342,7 @@ export const vi = {
 
   SIDEBAR: {
     HOME: 'Trang chủ',
+    PRODUCTS: 'Quản lý sản phẩm',
     SEARCH_SUPPLY: 'Tìm kiếm nguồn cung',
     PURCHASE_REQUESTS: 'Yêu cầu mua',
     MESSAGES: 'Tin nhắn',

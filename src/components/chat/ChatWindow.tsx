@@ -47,7 +47,9 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
       setMessages(res.data);
     } catch (error) {
       console.error('Failed to fetch messages', error);
-      toast.error(t('CHAT.FETCH_MESSAGES_ERROR') || 'Không thể tải tin nhắn!');
+      toast.error(
+        t('CHAT.TOAST.FETCH_MESSAGES_ERROR') || 'Không thể tải tin nhắn!'
+      );
     }
   }, [selectedRoom?.id, t]);
 

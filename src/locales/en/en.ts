@@ -348,6 +348,7 @@ export const en = {
 
   SIDEBAR: {
     HOME: 'Home',
+    PRODUCTS: 'Management products',
     SEARCH_SUPPLY: 'Search Supply',
     PURCHASE_REQUESTS: 'Purchase Requests',
     MESSAGES: 'Messages',

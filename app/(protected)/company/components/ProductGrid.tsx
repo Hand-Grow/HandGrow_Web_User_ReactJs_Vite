@@ -1,23 +1,8 @@
 // components/ProductGrid.tsx
+import { MarketplacePost } from '@/src/types';
 import ProductCard from './ProductCard';
-
-// Copy interface BulkSale từ SourcingPage
-interface BulkSale {
-  id: string;
-  campaignId: string;
-  productName: string;
-  totalQuantity: number;
-  expectedPrice: number | null;
-  status: 'OPEN' | 'CLOSED';
-  coopName: string;
-  createdAt: string;
-  images?: string[];
-  description?: string;
-  unit?: string;
-}
-
 interface ProductGridProps {
-  products?: BulkSale[];
+  products?: MarketplacePost[];
   loading?: boolean;
 }
 

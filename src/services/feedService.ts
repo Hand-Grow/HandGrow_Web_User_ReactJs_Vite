@@ -8,21 +8,7 @@ import {
 } from '@/src/types';
 import httpClient from './http/httpClient';
 import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
-
-export interface PageResponse<T> {
-  content: T[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-}
-
-export interface CommentResponse {
-  id: string;
-  content: string;
-  createdAt: string;
-  farmerName: string;
-}
+import { PageResponse, CommentResponse } from '@/src/types';
 
 export const feedService = {
   getFeed: async (coopId: string): Promise<FeedResponse> => {

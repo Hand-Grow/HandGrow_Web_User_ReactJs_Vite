@@ -10,7 +10,11 @@ export default function MyRequests() {
   const { t } = useTranslation();
   const [requests, setRequests] = useState<SourcingRequestResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   useEffect(() => {
     fetchMyRequests();
   }, []);
@@ -68,7 +72,7 @@ export default function MyRequests() {
 
   const formatPrice = (price: number | null) => {
     if (price === null) return t('SOURCING.PRICE_NEGOTIABLE');
-    return new Intl.NumberFormat('SOURCING.vi-VN', {
+    return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
       currency: 'VND',
     }).format(price);
@@ -82,6 +86,7 @@ export default function MyRequests() {
     );
   }
 
+  if (!mounted) return null;
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -152,9 +157,7 @@ export default function MyRequests() {
                     {t('SOURCING.MY_REQUESTS.QUANTITY')}:
                   </span>
                   <span className="font-medium">
-                    {new Intl.NumberFormat('SOURCING.vi-VN').format(
-                      request.quantity
-                    )}{' '}
+                    {new Intl.NumberFormat('vi-VN').format(request.quantity)}{' '}
                     {t(`UNITS.${request.unit.toUpperCase()}`)}
                   </span>
                 </div>

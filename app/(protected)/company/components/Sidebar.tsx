@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Package,
+  Boxes,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -32,6 +33,11 @@ const menuItems: MenuItem[] = [
     labelKey: 'SIDEBAR.HOME',
     href: '/company/dashboard',
     icon: Home,
+  },
+  {
+    labelKey: 'SIDEBAR.PRODUCTS',
+    href: '/company/products',
+    icon: Boxes,
   },
   {
     labelKey: 'SIDEBAR.SEARCH_SUPPLY',
@@ -64,7 +70,11 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [expanded, setExpanded] = useState(true);
   const [userInfo, setUserInfo] = useState<{
     name: string;
@@ -131,7 +141,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
     localStorage.removeItem('accessToken');
     router.push(`/login?lang=${i18next.language || 'vi'}`);
   };
-
+  if (!mounted) return null;
   return (
     <aside className="bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-4rem)]">
       {/* Header */}
@@ -145,9 +155,11 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
             <span className="text-sm font-bold text-gray-900 block truncate">
               {userInfo?.name || 'AgriTrade'}
             </span>
-            <span className="text-xs text-gray-400">
-              {t('SIDEBAR.BUSINESS')}
-            </span>
+            {mounted && (
+              <span className="text-xs text-gray-400">
+                {t('SIDEBAR.BUSINESS')}
+              </span>
+            )}
           </div>
         )}
       </div>

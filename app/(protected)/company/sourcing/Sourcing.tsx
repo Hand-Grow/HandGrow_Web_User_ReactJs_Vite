@@ -8,24 +8,11 @@ import { toast } from 'react-toastify';
 import { marketplaceApi } from '@/src/services/marketplace/marketplaceApi';
 import { PRODUCE_LABELS, PRODUCE_VALUES, ProduceType } from '@/src/constants';
 import ProductGrid from '../components/ProductGrid';
-
-interface BulkSale {
-  id: string;
-  campaignId: string;
-  productName: string;
-  totalQuantity: number;
-  expectedPrice: number | null;
-  status: 'OPEN' | 'CLOSED';
-  coopName: string;
-  createdAt: string;
-  images?: string[];
-  description?: string;
-  unit?: string;
-}
+import { MarketplacePost } from '@/src/types';
 
 export default function SourcingPage() {
   const { t } = useTranslation();
-  const [bulkSales, setBulkSales] = useState<BulkSale[]>([]);
+  const [bulkSales, setBulkSales] = useState<MarketplacePost[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<{
     product: string;
