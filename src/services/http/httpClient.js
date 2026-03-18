@@ -1,4 +1,5 @@
 import axios from 'axios';
+import i18next from 'i18next';
 import toast from 'react-hot-toast';
 
 const httpClient = axios.create({
@@ -45,7 +46,7 @@ httpClient.interceptors.response.use(
         toast.error('Session expired. Please login again.');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        window.location.href = `/login?lang=${i18next.language || 'vi'}`;
         break;
 
       case 403:
@@ -56,9 +57,9 @@ httpClient.interceptors.response.use(
         toast.error('Resource not found');
         break;
 
-      case 500:
-        toast.error('Server error. Please try again later');
-        break;
+      // case 500:
+      //   toast.error('Server error. Please try again later');
+      //   break;
 
       default:
         toast.error(message);

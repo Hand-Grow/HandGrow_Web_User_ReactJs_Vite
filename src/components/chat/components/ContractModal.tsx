@@ -2,6 +2,16 @@ import { useState, useEffect } from 'react';
 import { DraftContractData, CreateContractPayload } from '@/src/types';
 import { contractAPI } from '@/src/services/contract/aiContractService';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
+import {
+  FileText,
+  Calendar,
+  Package,
+  DollarSign,
+  CheckCircle,
+} from 'lucide-react';
+import axios, { AxiosError } from 'axios';
 
 interface Props {
   isOpen: boolean;
@@ -10,142 +20,219 @@ interface Props {
   onSaved: () => void;
 }
 
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
 export default function ContractFormModal({
   isOpen,
   onClose,
   draft,
   onSaved,
 }: Props) {
-  const [quantity, setQuantity] = useState<number>(0);
-  const [price, setPrice] = useState<number>(0);
+  const [quantity, setQuantity] = useState('');
+  const [price, setPrice] = useState('');
   const [date, setDate] = useState('');
-  const [terms, setTerms] = useState('');
+  const [isAccepted, setIsAccepted] = useState(false);
+
+  const { t } = useTranslation();
+
+  const TERMS_CONTENT = [
+    'Bên bán cam kết cung cấp đúng số lượng và chất lượng.',
+    'Bên mua thanh toán đúng hạn theo thỏa thuận.',
+    'Hai bên chịu trách nhiệm nếu vi phạm hợp đồng.',
+  ];
 
   useEffect(() => {
     if (draft) {
-      setQuantity(draft.agreedQuantity || 0);
-      setPrice(draft.agreedPrice || 0);
-      setDate(draft.deliveryDate || '');
-      setTerms(draft.terms || '');
+      setQuantity(draft.agreedQuantity?.toString() || '');
+      setPrice(draft.agreedPrice?.toString() || '');
+      setDate(formatDisplayDate(draft.deliveryDate || ''));
+      setIsAccepted(false);
     }
   }, [draft]);
 
   if (!isOpen) return null;
 
+  // yyyy-MM-dd -> dd/MM/yyyy
+  const formatDisplayDate = (value: string) => {
+    if (!value) return '';
+    const [y, m, d] = value.split('-');
+    return `${d}/${m}/${y}`;
+  };
+
+  // dd/MM/yyyy -> yyyy-MM-dd
+  const formatSubmitDate = (value: string) => {
+    if (!value.includes('/')) return value;
+    const [d, m, y] = value.split('/');
+    return `${y}-${m}-${d}`;
+  };
+
   const handleSave = async () => {
-    const payload: CreateContractPayload = {
-      roomId: draft.roomId,
-      agreedQuantity: quantity,
-      agreedPrice: price,
-      deliveryDate: date,
-      terms,
-    };
+    if (!isAccepted) {
+      toast.error('Bạn phải đồng ý với điều khoản');
+      return;
+    }
 
-    await contractAPI.saveContract(payload);
+    try {
+      const payload: CreateContractPayload = {
+        roomId: draft.roomId,
+        agreedQuantity: Number(quantity),
+        agreedPrice: Number(price),
+        deliveryDate: formatSubmitDate(date),
+        terms: TERMS_CONTENT.join('\n'),
+      };
 
-    onSaved();
-    onClose();
+      await contractAPI.saveContract(payload);
+
+      toast.success('Tạo hợp đồng thành công');
+      onSaved();
+      onClose();
+    } catch (err: unknown) {
+      let message = 'Tạo hợp đồng thất bại';
+
+      if (axios.isAxiosError<ApiErrorResponse>(err)) {
+        message =
+          err.response?.data?.message ||
+          err.response?.data?.error ||
+          err.message ||
+          message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+
+      if (message.includes('Hợp đồng cho phòng chat này đã tồn tại')) {
+        toast.error('Hợp đồng đã tồn Hợp đồng cho phòng chat này đã tồn tại');
+        return;
+      }
+
+      toast.error(message);
+    }
   };
 
   const productLabel =
     PRODUCE_LABELS[draft.productName as ProduceType] ?? draft.productName;
 
-  const totalValue = quantity * price;
+  const totalValue = Number(quantity || 0) * Number(price || 0);
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-225 max-w-[95vw] rounded-xl p-6 space-y-6 shadow-xl">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            Tạo hợp đồng
-            {draft.aiGenerated && (
-              <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
-                ✨ AI Generated
-              </span>
-            )}
-          </h2>
-        </div>
+      <div className="bg-white w-[920px] max-w-[95vw] rounded-2xl p-6 space-y-6 shadow-xl">
+        {/* HEADER */}
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <FileText className="w-5 h-5 text-emerald-600" />
+          {t('CHAT.CREATE_CONTRACT')}
+        </h2>
 
-        <div className="grid grid-cols-2 gap-4">
+        {/* FORM */}
+        <div className="grid grid-cols-2 gap-5">
+          {/* PRODUCT */}
           <div>
-            <label className="text-sm text-gray-600">Doanh nghiệp</label>
-            <input
-              value={draft.enterpriseName}
-              disabled
-              className="border rounded p-2 w-full bg-gray-100"
-            />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600">Hợp tác xã</label>
-            <input
-              value={draft.cooperativeName}
-              disabled
-              className="border rounded p-2 w-full bg-gray-100"
-            />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600">Sản phẩm</label>
+            <label className="text-sm text-gray-500 flex items-center gap-1">
+              <Package size={14} /> {t('CHAT.PRODUCT')}
+            </label>
             <input
               value={productLabel}
               disabled
-              className="border rounded p-2 w-full bg-gray-100"
+              className="border rounded-lg p-2 w-full bg-gray-100"
             />
           </div>
 
+          {/* DATE */}
           <div>
-            <label className="text-sm text-gray-600">Ngày giao</label>
+            <label className="text-sm text-gray-500 flex items-center gap-1">
+              <Calendar size={14} /> {t('CHAT.DELIVERY_DATE')}
+            </label>
             <input
-              type="date"
+              type="text"
+              placeholder="dd/MM/yyyy"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="border rounded p-2 w-full"
+              onFocus={(e) => (e.target.type = 'date')}
+              onBlur={(e) => {
+                e.target.type = 'text';
+                setDate(formatDisplayDate(e.target.value));
+              }}
+              className="border rounded-lg p-2 w-full"
             />
           </div>
+
+          {/* QUANTITY */}
           <div>
-            <label className="text-sm text-gray-600">Sản lượng (kg)</label>
+            <label className="text-sm text-gray-500 flex items-center gap-1">
+              <Package size={14} /> {t('CHAT.QUANTITY')}
+            </label>
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              className="border rounded p-2 w-full"
+              onChange={(e) => setQuantity(e.target.value.replace(/\D/g, ''))}
+              className="border rounded-lg p-2 w-full"
             />
           </div>
+
+          {/* PRICE */}
           <div>
-            <label className="text-sm text-gray-600">Đơn giá (VND/kg)</label>
+            <label className="text-sm text-gray-500 flex items-center gap-1">
+              <DollarSign size={14} /> {t('CHAT.PRICE')}
+            </label>
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
-              className="border rounded p-2 w-full"
+              onChange={(e) => setPrice(e.target.value.replace(/\D/g, ''))}
+              className="border rounded-lg p-2 w-full"
             />
           </div>
-          <div className="col-span-2 bg-green-50 border border-green-200 rounded p-3">
-            <p className="text-sm text-gray-600">Tổng giá trị hợp đồng</p>
-            <p className="text-lg font-semibold text-green-700">
-              {totalValue.toLocaleString()} đ
+
+          {/* TOTAL */}
+          <div className="col-span-2 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl p-4">
+            <p className="text-sm text-gray-600">{t('CHAT.TOTAL_VALUE')}</p>
+            <p className="text-xl font-bold text-emerald-700">
+              {totalValue.toLocaleString()} {t('CHAT.CURRENCY')}
             </p>
           </div>
 
-          <div className="col-span-2">
-            <label className="text-sm text-gray-600">Điều khoản hợp đồng</label>
-            <textarea
-              rows={4}
-              value={terms}
-              onChange={(e) => setTerms(e.target.value)}
-              className="border rounded p-2 w-full"
-            />
+          {/* TERMS */}
+          <div className="col-span-2 border rounded-xl p-4 bg-gray-50">
+            <p className="font-medium mb-2 flex items-center gap-2 text-gray-700">
+              <FileText size={16} /> Điều khoản hợp đồng
+            </p>
+
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
+              {TERMS_CONTENT.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+
+            <div className="mt-4 flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={isAccepted}
+                onChange={(e) => setIsAccepted(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <span className="text-sm flex items-center gap-1 text-gray-700">
+                <CheckCircle size={14} className="text-emerald-600" />
+                Tôi đồng ý với các điều khoản
+              </span>
+            </div>
           </div>
         </div>
+
+        {/* ACTION */}
         <div className="flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 border rounded">
-            Hủy
+          <button onClick={onClose} className="px-4 py-2 border rounded-lg">
+            {t('CHAT.CANCEL')}
           </button>
 
           <button
             onClick={handleSave}
-            className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+            disabled={!isAccepted}
+            className="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 disabled:opacity-50"
           >
-            Lưu hợp đồng
+            {t('CHAT.SAVE')}
           </button>
         </div>
       </div>
