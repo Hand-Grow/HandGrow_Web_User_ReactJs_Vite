@@ -44,4 +44,4 @@ jobs:
       # 6. Đồng bộ toàn bộ thư mục 'out' lên Bucket, xóa các file cũ rác đi
       - name: Deploy to S3
         run: |
-          aws s3 sync ./dist s3://${{ secrets.AWS_BUCKET_NAME }} --delete
+          aws s3 sync ./out s3://${{ secrets.AWS_BUCKET_NAME }} --delete
