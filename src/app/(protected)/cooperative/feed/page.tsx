@@ -19,7 +19,7 @@ import {
   ShoppingCart,
 } from 'lucide-react';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
-
+import { showToast } from '@/src/utils/toast';
 export default function FeedPage() {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<PostType | 'ALL'>('ALL');
@@ -41,6 +41,9 @@ export default function FeedPage() {
         setFeed(data || []);
       } catch (err) {
         console.error('Load feed failed:', err);
+        showToast('error', {
+          message: 'Không thể tải bảng tin. Vui lòng thử lại',
+        });
       } finally {
         setLoading(false);
       }
@@ -56,6 +59,9 @@ export default function FeedPage() {
 
   const handleCreatePost = (post: Post) => {
     setFeed((prev) => [post, ...prev]);
+    showToast('success', {
+      message: 'Đăng bài thành công',
+    });
   };
 
   const filteredFeed =

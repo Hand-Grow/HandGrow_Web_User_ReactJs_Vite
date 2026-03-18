@@ -60,6 +60,7 @@ export default [
       parser: tsParser,
       globals: {
         ...globals.browser,
+        ...globals.node,
         ...globals.es2021,
         process: 'readonly',
         module: 'readonly',
