@@ -2,7 +2,7 @@
 
 import { authService } from '@/src/services/authService';
 import { userService } from '@/src/services/userService';
-import { UserProfile } from '@/types/users';
+import { UserProfile } from '@/src/types/users';
 import {
   LogOut,
   FileText,

@@ -66,7 +66,7 @@ export const Header = () => {
               onClick={() => setOpen(!open)}
             >
               <img
-                src={user.avatar || '/avatar-default.png'}
+                src="/avatar-default.png"
                 alt="avatar"
                 className="w-9 h-9 rounded-full object-cover border"
               />
