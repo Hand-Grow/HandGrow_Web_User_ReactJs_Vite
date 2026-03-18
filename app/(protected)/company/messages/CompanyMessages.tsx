@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -10,7 +10,8 @@ import { chatApi } from '@/src/services/chat/chatApi';
 import ConversationList from '@/src/components/chat/ConversationList';
 import ChatWindow from '@/src/components/chat/ChatWindow';
 
-export default function CompanyMessages() {
+// 1. TÁCH LÕI LOGIC ĐANG CÓ THÀNH COMPONENT RIÊNG
+function CompanyMessagesContent() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const roomIdFromUrl = searchParams.get('CHAT.roomId');
@@ -67,5 +68,20 @@ export default function CompanyMessages() {
         </>
       )}
     </div>
+  );
+}
+
+// 2. LỚP VỎ BẢO VỆ CHÍNH BỌC SUSPENSE
+export default function CompanyMessages() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-[calc(100vh-80px)] flex items-center justify-center bg-white rounded-2xl border border-neutral-200">
+          <Loader2 className="animate-spin text-emerald-600" size={32} />
+        </div>
+      }
+    >
+      <CompanyMessagesContent />
+    </Suspense>
   );
 }
