@@ -1,7 +1,7 @@
 // Trong MessagesPage.tsx
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { chatApi } from '@/src/services/chat/chatApi';
@@ -13,7 +13,8 @@ import toast from 'react-hot-toast';
 import { useAuth } from '@/src/context/auth/useAuth'; // Import useAuth
 import { USER_ROLES } from '@/src/constants';
 
-export default function MessagesPage() {
+// 1. TÁCH LÕI LOGIC ra một component riêng
+function MessagesContent() {
   const searchParams = useSearchParams();
   const roomIdFromUrl = searchParams.get('roomId');
   const [collapsed, setCollapsed] = useState(false);
@@ -23,8 +24,6 @@ export default function MessagesPage() {
     roomIdFromUrl
   );
   const [loading, setLoading] = useState(true);
-
-  // Lấy user từ context thay vì fetch riêng
   const { user } = useAuth();
 
   const fetchRooms = useCallback(async () => {
@@ -32,13 +31,14 @@ export default function MessagesPage() {
       setLoading(true);
       const res = await chatApi.getMyRooms();
       setRooms(res.data);
-      toast.success(t('CHAT.LOAD_SUCCESS') || 'Tải danh sách chat thành công!');
 
       if (!roomIdFromUrl && res.data.length > 0) {
         setSelectedRoomId(res.data[0].id);
       }
     } catch (_) {
-      toast.error(t('CHAT.LOAD_ERROR') || 'Không thể tải danh sách chat!');
+      toast.error(
+        t('CHAT.TOAST.LOAD_ERROR') || 'Không thể tải danh sách chat!'
+      );
     } finally {
       setLoading(false);
     }
@@ -50,15 +50,12 @@ export default function MessagesPage() {
 
   const selectedRoom = rooms.find((r) => r.id === selectedRoomId);
 
-  // ✅ QUAN TRỌNG: Xác định senderType dựa trên role của user
   const getSenderType = () => {
-    if (!user) return 'COOPERATIVE'; // Default
+    if (!user) return 'COOPERATIVE';
 
-    // Nếu user là COOP -> gửi với senderType = 'COOPERATIVE'
     if (user.role === USER_ROLES.COOP) {
       return 'COOPERATIVE';
     }
-    // Nếu user là ENTERPRISE -> gửi với senderType = 'ENTERPRISE'
     if (user.role === USER_ROLES.ENTERPRISE) {
       return 'ENTERPRISE';
     }
@@ -89,5 +86,19 @@ export default function MessagesPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-[calc(100vh-80px)] flex items-center justify-center bg-white rounded-2xl border border-neutral-200">
+          <Loader2 className="animate-spin text-emerald-600" size={32} />
+        </div>
+      }
+    >
+      <MessagesContent />
+    </Suspense>
   );
 }

@@ -79,7 +79,6 @@ export default function MessageBubble({
     return productKey;
   };
 
-  // Trong MessageBubble.tsx
   const canSignContract = (contract: ContractData) => {
     if (!currentUserRole || !currentUserId) return false;
 
@@ -109,7 +108,6 @@ export default function MessageBubble({
         t('CONTRACT.SIGNING') || 'Đang ký hợp đồng...'
       );
 
-      // Gọi API ký hợp đồng
       await contractAPI.signContract(contractId);
 
       toast.dismiss(toastId);
@@ -117,7 +115,6 @@ export default function MessageBubble({
         icon: '✍️',
       });
 
-      // Gọi callback để refresh messages
       onContractSigned?.();
     } catch (error) {
       console.error('Sign contract failed:', error);
@@ -127,7 +124,6 @@ export default function MessageBubble({
     }
   };
 
-  // Kiểm tra nếu là contract message
   try {
     const parsed = JSON.parse(text);
     if (parsed.type === 'CONTRACT' && parsed.contractData) {

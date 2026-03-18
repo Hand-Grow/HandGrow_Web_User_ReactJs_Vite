@@ -1,6 +1,6 @@
 'use client';
 
-import { JoinRequestStatus } from '@/types/joinRequest';
+import { JoinRequestStatus } from '@/src/types/joinRequest';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 

@@ -188,7 +188,6 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     );
   }
 
-  // ✅ Hàm isMine đơn giản
   const isMine = (msgSenderType: string) => {
     return msgSenderType === senderType;
   };
@@ -200,7 +199,16 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
       </div>
     );
   }
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
 
+    date.setHours(date.getHours() + 7);
+
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
   return (
     <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex flex-col overflow-hidden">
       <ChatHeader room={selectedRoom} viewerType={senderType} />
@@ -211,10 +219,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
             <MessageBubble
               key={msg.id}
               text={msg.content}
-              time={new Date(msg.createdAt).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              time={formatTime(msg.createdAt)}
               mine={isMine(msg.senderType)}
               currentUserRole={user?.role}
               currentUserId={user?.id}
