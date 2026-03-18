@@ -1,8 +1,8 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import { en } from '../locales/en/en';
-import { vi } from '../locales/vi/vi';
+import { en } from '../src/locales/en/en';
+import { vi } from '../src/locales/vi/vi';
 
 export const createI18nInstance = () => {
   if (!i18n.isInitialized) {

@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/src/context/theme/ThemeContext';
 import { AuthProvider } from '@/src/context/auth/AuthProvider';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ToastContainer } from 'react-toastify';
-import '@/src/app/i18n';
+import '@/app/i18n';
 import 'react-toastify/dist/ReactToastify.css';
 
 interface Props {

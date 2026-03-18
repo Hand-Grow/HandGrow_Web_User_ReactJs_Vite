@@ -349,11 +349,11 @@ const QuickActions = () => {
   return (
     <div className="bg-linear-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl p-8">
       <h2 className="text-3xl font-bold mb-2">
-        {t('DASHBOARD.ACTIONS.TITLE')}
+        {t('DASHBOARD.QUICK_ACTIONS.TITLE')}
       </h2>
 
       <p className="text-sm opacity-90 mb-8">
-        {t('DASHBOARD.ACTIONS.SUBTITLE')}
+        {t('DASHBOARD.QUICK_ACTIONS.SUBTITLE')}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -366,7 +366,7 @@ const QuickActions = () => {
             <div className="mb-4 flex justify-center">{action.icon}</div>
 
             <h3 className="font-bold text-lg text-center">
-              {t(`DASHBOARD.ACTIONS.${action.key}`)}
+              {t(`DASHBOARD.QUICK_ACTIONS.${action.key}`)}
             </h3>
           </button>
         ))}

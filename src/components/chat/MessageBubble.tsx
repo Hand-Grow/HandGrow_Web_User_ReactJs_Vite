@@ -83,15 +83,6 @@ export default function MessageBubble({
   const canSignContract = (contract: ContractData) => {
     if (!currentUserRole || !currentUserId) return false;
 
-    // Log để debug (có thể xóa sau)
-    console.log('Checking sign permission:', {
-      currentUserRole,
-      currentUserId,
-      contractStatus: contract.status,
-      cooperativeId: contract.cooperativeId,
-      enterpriseId: contract.enterpriseId,
-    });
-
     if (
       currentUserRole === 'COOP' &&
       contract.status === 'PENDING_COOPERATIVE_SIGNATURE' &&

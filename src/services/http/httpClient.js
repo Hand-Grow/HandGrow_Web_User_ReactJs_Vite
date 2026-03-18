@@ -57,9 +57,9 @@ httpClient.interceptors.response.use(
         toast.error('Resource not found');
         break;
 
-      case 500:
-        toast.error('Server error. Please try again later');
-        break;
+      // case 500:
+      //   toast.error('Server error. Please try again later');
+      //   break;
 
       default:
         toast.error(message);

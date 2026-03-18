@@ -19,6 +19,7 @@ import {
   Sun,
   Settings,
 } from 'lucide-react';
+import { ViFlag, EngFlag } from '@/public/assets';
 
 export const Header = () => {
   const { theme, toggleTheme } = useTheme();
@@ -41,8 +42,8 @@ export const Header = () => {
   }, []);
 
   const languages = [
-    { code: 'vi', name: 'Tiếng Việt', flag: '/flags/vi.png' },
-    { code: 'en', name: 'English', flag: '/flags/en.png' },
+    { code: 'vi', name: 'Tiếng Việt', flag: ViFlag },
+    { code: 'en', name: 'English', flag: EngFlag },
   ];
 
   const handleLogout = () => {

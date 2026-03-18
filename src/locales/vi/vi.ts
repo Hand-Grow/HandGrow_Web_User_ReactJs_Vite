@@ -36,6 +36,7 @@ export const vi = {
 
     QUICK_ACTIONS: {
       TITLE: 'Thao tác nhanh',
+      SUBTITLE: 'Dễ dàng thao tác cùng với mục thao tác nhanh',
       CREATE_PURCHASE_REQUEST: 'Tạo yêu cầu mua mới',
       SEARCH_SUPPLY: 'Tìm kiếm nguồn cung',
       CREATE_ORDER: 'Tạo đơn mua hàng',

@@ -20,7 +20,7 @@ import { AxiosError } from 'axios';
 
 interface Props {
   selectedRoom: ChatRoom | undefined;
-  senderType: 'COOPERATIVE' | 'ENTERPRISE'; // ✅ SỬA: từ 'COOP' thành 'COOPERATIVE'
+  senderType: 'COOPERATIVE' | 'ENTERPRISE';
 }
 
 export default function ChatWindow({ selectedRoom, senderType }: Props) {
@@ -105,13 +105,15 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
 
       toast.dismiss(toastId);
       toast.success(
-        t('CHAT.DRAFT_SUCCESS') || 'Soạn thảo hợp đồng thành công!'
+        t('CHAT.TOAST.DRAFT_SUCCESS') || 'Soạn thảo hợp đồng thành công!'
       );
     } catch (err) {
       console.error('Draft contract failed', err);
 
       toast.dismiss(toastId);
-      toast.error(t('CHAT.DRAFT_ERROR') || 'Soạn thảo hợp đồng thất bại!');
+      toast.error(
+        t('CHAT.TOAST.DRAFT_ERROR') || 'Soạn thảo hợp đồng thất bại!'
+      );
     } finally {
       setIsDrafting(false);
     }

@@ -36,6 +36,7 @@ export const en = {
 
     QUICK_ACTIONS: {
       TITLE: 'Quick Actions',
+      SUBTITLE: 'Easy to access with quick actions',
       CREATE_PURCHASE_REQUEST: 'Create Purchase Request',
       SEARCH_SUPPLY: 'Search Supply',
       CREATE_ORDER: 'Create Purchase Order',
