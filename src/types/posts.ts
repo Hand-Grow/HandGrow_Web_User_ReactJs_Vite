@@ -106,7 +106,7 @@ export interface CampaignPost extends BasePost {
 export type Post = AnnouncementPost | CampaignPost;
 export type FeedResponse = Post[];
 export interface MarketplacePost {
-  id: number;
+  id: string;
   campaignId: string;
   productName: string;
   totalQuantity: number;

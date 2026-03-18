@@ -1,11 +1,12 @@
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import ConversationItem from './ConversationItem';
 import { ChatRoom } from '@/src/types';
+import { UserRole } from '@/src/constants';
 
 interface Props {
   rooms: ChatRoom[];
   selectedRoomId: string | null;
-  viewerType: 'ENTERPRISE' | 'COOPERATIVE';
+  viewerType: UserRole;
   onSelectRoom: (roomId: string) => void;
 
   collapsed?: boolean;

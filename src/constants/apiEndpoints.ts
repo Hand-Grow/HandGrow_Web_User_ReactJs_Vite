@@ -87,6 +87,7 @@ export const API_ENDPOINTS = {
     SAVE: '/api/v1/contracts',
     BY_ROOM: (roomId: string) => `/api/v1/contracts/room/${roomId}`,
     MY_CONTRACTS: '/api/v1/contracts/my',
+    SIGN: (contractId: string) => `/contracts/${contractId}/sign`,
   },
   GROUP_BUY: {
     CAMPAIGNS: '/api/v1/group-buy/campaigns',
