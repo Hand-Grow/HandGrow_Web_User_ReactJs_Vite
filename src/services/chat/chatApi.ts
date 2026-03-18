@@ -1,5 +1,7 @@
+import { Contract } from '@/src/types';
 import httpClient from '../http/httpClient';
 import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
+import { UserRole } from '@/src/constants';
 export const chatApi = {
   createRoom(bulkSaleId: string) {
     return httpClient.post(API_ENDPOINTS.CHAT.ROOMS, { bulkSaleId });
@@ -24,5 +26,18 @@ export const chatApi = {
       content,
       senderType,
     });
+  },
+  sendContractMessage(
+    roomId: string,
+    contractData: Contract,
+    senderType: 'ENTERPRISE' | 'COOPERATIVE'
+  ) {
+    const content = JSON.stringify({
+      type: 'CONTRACT',
+      contractId: contractData.id,
+      contractData: contractData,
+    });
+
+    return this.sendMessage(roomId, content, senderType);
   },
 };

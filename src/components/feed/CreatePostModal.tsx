@@ -15,6 +15,8 @@ import { feedService } from '@/src/services/feedService';
 import { authService } from '@/src/services/authService';
 import { fileService } from '@/src/services/fileService';
 import { PRODUCE_LABELS, PRODUCE_VALUES, ProduceType } from '@/src/constants';
+import toast from 'react-hot-toast';
+import { t } from 'i18next';
 
 interface CreatePostModalProps {
   onClose: () => void;
@@ -61,8 +63,8 @@ export default function CreatePostModal({
       const url = await fileService.uploadFile(file);
 
       setAttachments((prev) => [...prev, url]);
-    } catch (err) {
-      console.error('Upload failed', err);
+    } catch (_) {
+      toast.error(t('FEED.ERROR_IMAGE'));
     } finally {
       setUploading(false);
     }
@@ -100,8 +102,8 @@ export default function CreatePostModal({
 
       onCreate(newPost);
       onClose();
-    } catch (err) {
-      console.error('Create post failed', err);
+    } catch (_) {
+      toast.error(t('FEED.ERROR_LOAD'));
     } finally {
       setLoading(false);
     }
@@ -109,10 +111,9 @@ export default function CreatePostModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white w-[420px] max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-6 space-y-5">
-        {/* HEADER */}
+      <div className="bg-white w-105 max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-6 space-y-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Tạo bài đăng</h2>
+          <h2 className="text-lg font-semibold">{t('FEED.CREATE_POST')}</h2>
 
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
             <X size={18} />
@@ -131,7 +132,7 @@ export default function CreatePostModal({
               }`}
           >
             <Megaphone size={16} />
-            Thông báo
+            {t('FEED.ANNOUNCEMENT')}
           </button>
 
           <button
@@ -144,16 +145,18 @@ export default function CreatePostModal({
               }`}
           >
             <Sprout size={16} />
-            Thu gom
+            {t('FEED.CAMPAIGN')}
           </button>
         </div>
 
         {/* TITLE */}
         <div>
-          <label className="text-sm text-gray-500">Tiêu đề</label>
+          <label className="text-sm text-gray-500">
+            {t('FEED.TITLE_POST')}
+          </label>
 
           <input
-            placeholder="Nhập tiêu đề..."
+            placeholder={t('FEED.TITLE_POST_PLACEHOLDER')}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500 outline-none"
@@ -164,7 +167,9 @@ export default function CreatePostModal({
         {type === 'CAMPAIGN' && (
           <>
             <div>
-              <label className="text-sm text-gray-500">Sản phẩm</label>
+              <label className="text-sm text-gray-500">
+                {t('FEED.PRODUCT')}
+              </label>
 
               <select
                 value={productName}
@@ -180,7 +185,9 @@ export default function CreatePostModal({
             </div>
 
             <div>
-              <label className="text-sm text-gray-500">Ngày dự kiến</label>
+              <label className="text-sm text-gray-500">
+                {t('FEED.EXPECTED_DATE')}
+              </label>
 
               <input
                 type="date"
@@ -194,11 +201,11 @@ export default function CreatePostModal({
 
         {/* CONTENT */}
         <div>
-          <label className="text-sm text-gray-500">Nội dung</label>
+          <label className="text-sm text-gray-500">{t('FEED.CONTENT')}</label>
 
           <textarea
             rows={4}
-            placeholder="Nhập nội dung bài đăng..."
+            placeholder={t('FEED.CONTENT_PLACEHOLDER')}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500 outline-none"
@@ -208,7 +215,9 @@ export default function CreatePostModal({
         {/* IMAGE UPLOAD */}
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">Ảnh đính kèm</span>
+            <span className="text-sm text-gray-500">
+              {t('FEED.ATTACHMENTS')}
+            </span>
 
             <button
               onClick={() => fileInputRef.current?.click()}
@@ -220,7 +229,7 @@ export default function CreatePostModal({
               ) : (
                 <Plus size={14} />
               )}
-              Thêm ảnh
+              {t('FEED.ADD_IMAGE')}
             </button>
           </div>
 
@@ -260,7 +269,7 @@ export default function CreatePostModal({
             onClick={onClose}
             className="px-4 py-2 border rounded-lg hover:bg-gray-100"
           >
-            Hủy
+            {t('CANCEL')}
           </button>
 
           <button
@@ -268,7 +277,7 @@ export default function CreatePostModal({
             disabled={loading || uploading}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
           >
-            {loading ? 'Đang đăng...' : 'Đăng bài'}
+            {loading ? t('FEED.UPLOADING') : t('FEED.POST')}
           </button>
         </div>
       </div>

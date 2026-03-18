@@ -1,10 +1,11 @@
+import { UserRole } from '@/src/constants';
 import { PRODUCE_LABELS, ProduceType } from '@/src/constants/produce';
 import { ChatRoom } from '@/src/types';
 
 interface Props {
   room: ChatRoom;
   active?: boolean;
-  viewerType: 'ENTERPRISE' | 'COOPERATIVE';
+  viewerType: UserRole;
   onClick: () => void;
 }
 
