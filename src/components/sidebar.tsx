@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
   onExpandChange?: (expanded: boolean) => void;
@@ -23,43 +24,44 @@ interface SidebarProps {
 
 const menuItems = [
   {
-    label: 'Trang chủ',
+    label: 'SIDEBAR.HOME',
     href: '/cooperative/dashboard',
     icon: <Home className="w-5 h-5" />,
   },
   {
-    label: 'Bài đăng',
+    label: 'SIDEBAR.POSTS',
     href: '/cooperative/feed',
     icon: <Newspaper className="w-5 h-5" />,
   },
   {
-    label: 'Mua chung',
+    label: 'SIDEBAR.PURCHASE_REQUESTS',
     href: '/cooperative/purchases',
     icon: <ShoppingCart className="w-5 h-5" />,
   },
   {
-    label: 'Quản lý thành viên',
+    label: 'SIDEBAR.MANAGE_MEMBER',
     href: '/cooperative/members',
     icon: <Users className="w-5 h-5" />,
   },
   {
-    label: 'Tin nhắn',
+    label: 'SIDEBAR.MESSAGES',
     href: '/cooperative/messages',
     icon: <MessageSquare className="w-5 h-5" />,
   },
   {
-    label: 'Báo cáo',
+    label: 'SIDEBAR.REPORTS',
     href: '/cooperative/reports',
     icon: <BarChart3 className="w-5 h-5" />,
   },
   {
-    label: 'Hợp đồng',
+    label: 'SIDEBAR.CONTRACTS',
     href: '/cooperative/orders',
     icon: <FileText className="w-5 h-5" />,
   },
 ];
 
 export function Sidebar({ onExpandChange }: SidebarProps) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
   const [expanded, setExpanded] = useState(true);
@@ -85,6 +87,7 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
         expanded ? 'w-64' : 'w-20'
       } h-[calc(100vh-4rem)] fixed left-0 top-16 flex flex-col z-40`}
     >
+      {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center gap-3">
         <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
           HTX
@@ -96,6 +99,7 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
         )}
       </div>
 
+      {/* Menu */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
@@ -109,17 +113,18 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
                   ? 'bg-emerald-100 text-emerald-700 font-semibold'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
-              title={!expanded ? item.label : ''}
+              title={!expanded ? t(item.label) : ''}
             >
               <span className="shrink-0">{item.icon}</span>
               {expanded && (
-                <span className="text-sm truncate">{item.label}</span>
+                <span className="text-sm truncate">{t(item.label)}</span>
               )}
             </Link>
           );
         })}
       </nav>
 
+      {/* Footer */}
       <div className="p-4 border-t border-gray-200 space-y-2">
         <button
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
@@ -128,7 +133,7 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
           {expanded ? (
             <>
               <ChevronLeft className="w-5 h-5 shrink-0" />
-              <span className="text-sm">Thu gọn</span>
+              <span className="text-sm">{t('SIDEBAR.COLLAPSE')}</span>
             </>
           ) : (
             <ChevronRight className="w-5 h-5 shrink-0 mx-auto" />
@@ -138,10 +143,10 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
-          title={!expanded ? 'Đăng xuất' : ''}
+          title={!expanded ? t('SIDEBAR.LOGOUT') : ''}
         >
           <LogOut className="w-5 h-5 shrink-0" />
-          {expanded && <span className="text-sm">Đăng xuất</span>}
+          {expanded && <span className="text-sm">{t('SIDEBAR.LOGOUT')}</span>}
         </button>
       </div>
     </aside>

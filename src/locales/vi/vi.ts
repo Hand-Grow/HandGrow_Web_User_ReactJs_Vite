@@ -353,6 +353,8 @@ export const vi = {
     COLLAPSE: 'Thu gọn',
     EXPAND: 'Mở rộng',
     LOGOUT: 'Đăng xuất',
+    POSTS: 'Bài đăng',
+    REPORTS: 'Báo cáo',
   },
 
   FILTER: {
