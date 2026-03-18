@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+'use client';
+
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { toast } from 'react-toastify';
@@ -8,7 +10,8 @@ import { chatApi } from '@/src/services/chat/chatApi';
 import ConversationList from '@/src/components/chat/ConversationList';
 import ChatWindow from '@/src/components/chat/ChatWindow';
 
-export default function CompanyMessages() {
+// 1. TÁCH LÕI LOGIC: Đổi tên hàm cũ thành MessagesContent
+function MessagesContent() {
   const searchParams = useSearchParams();
   const roomIdFromUrl = searchParams.get('roomId');
 
@@ -64,5 +67,21 @@ export default function CompanyMessages() {
         </>
       )}
     </div>
+  );
+}
+
+// 2. LỚP VỎ BẢO VỆ: Export Component chính đã được bọc Suspense
+export default function CompanyMessages() {
+  return (
+    // Fallback sẽ hiển thị cái vòng xoay trong phần nghìn giây chờ Next.js đọc URL
+    <Suspense
+      fallback={
+        <div className="h-[calc(100vh-80px)] flex items-center justify-center bg-white rounded-2xl border border-neutral-200">
+          <Loader2 className="animate-spin text-emerald-600" size={32} />
+        </div>
+      }
+    >
+      <MessagesContent />
+    </Suspense>
   );
 }

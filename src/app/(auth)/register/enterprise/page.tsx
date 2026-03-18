@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import type { AxiosError } from 'axios';
-import { Province, Ward } from '@/types/location';
+import { Province, Ward } from '@/src/types/location';
 import { locationApi } from '@/src/services/location/locationApi';
 import { toast } from 'react-toastify';
 import { authApi } from '@/src/services/auth/authApi';
