@@ -1,11 +1,7 @@
 import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
 import httpClient from './http/httpClient';
 import axios from 'axios';
-
-export interface PresignedUrlResponse {
-  presignedUrl: string;
-  publicUrl: string;
-}
+import { PresignedUrlResponse } from '@/src/types';
 
 export const fileService = {
   getPresignedUrl: async (

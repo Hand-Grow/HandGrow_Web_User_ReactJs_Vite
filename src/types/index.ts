@@ -5,3 +5,5 @@ export * from './roles';
 export * from './users';
 export * from './chat';
 export * from './contract';
+export * from './products';
+export * from './api';

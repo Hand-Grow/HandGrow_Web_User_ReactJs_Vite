@@ -88,4 +88,18 @@ export const API_ENDPOINTS = {
     BY_ROOM: (roomId: string) => `/api/v1/contracts/room/${roomId}`,
     MY_CONTRACTS: '/api/v1/contracts/my',
   },
+  GROUP_BUY: {
+    CAMPAIGNS: '/api/v1/group-buy/campaigns',
+    COOPERATIVE_CAMPAIGNS: '/api/v1/group-buy/campaigns/cooperative/me',
+    CAMPAIGN_DETAIL: (id: string) => `/api/v1/group-buy/campaigns/${id}`,
+    JOIN_CAMPAIGN: (id: string) => `/api/v1/group-buy/campaigns/${id}/join`,
+    CLOSE_CAMPAIGN: (id: string) => `/api/v1/group-buy/campaigns/${id}/close`,
+    CAMPAIGN_PARTICIPATIONS: (id: string) =>
+      `/api/v1/group-buy/campaigns/${id}/participations`,
+  },
+  PRODUCT: {
+    LIST: '/api/v1/products',
+    DETAIL: (id: string) => `/api/v1/products/${id}`,
+    ENTERPRISE_PRODUCTS: '/api/v1/products/enterprise/me',
+  },
 };
