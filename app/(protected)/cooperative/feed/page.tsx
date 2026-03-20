@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import MainLayout from '@/src/components/layout/MainLayout';
 
 import { feedService } from '@/src/services/feedService';
@@ -28,67 +28,108 @@ export default function FeedPage() {
 
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<PostType | 'ALL'>('ALL');
-
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const [feed, setFeed] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const normalizeDate = (dateString?: string) => {
+    if (!dateString) return new Date().toISOString();
+    return dateString.endsWith('Z') ? dateString : dateString + 'Z';
+  };
+
+  const loadFeed = useCallback(async () => {
+    try {
+      if (page === 0) setLoading(true);
+      else setLoadingMore(true);
+
+      const user = await authService.getProfile();
+      const coopId = user.id;
+
+      const res = await feedService.getFeed(coopId, page, 10);
+
+      const data = Array.isArray(res) ? res : (res.content ?? []);
+      const normalized = data.map((p: Post, index: number) => ({
+        ...p,
+        id: p.id || `${Date.now()}-${index}`,
+        createdAt: normalizeDate(p.createdAt),
+        attachments: p.attachments || [],
+        likeCount: p.likeCount || 0,
+        commentCount: p.commentCount || 0,
+        liked: p.liked || false,
+      }));
+
+      setFeed((prev) => (page === 0 ? normalized : [...prev, ...normalized]));
+
+      setHasMore(data.length === 10);
+    } catch (err) {
+      console.error('Load feed failed:', err);
+      showToast('error', {
+        message: t('FEED.ERROR_LOAD'),
+      });
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [page, t]);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
+    loadFeed();
+  }, [loadFeed]);
 
-        const user = await authService.getProfile();
-        const coopId = user.id;
-
-        const data = await feedService.getFeed(coopId);
-
-        setFeed(data || []);
-      } catch (err) {
-        console.error('Load feed failed:', err);
-        showToast('error', {
-          message: t('FEED.ERROR_LOAD'),
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
+  const loadMore = () => {
+    if (!hasMore || loadingMore) return;
+    setPage((prev) => prev + 1);
+  };
 
   const campaignCount = feed.filter((f) => f.type === 'CAMPAIGN').length;
   const announcementCount = feed.filter(
     (f) => f.type === 'ANNOUNCEMENT'
   ).length;
 
-  const handleCreatePost = (post: Post) => {
-    setFeed((prev) => [post, ...prev]);
-    showToast('success', {
-      message: t('FEED.POST_SUCCESS'),
-    });
+  const handleCreatePost = async () => {
+    setPage(0);
+    setFeed([]);
   };
-
   const filteredFeed =
     filter === 'ALL' ? feed : feed.filter((f) => f.type === filter);
 
   const campaignPosts = feed.filter((f) => f.type === 'CAMPAIGN');
+  useEffect(() => {
+    if (!hasMore || loadingMore) return;
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      {
+        threshold: 1,
+      }
+    );
+
+    const current = loadMoreRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [hasMore, loadingMore]);
   return (
     <MainLayout>
       <div className="bg-gray-50 min-h-screen p-4 md:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8 space-y-6">
             <div className="space-y-4 pb-4">
-              <div
-                className="bg-linear-to-r from-green-500 via-emerald-500 to-green-600
-                h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg"
-              >
+              <div className="bg-linear-to-r from-green-500 via-emerald-500 to-green-600 h-36 rounded-2xl flex items-center justify-between px-8 text-white shadow-lg">
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold">
                     {t('FEED.TITLE')}
                   </h2>
-
                   <p className="text-sm opacity-90">{t('FEED.SUBTITLE')}</p>
                 </div>
 
@@ -96,14 +137,14 @@ export default function FeedPage() {
 
                 <button
                   onClick={() => router.push('/cooperative/marketplace')}
-                  className="flex items-center gap-2 bg-white text-green-700 px-4 py-2 rounded-lg shadow
-                  hover:bg-gray-100 hover:scale-105 transition"
+                  className="flex items-center gap-2 bg-white text-green-700 px-4 py-2 rounded-lg shadow hover:bg-gray-100 hover:scale-105 transition"
                 >
                   <ShoppingCart size={16} />
                   {t('FEED.MARKETPLACE')}
                 </button>
               </div>
 
+              {/* FILTER */}
               <div className="flex gap-2 flex-wrap bg-white p-3 rounded-xl shadow">
                 {[
                   {
@@ -127,7 +168,7 @@ export default function FeedPage() {
                     onClick={() => setFilter(tab.key as PostType | 'ALL')}
                     className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm transition
                     ${
-                      filter === (tab.key as PostType | 'ALL')
+                      filter === tab.key
                         ? 'bg-green-500 text-white shadow'
                         : 'bg-gray-100 hover:bg-gray-200'
                     }`}
@@ -138,6 +179,7 @@ export default function FeedPage() {
                 ))}
               </div>
 
+              {/* CREATE */}
               <div className="sticky top-4 z-20">
                 <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -146,8 +188,7 @@ export default function FeedPage() {
 
                   <button
                     onClick={() => setOpen(true)}
-                    className="flex-1 text-left bg-gray-100 hover:bg-gray-200
-      rounded-full px-4 py-2 text-gray-600 transition"
+                    className="flex-1 text-left bg-gray-100 hover:bg-gray-200 rounded-full px-4 py-2 text-gray-600 transition"
                   >
                     {t('FEED.THINKING')}
                   </button>
@@ -162,29 +203,47 @@ export default function FeedPage() {
               </div>
             </div>
 
+            {/* LOADING */}
             {loading && (
               <div className="text-center py-16 text-gray-400">
                 {t('FEED.LOADING')}
               </div>
             )}
 
+            {/* EMPTY */}
             {!loading && filteredFeed.length === 0 && (
               <div className="text-center py-16 text-gray-400">
                 {t('FEED.EMPTY_POST')}
               </div>
             )}
 
+            {/* FEED */}
             {!loading &&
-              filteredFeed.map((item) => (
-                <FeedCard key={item.id} item={item} setFeed={setFeed} />
+              filteredFeed.map((item, index) => (
+                <FeedCard
+                  key={item.id ?? `${item.createdAt}-${index}`} // 🔥 no warning
+                  item={item}
+                  setFeed={setFeed}
+                />
               ))}
           </div>
-
+          {hasMore && (
+            <div
+              ref={loadMoreRef}
+              className="h-10 flex justify-center items-center"
+            >
+              {loadingMore && (
+                <span className="text-gray-400 text-sm">
+                  {t('FEED.LOADING')}
+                </span>
+              )}
+            </div>
+          )}
+          {/* ===== RIGHT ===== */}
           <div className="lg:col-span-4 space-y-6 sticky top-24 self-start">
+            {/* STATS */}
             <div className="bg-white p-5 rounded-2xl shadow">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                {t('FEED.QUICK_STATS')}
-              </h3>
+              <h3 className="font-semibold mb-4">{t('FEED.QUICK_STATS')}</h3>
 
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="bg-gray-50 rounded-xl p-3">
@@ -212,8 +271,9 @@ export default function FeedPage() {
               </div>
             </div>
 
+            {/* CAMPAIGN */}
             <div className="bg-white p-5 rounded-2xl shadow">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
+              <h3 className="font-semibold mb-3">
                 {t('FEED.UPCOMING_CAMPAIGN')}
               </h3>
 
@@ -223,27 +283,19 @@ export default function FeedPage() {
 
               <div className="space-y-3">
                 {campaignPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="bg-green-50 p-3 rounded-xl hover:bg-green-100 transition"
-                  >
-                    {'productName' in post && (
-                      <>
-                        <p className="font-medium text-green-700 flex items-center gap-1">
-                          {PRODUCE_LABELS[post.productName as ProduceType] ??
-                            post.productName}
-                          {' · '}
-                        </p>
+                  <div key={post.id} className="bg-green-50 p-3 rounded-xl">
+                    <p className="font-medium text-green-700">
+                      {PRODUCE_LABELS[post.productName as ProduceType] ??
+                        post.productName}
+                    </p>
 
-                        {post.expectedDate && (
-                          <p className="text-xs text-gray-500">
-                            📅
-                            {new Date(post.expectedDate).toLocaleDateString(
-                              'vi-VN'
-                            )}
-                          </p>
+                    {post.expectedDate && (
+                      <p className="text-xs text-gray-500">
+                        📅{' '}
+                        {new Date(post.expectedDate).toLocaleDateString(
+                          'vi-VN'
                         )}
-                      </>
+                      </p>
                     )}
                   </div>
                 ))}

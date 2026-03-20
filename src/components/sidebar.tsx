@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -65,6 +65,11 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [expanded, setExpanded] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleExpand = () => {
     const newState = !expanded;
@@ -81,28 +86,48 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
     router.push(`/login?lang=${i18next.language || 'vi'}`);
   };
 
+  // Hàm kiểm tra active menu
+  const isMenuItemActive = (itemHref: string) => {
+    if (itemHref === '/cooperative/dashboard') {
+      return pathname === '/cooperative/dashboard';
+    }
+    return (
+      pathname.startsWith(itemHref) && pathname !== '/cooperative/dashboard'
+    );
+  };
+
   return (
     <aside
       className={`bg-white border-r border-gray-200 transition-all duration-300 ${
         expanded ? 'w-64' : 'w-20'
       } h-[calc(100vh-4rem)] fixed left-0 top-16 flex flex-col z-40`}
+      suppressHydrationWarning
     >
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 flex items-center gap-3">
+      <div
+        className="p-4 border-b border-gray-200 flex items-center gap-3"
+        suppressHydrationWarning
+      >
         <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
           HTX
         </div>
         {expanded && (
-          <span className="text-sm font-bold text-gray-900 truncate">
+          <span
+            className="text-sm font-bold text-gray-900 truncate"
+            suppressHydrationWarning
+          >
             HTX nông nghiệp
           </span>
         )}
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+      <nav
+        className="flex-1 p-4 space-y-2 overflow-y-auto"
+        suppressHydrationWarning
+      >
         {menuItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = isMenuItemActive(item.href);
 
           return (
             <Link
@@ -114,10 +139,15 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
               title={!expanded ? t(item.label) : ''}
+              suppressHydrationWarning
             >
-              <span className="shrink-0">{item.icon}</span>
+              <span className="shrink-0" suppressHydrationWarning>
+                {item.icon}
+              </span>
               {expanded && (
-                <span className="text-sm truncate">{t(item.label)}</span>
+                <span className="text-sm truncate" suppressHydrationWarning>
+                  {t(item.label)}
+                </span>
               )}
             </Link>
           );
@@ -125,18 +155,30 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200 space-y-2">
+      <div
+        className="p-4 border-t border-gray-200 space-y-2"
+        suppressHydrationWarning
+      >
         <button
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
           onClick={toggleExpand}
+          suppressHydrationWarning
         >
           {expanded ? (
             <>
-              <ChevronLeft className="w-5 h-5 shrink-0" />
-              <span className="text-sm">{t('SIDEBAR.COLLAPSE')}</span>
+              <ChevronLeft
+                className="w-5 h-5 shrink-0"
+                suppressHydrationWarning
+              />
+              <span className="text-sm" suppressHydrationWarning>
+                {t('SIDEBAR.COLLAPSE')}
+              </span>
             </>
           ) : (
-            <ChevronRight className="w-5 h-5 shrink-0 mx-auto" />
+            <ChevronRight
+              className="w-5 h-5 shrink-0 mx-auto"
+              suppressHydrationWarning
+            />
           )}
         </button>
 
@@ -144,9 +186,14 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
           title={!expanded ? t('SIDEBAR.LOGOUT') : ''}
+          suppressHydrationWarning
         >
-          <LogOut className="w-5 h-5 shrink-0" />
-          {expanded && <span className="text-sm">{t('SIDEBAR.LOGOUT')}</span>}
+          <LogOut className="w-5 h-5 shrink-0" suppressHydrationWarning />
+          {expanded && (
+            <span className="text-sm" suppressHydrationWarning>
+              {t('SIDEBAR.LOGOUT')}
+            </span>
+          )}
         </button>
       </div>
     </aside>

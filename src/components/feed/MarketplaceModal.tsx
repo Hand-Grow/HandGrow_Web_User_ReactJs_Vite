@@ -124,9 +124,8 @@ export default function MarketplaceCard({ post, onEdit, onDelete }: Props) {
           <div className="flex items-center gap-2">
             <Package size={16} className="text-blue-500" />
             <span>
-              {post.totalQuantity > 0
-                ? `${post.totalQuantity} tấn`
-                : 'Đang thu gom'}
+              {/* ĐÃ SỬA: Hiển thị số lượng trực tiếp, không check điều kiện */}
+              {post.totalQuantity} tấn
             </span>
           </div>
 

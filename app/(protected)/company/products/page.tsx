@@ -646,7 +646,6 @@ function ProductsContent() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Quản lý sản phẩm</h1>
-        <p className="text-gray-600 mt-1">Enterprise Dashboard</p>
       </div>
 
       <div className="flex gap-4">
@@ -689,97 +688,91 @@ function ProductsContent() {
           filtered.map((product) => (
             <div
               key={product.id}
-              className="rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm"
             >
-              <div className="flex gap-3">
-                {/* Product Image */}
+              {/* IMAGE */}
+              <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
                 {product.imageUrl ? (
-                  <div className="flex-shrink-0">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-20 h-20 object-cover rounded-lg"
-                    />
-                  </div>
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
-                  <div className="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <Package className="w-8 h-8 text-gray-400" />
-                  </div>
+                  <Package className="w-6 h-6 text-gray-400" />
+                )}
+              </div>
+
+              {/* INFO */}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-base">{product.name}</h3>
+
+                <div className="flex items-center gap-2 mt-1 text-sm">
+                  <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-md text-xs">
+                    {
+                      categoryOptions.find(
+                        (opt) => opt.value === product.category
+                      )?.label
+                    }
+                  </span>
+                  <span className="text-gray-500">{product.unit}</span>
+                </div>
+
+                {/* description / extra */}
+                {product.description && (
+                  <p className="text-sm text-gray-500 mt-1 line-clamp-1">
+                    {product.description}
+                  </p>
                 )}
 
-                {/* Product Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-base truncate">
-                        {product.name}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                          {
-                            categoryOptions.find(
-                              (opt) => opt.value === product.category
-                            )?.label
-                          }
-                        </span>
-                        <span className="text-xs text-gray-600">
-                          {product.unit}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right ml-2">
-                      <p className="text-lg font-bold text-green-600">
-                        {(product.basePrice / 1000).toFixed(0)}k
-                      </p>
-                      <p className="text-xs text-gray-500">Giá gốc</p>
-                    </div>
-                  </div>
+                {/* price tiers */}
+                {product.priceTiers?.length > 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {product.priceTiers
+                      .slice(0, 3)
+                      .map(
+                        (tier) =>
+                          `≥${tier.minQty}: ${(tier.price / 1000).toFixed(0)}k`
+                      )
+                      .join(', ')}
+                  </p>
+                )}
 
-                  {product.description && (
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                      {product.description}
-                    </p>
-                  )}
+                {/* CTA */}
+                <p className="text-green-600 text-sm mt-1 font-medium cursor-pointer">
+                  Xem chi tiết & đặt hàng →
+                </p>
+              </div>
 
-                  {product.priceTiers && product.priceTiers.length > 0 && (
-                    <div className="mb-2">
-                      <div className="flex gap-1 flex-wrap">
-                        {product.priceTiers.slice(0, 2).map((tier, index) => (
-                          <span
-                            key={index}
-                            className="text-xs bg-gray-100 px-2 py-1 rounded"
-                          >
-                            ≥{tier.minQty}: {(tier.price / 1000).toFixed(0)}k
-                          </span>
-                        ))}
-                        {product.priceTiers.length > 2 && (
-                          <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                            +{product.priceTiers.length - 2}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
+              {/* RIGHT SIDE */}
+              <div className="text-right flex flex-col items-end gap-2">
+                {/* PRICE */}
+                <p className="text-lg font-bold text-orange-600 whitespace-nowrap">
+                  {(product.basePrice / 1000).toFixed(0)},000 đ/{product.unit}
+                </p>
 
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs gap-1 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
-                      onClick={() => handleEdit(product)}
-                    >
-                      <Edit className="w-3 h-3" /> Chỉnh sửa
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs gap-1 hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition-colors"
-                      onClick={() => handleDelete(product)}
-                    >
-                      <Trash2 className="w-3 h-3" /> Xóa
-                    </Button>
-                  </div>
+                {/* STOCK (fake nếu chưa có) */}
+                <p className="text-xs text-gray-500">Còn hàng</p>
+
+                {/* ACTION */}
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    className="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100"
+                    onClick={() => handleEdit(product)}
+                  >
+                    <Edit className="w-3 h-3 mr-1" />
+                    Sửa
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    className="text-xs bg-red-50 text-red-600 hover:bg-red-100"
+                    onClick={() => handleDelete(product)}
+                  >
+                    <Trash2 className="w-3 h-3 mr-1" />
+                    Xóa
+                  </Button>
                 </div>
               </div>
             </div>

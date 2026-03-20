@@ -1,4 +1,5 @@
 import {
+  ApiResponse,
   CommitmentRequest,
   CommitmentResponse,
   CreateAnnouncementRequest,
@@ -11,9 +12,13 @@ import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
 import { PageResponse, CommentResponse } from '@/src/types';
 
 export const feedService = {
-  getFeed: async (coopId: string): Promise<FeedResponse> => {
-    const res = await httpClient.get<FeedResponse>(
-      API_ENDPOINTS.FEED.GET_FEED(coopId)
+  getFeed: async (
+    coopId: string,
+    page = 0,
+    size = 10
+  ): Promise<PageResponse<Post>> => {
+    const res = await httpClient.get<PageResponse<Post>>(
+      `${API_ENDPOINTS.FEED.GET_FEED(coopId)}?page=${page}&size=${size}`
     );
 
     return res.data;
@@ -53,12 +58,17 @@ export const feedService = {
   createAnnouncement: async (
     coopId: string,
     data: CreateAnnouncementRequest
-  ): Promise<Post> => {
-    const res = await httpClient.post<Post>(
+  ): Promise<boolean> => {
+    const res = await httpClient.post<ApiResponse<null>>(
       API_ENDPOINTS.ANNOUNCEMENT.CREATE(coopId),
       data
     );
-    return res.data;
+
+    if (!res.data.success) {
+      throw new Error(res.data.message);
+    }
+
+    return true;
   },
 
   getAnnouncements: async (
@@ -75,12 +85,17 @@ export const feedService = {
   createCampaign: async (
     coopId: string,
     data: CreateCampaignRequest
-  ): Promise<Post> => {
-    const res = await httpClient.post<Post>(
+  ): Promise<boolean> => {
+    const res = await httpClient.post<ApiResponse<null>>(
       API_ENDPOINTS.CAMPAIGN.CREATE(coopId),
       data
     );
-    return res.data;
+
+    if (!res.data.success) {
+      throw new Error(res.data.message);
+    }
+
+    return true;
   },
 
   commitCampaign: async (
