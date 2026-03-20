@@ -10,6 +10,7 @@ export const en = {
     LOADING: 'Loading...',
     EMPTY: 'No data available',
     ERROR: 'An error occurred',
+    VIETNAM: 'Viet Nam',
   },
   DASHBOARD: {
     HOME_TITLE: 'Cooperative Dashboard',
@@ -74,6 +75,7 @@ export const en = {
 
   FEED: {
     TITLE: 'Cooperative Feed',
+    CREAT_POST: 'Create post',
     SUBTITLE: 'Updates on announcements and collection campaigns',
     MARKETPLACE: 'Marketplace',
     THINKING: 'What are you thinking?',
@@ -88,6 +90,7 @@ export const en = {
     UPCOMING_CAMPAIGN: 'Upcoming Campaigns',
     NO_CAMPAIGN: 'No campaigns available',
     NEW: 'New',
+    COLLECTED: 'Total quantity',
     EXPECTED_CAMPAIGN: 'Upcoming Campaign:',
     PUBLISH: 'Publish',
     PUBLISHED: 'Published',
@@ -97,6 +100,7 @@ export const en = {
     ERROR_IMAGE: 'Unable to upload image. Please try again',
     UPLOADING: 'Uploading...',
     POST: 'Post',
+    CONTENT: 'Content',
     CONTENT_PLACEHOLDER: 'Enter post content...',
     TITLE_POST: 'Title',
     TITLE_POST_PLACEHOLDER: 'Enter post title...',
@@ -106,7 +110,9 @@ export const en = {
     EXPECTED_DATE: 'Expected Date',
     ATTACHMENTS: 'Attachments',
     ADD_IMAGE: 'Add Image',
-
+    ERROR_TITLE_REQUIRED: 'Title is required',
+    ERROR_CONTENT_REQUIRED: 'Content is required',
+    ERROR_DATE_REQUIRED: 'Please select expected date',
     TIME: {
       JUST_NOW: 'Just now',
       MINUTES_AGO: '{{count}} minute ago',
@@ -175,13 +181,14 @@ export const en = {
     NO_IMAGE: 'No image available',
     COOPERATIVE: 'Cooperative',
     QUANTITY: 'Quantity',
+    QUANTITY_TONS: 'Tons',
     DESCRIPTION: 'Description',
     CONTACT_FOR_PRICE: 'Contact for price',
     VIEW_DETAILS: 'View details',
     POSTED_DATE: 'Posted: {{date}}',
     PRICE_FORMAT: '{{price}} VND/{{unit}}',
     QUANTITY_FORMAT: '{{quantity}} {{unit}}',
-
+    CONTACT: 'Contact',
     FILTER: {
       ALL: 'All',
       AVAILABLE: 'Available',
@@ -213,6 +220,23 @@ export const en = {
 
     TOAST: {
       LOAD_ERROR: 'Unable to load marketplace',
+    },
+    PUBLISH: {
+      TITLE: 'Publish to Marketplace',
+      PRICE_LABEL: 'Expected Price (VND)',
+      PRICE_PLACEHOLDER: '150000',
+      ATTACHMENTS: 'Product Images (Optional)',
+      ADD_IMAGE: 'Add image',
+      SUBMIT: 'Publish to Marketplace',
+      LOADING: 'Publishing...',
+    },
+    ERRORS: {
+      QUANTITY_ZERO: 'Collected quantity must be greater than 0.',
+      PRICE_REQUIRED: 'Please enter a price.',
+      PRICE_INVALID: 'Price must be greater than 0.',
+      UPLOAD_FAILED: 'Upload failed.',
+      PUBLISH_FAILED: 'Failed to publish post.',
+      PRICE_TOO_LARGE: 'Price must not exceed {{max}}',
     },
   },
 
@@ -392,6 +416,7 @@ export const en = {
       UPDATED_AT: 'Updated at',
       COUNT: '{{count}} request',
       COUNT_other: '{{count}} requests',
+      REQUIREMENTS: 'Requirement',
     },
 
     STATUS: {
@@ -427,32 +452,45 @@ export const en = {
 
     FORM: {
       PRODUCT_NAME: 'Product Name',
-      PRODUCT_NAME_PLACEHOLDER: 'E.g., Arabica Coffee',
+      PRODUCT_NAME_PLACEHOLDER: 'E.g: Arabica Coffee',
+
       QUANTITY: 'Quantity',
       QUANTITY_PLACEHOLDER: '1000',
+
       UNIT: 'Unit',
       UNITS: {
         KG: 'Kg',
         TON: 'Ton',
       },
+
       EXPECTED_PRICE: 'Expected Price (VND)',
       EXPECTED_PRICE_PLACEHOLDER: '50000',
+
       DEADLINE: 'Deadline',
+
       REQUIREMENTS: 'Additional Requirements',
       REQUIREMENTS_PLACEHOLDER:
         'Enter specific requirements about quality, specifications, delivery time...',
+
       CANCEL: 'Cancel',
       CREATE: 'Create Request',
       CREATING: 'Creating...',
 
+      SELECTED_DATE: 'Selected date: {{date}}',
+
       VALIDATION: {
         PRODUCT_NAME_REQUIRED: 'Please enter product name',
         QUANTITY_REQUIRED: 'Please enter quantity',
+        QUANTITY_INVALID: 'Invalid quantity',
+        QUANTITY_TOO_LARGE: 'Quantity cannot exceed {{max}} tons',
+        PRICE_INVALID: 'Invalid price',
+        PRICE_NEGATIVE: 'Price cannot be negative',
+        PRICE_TOO_LARGE: 'Price cannot exceed {{max}} VND',
         DEADLINE_REQUIRED: 'Please select deadline',
+        DATE_INVALID: 'Invalid date',
         DEADLINE_PAST: 'Deadline cannot be in the past',
       },
     },
-
     TOAST: {
       CREATE_SUCCESS: 'Purchase request created successfully!',
       CREATE_FAILED: 'Failed to create purchase request',

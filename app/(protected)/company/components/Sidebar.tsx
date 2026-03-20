@@ -10,8 +10,7 @@ import {
   FileText,
   User,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
+  ChevronDown,
   Package,
   Boxes,
 } from 'lucide-react';
@@ -70,11 +69,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
   const [expanded, setExpanded] = useState(true);
   const [userInfo, setUserInfo] = useState<{
     name: string;
@@ -130,6 +125,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
     );
   };
 
+  // Prefetch toàn bộ page khi load
   useEffect(() => {
     menuItems.forEach((item) => {
       router.prefetch(item.href);
@@ -141,12 +137,16 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
     localStorage.removeItem('accessToken');
     router.push(`/login?lang=${i18next.language || 'vi'}`);
   };
-  if (!mounted) return null;
+
   return (
-    <aside className="bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-4rem)]">
+    <aside
+      className={`bg-white border-r border-gray-200 transition-all duration-300 ${
+        expanded ? 'w-64' : 'w-20'
+      } h-screen flex flex-col fixed top-0 left-0 z-50`}
+    >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center gap-3">
-        <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
+        <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
           {userInfo?.name?.charAt(0)?.toUpperCase() || 'AT'}
         </div>
 
@@ -155,15 +155,14 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
             <span className="text-sm font-bold text-gray-900 block truncate">
               {userInfo?.name || 'AgriTrade'}
             </span>
-            {mounted && (
-              <span className="text-xs text-gray-400">
-                {t('SIDEBAR.BUSINESS')}
-              </span>
-            )}
+            <span className="text-xs text-gray-400">
+              {t('SIDEBAR.BUSINESS')}
+            </span>
           </div>
         )}
       </div>
 
+      {/* Menu */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -182,7 +181,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
               onMouseEnter={() => router.prefetch(item.href)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                 isActive
-                  ? 'bg-emerald-100 text-emerald-700 font-semibold'
+                  ? 'bg-green-100 text-green-700 font-semibold'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
               title={!expanded ? t(item.labelKey) : ''}
@@ -196,20 +195,19 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
         })}
       </nav>
 
+      {/* Footer */}
       <div className="p-4 border-t border-gray-200 space-y-2">
         <button
           onClick={toggleExpand}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
           title={!expanded ? t('SIDEBAR.COLLAPSE') : ''}
         >
-          {expanded ? (
-            <>
-              <ChevronLeft className="w-5 h-5 shrink-0" />
-              <span className="text-sm">{t('SIDEBAR.COLLAPSE')}</span>
-            </>
-          ) : (
-            <ChevronRight className="w-5 h-5 shrink-0 mx-auto" />
-          )}
+          <ChevronDown
+            className={`w-5 h-5 shrink-0 transition-transform ${
+              expanded ? '' : 'rotate-180'
+            }`}
+          />
+          {expanded && <span className="text-sm">{t('SIDEBAR.COLLAPSE')}</span>}
         </button>
 
         <button

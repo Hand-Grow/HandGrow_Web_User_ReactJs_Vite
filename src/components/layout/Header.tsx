@@ -26,14 +26,14 @@ const languages = [
   { code: 'en', name: 'English', flag: EngFlag },
 ];
 
-// 1. COMPONENT SKELETON ĐỂ CHỜ LOADING (Lấy từ code cũ của bạn)
+// 1. COMPONENT SKELETON ĐỂ CHỜ LOADING
 function HeaderSkeleton() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/60 dark:bg-gray-900/95 dark:border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold bg-linear-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-linear-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
               HandGrow
             </span>
           </Link>
@@ -140,7 +140,7 @@ function HeaderContent() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold bg-linear-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-linear-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
               HandGrow
             </span>
           </Link>
@@ -149,7 +149,7 @@ function HeaderContent() {
             <div className="hidden sm:block relative" ref={langDropdownRef}>
               <button
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 rounded-lg hover:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:text-gray-200"
+                className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 rounded-lg hover:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-700 dark:text-gray-200"
                 aria-label="Select language"
               >
                 <div className="w-5 h-5 relative overflow-hidden rounded-sm">
@@ -180,7 +180,7 @@ function HeaderContent() {
                       onClick={() => handleChangeLang(lang.code)}
                       className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
                         lang.code === i18n.language
-                          ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
+                          ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400'
                           : 'text-gray-700 dark:text-gray-200'
                       }`}
                     >
@@ -195,7 +195,7 @@ function HeaderContent() {
                       </div>
                       <span className="flex-1 text-left">{lang.name}</span>
                       {lang.code === i18n.language && (
-                        <span className="text-emerald-600 dark:text-emerald-400">
+                        <span className="text-green-600 dark:text-green-400">
                           ✓
                         </span>
                       )}
@@ -206,10 +206,10 @@ function HeaderContent() {
             </div>
 
             <Button
-              variant="default"
+              variant="ghost"
               size="sm"
               onClick={toggleTheme}
-              className="rounded-full w-9 h-9 sm:w-10 sm:h-10 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="rounded-full w-9 h-9 sm:w-10 sm:h-10 bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700"
               aria-label="Toggle theme"
             >
               {theme === 'light' ? (
@@ -231,7 +231,7 @@ function HeaderContent() {
                     <img
                       src="/avatar-default.png"
                       alt={user.fullName}
-                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-emerald-500"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-green-500"
                     />
                     <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></span>
                   </div>
@@ -249,7 +249,7 @@ function HeaderContent() {
                       <p className="text-sm font-semibold text-gray-900 dark:text-white">
                         {user.fullName}
                       </p>
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-medium">
                         {user.role === USER_ROLES.COOP
                           ? t('CONTRACT.COOPERATIVE')
                           : t('CONTRACT.ENTERPRISE')}
@@ -323,7 +323,7 @@ function HeaderContent() {
                     }}
                     className={`w-full flex items-center gap-3 px-2 py-2.5 rounded-lg transition-colors ${
                       lang.code === i18n.language
-                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
+                        ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400'
                         : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
                   >
@@ -340,7 +340,7 @@ function HeaderContent() {
                       {lang.name}
                     </span>
                     {lang.code === i18n.language && (
-                      <span className="text-emerald-600 dark:text-emerald-400">
+                      <span className="text-green-600 dark:text-green-400">
                         ✓
                       </span>
                     )}
@@ -355,7 +355,6 @@ function HeaderContent() {
   );
 }
 
-// 3. XUẤT COMPONENT ĐÃ ĐƯỢC BỌC GIÁP
 export const Header = () => {
   return (
     <Suspense fallback={<HeaderSkeleton />}>

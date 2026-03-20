@@ -1,7 +1,7 @@
 'use client';
 
-import Sidebar from '@/app/(protected)/company/components/Sidebar';
 import { Header } from '@/src/components/layout/Header';
+import Sidebar from '@/app/(protected)/company/components/Sidebar';
 import React, { useState, useEffect } from 'react';
 
 interface SidebarChangeEvent extends CustomEvent {
@@ -31,14 +31,15 @@ export default function CompanyLayout({
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <div
-        className="grid flex-1"
-        style={{
-          gridTemplateColumns: sidebarExpanded ? '16rem 1fr' : '5rem 1fr',
-        }}
-      >
+      <div className="flex flex-1">
         <Sidebar onExpandChange={setSidebarExpanded} />
-        <main className="p-6 overflow-x-auto"> {children} </main>
+        <main
+          className={`flex-1 overflow-x-auto transition-all duration-300 ${
+            sidebarExpanded ? 'ml-64' : 'ml-20'
+          }`}
+        >
+          <div className="p-6">{children}</div>
+        </main>
       </div>
     </div>
   );
