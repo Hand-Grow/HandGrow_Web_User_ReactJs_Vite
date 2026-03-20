@@ -5,7 +5,12 @@ export interface PageResponse<T> {
   totalElements: number;
   totalPages: number;
 }
-
+export interface ApiResponse<T> {
+  status: number;
+  message: string;
+  success: boolean;
+  data: T;
+}
 export interface Author {
   id?: string | number;
   name: string;
@@ -89,6 +94,7 @@ export interface BasePost {
   image?: string;
   attachments?: string[];
   /* campaign specific */
+  totalQuantity: number;
   productName?: string;
   expectedDate?: string;
   /* marketplace */

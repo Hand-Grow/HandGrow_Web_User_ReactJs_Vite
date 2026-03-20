@@ -1,16 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
-import {
-  X,
-  Megaphone,
-  Sprout,
-  Image as ImageIcon,
-  Loader2,
-  Plus,
-} from 'lucide-react';
+import { X, Megaphone, Sprout, Loader2, Plus } from 'lucide-react';
 
-import { Post, PostType } from '@/src/types';
+import { PostType } from '@/src/types';
 import { feedService } from '@/src/services/feedService';
 import { authService } from '@/src/services/authService';
 import { fileService } from '@/src/services/fileService';
@@ -20,7 +13,7 @@ import { t } from 'i18next';
 
 interface CreatePostModalProps {
   onClose: () => void;
-  onCreate: (post: Post) => void;
+  onCreate: () => Promise<void>; // ✅ FIX async
 }
 
 export default function CreatePostModal({
@@ -40,30 +33,37 @@ export default function CreatePostModal({
 
   const [loading, setLoading] = useState(false);
   const [coopId, setCoopId] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // ✅ FIX timezone today (yyyy-mm-dd)
+  const today = new Date();
+  const minDate = today.toISOString().split('T')[0];
+
   useEffect(() => {
     const loadProfile = async () => {
-      const user = await authService.getProfile();
-      setCoopId(user.id);
+      try {
+        const user = await authService.getProfile();
+        setCoopId(user.id);
+      } catch {
+        toast.error(t('FEED.ERROR_LOAD'));
+      }
     };
     loadProfile();
   }, []);
 
+  // ===== Upload =====
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     try {
       setUploading(true);
-
       const file = files[0];
-
       const url = await fileService.uploadFile(file);
-
       setAttachments((prev) => [...prev, url]);
-    } catch (_) {
+    } catch {
       toast.error(t('FEED.ERROR_IMAGE'));
     } finally {
       setUploading(false);
@@ -74,24 +74,54 @@ export default function CreatePostModal({
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // ===== VALIDATE =====
+  const isTitleInvalid = submitted && !title.trim();
+  const isContentInvalid = submitted && !content.trim();
+  const isDateInvalid = submitted && type === 'CAMPAIGN' && !expectedDate;
+
+  // ===== SUBMIT =====
   const handleSubmit = async () => {
-    if (!content.trim()) return;
+    setSubmitted(true);
+
+    if (!coopId) {
+      toast.error('Chưa xác định hợp tác xã');
+      return;
+    }
+
+    if (!title.trim()) {
+      toast.error(t('FEED.VALIDATION.TITLE_REQUIRED'));
+      return;
+    }
+
+    if (!content.trim()) {
+      toast.error(t('FEED.VALIDATION.CONTENT_REQUIRED'));
+      return;
+    }
+
+    if (type === 'CAMPAIGN') {
+      if (!expectedDate) {
+        toast.error(t('FEED.VALIDATION.DATE_REQUIRED'));
+        return;
+      }
+
+      // ✅ FIX: không cho ngày quá khứ
+      if (expectedDate < minDate) {
+        toast.error(t('FEED.VALIDATION.DATE_PAST'));
+        return;
+      }
+    }
 
     try {
       setLoading(true);
 
-      let newPost: Post;
-
       if (type === 'ANNOUNCEMENT') {
-        newPost = await feedService.createAnnouncement(coopId, {
+        await feedService.createAnnouncement(coopId, {
           title,
           content,
           attachments,
         });
       } else {
-        if (!expectedDate) return;
-
-        newPost = await feedService.createCampaign(coopId, {
+        await feedService.createCampaign(coopId, {
           title: title || PRODUCE_LABELS[productName],
           productName,
           expectedDate,
@@ -100,9 +130,13 @@ export default function CreatePostModal({
         });
       }
 
-      onCreate(newPost);
+      // ✅ FIX: reload feed từ server (API trả data null)
+      await onCreate();
+
       onClose();
-    } catch (_) {
+
+      toast.success(t('FEED.POST_SUCCESS'));
+    } catch {
       toast.error(t('FEED.ERROR_LOAD'));
     } finally {
       setLoading(false);
@@ -112,6 +146,7 @@ export default function CreatePostModal({
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white w-105 max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-6 space-y-5">
+        {/* HEADER */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">{t('FEED.CREATE_POST')}</h2>
 
@@ -129,7 +164,8 @@ export default function CreatePostModal({
                 type === 'ANNOUNCEMENT'
                   ? 'border-green-500 bg-green-50'
                   : 'border-gray-200'
-              }`}
+              }
+            `}
           >
             <Megaphone size={16} />
             {t('FEED.ANNOUNCEMENT')}
@@ -142,7 +178,8 @@ export default function CreatePostModal({
                 type === 'CAMPAIGN'
                   ? 'border-green-500 bg-green-50'
                   : 'border-gray-200'
-              }`}
+              }
+            `}
           >
             <Sprout size={16} />
             {t('FEED.CAMPAIGN')}
@@ -152,18 +189,26 @@ export default function CreatePostModal({
         {/* TITLE */}
         <div>
           <label className="text-sm text-gray-500">
-            {t('FEED.TITLE_POST')}
+            {t('FEED.TITLE_POST')} <span className="text-red-500">*</span>
           </label>
 
           <input
-            placeholder={t('FEED.TITLE_POST_PLACEHOLDER')}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500 outline-none"
+            placeholder={t('FEED.TITLE_POST_PLACEHOLDER')}
+            className={`w-full border rounded-lg p-2 mt-1 outline-none
+              ${isTitleInvalid ? 'border-red-500' : 'focus:ring-2 focus:ring-green-500'}
+            `}
           />
+
+          {isTitleInvalid && (
+            <p className="text-xs text-red-500 mt-1">
+              {t('FEED.ERROR_TITLE_REQUIRED')}
+            </p>
+          )}
         </div>
 
-        {/* CAMPAIGN EXTRA */}
+        {/* CAMPAIGN */}
         {type === 'CAMPAIGN' && (
           <>
             <div>
@@ -186,33 +231,53 @@ export default function CreatePostModal({
 
             <div>
               <label className="text-sm text-gray-500">
-                {t('FEED.EXPECTED_DATE')}
+                {t('FEED.EXPECTED_DATE')}{' '}
+                <span className="text-red-500">*</span>
               </label>
 
               <input
                 type="date"
                 value={expectedDate}
+                min={minDate} // ✅ FIX chính
                 onChange={(e) => setExpectedDate(e.target.value)}
-                className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500"
+                className={`w-full border rounded-lg p-2 mt-1
+                  ${isDateInvalid ? 'border-red-500' : 'focus:ring-2 focus:ring-green-500'}
+                `}
               />
+
+              {isDateInvalid && (
+                <p className="text-xs text-red-500 mt-1">
+                  {t('FEED.ERROR_DATE_REQUIRED')}
+                </p>
+              )}
             </div>
           </>
         )}
 
         {/* CONTENT */}
         <div>
-          <label className="text-sm text-gray-500">{t('FEED.CONTENT')}</label>
+          <label className="text-sm text-gray-500">
+            {t('FEED.CONTENT')} <span className="text-red-500">*</span>
+          </label>
 
           <textarea
             rows={4}
-            placeholder={t('FEED.CONTENT_PLACEHOLDER')}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-500 outline-none"
+            placeholder={t('FEED.CONTENT_PLACEHOLDER')}
+            className={`w-full border rounded-lg p-2 mt-1 outline-none
+              ${isContentInvalid ? 'border-red-500' : 'focus:ring-2 focus:ring-green-500'}
+            `}
           />
+
+          {isContentInvalid && (
+            <p className="text-xs text-red-500 mt-1">
+              {t('FEED.ERROR_CONTENT_REQUIRED')}
+            </p>
+          )}
         </div>
 
-        {/* IMAGE UPLOAD */}
+        {/* ATTACHMENTS */}
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-500">
@@ -241,7 +306,6 @@ export default function CreatePostModal({
             accept="image/*"
           />
 
-          {/* PREVIEW */}
           {attachments.length > 0 && (
             <div className="grid grid-cols-3 gap-2">
               {attachments.map((url, i) => (
@@ -269,7 +333,7 @@ export default function CreatePostModal({
             onClick={onClose}
             className="px-4 py-2 border rounded-lg hover:bg-gray-100"
           >
-            {t('CANCEL')}
+            {t('CHAT.CANCEL')}
           </button>
 
           <button

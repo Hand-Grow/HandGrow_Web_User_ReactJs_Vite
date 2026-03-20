@@ -6,20 +6,27 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('accessToken');
   const { pathname } = request.nextUrl;
 
-  if (pathname.includes('/_next') || pathname.includes('/favicon.ico')) {
-    return NextResponse.next();
-  }
+  const lang =
+    request.cookies.get('lang')?.value ||
+    request.nextUrl.searchParams.get('lang') ||
+    'vi';
+
+  const response = NextResponse.next();
+
+  response.headers.set('x-language', lang);
 
   if (pathname.startsWith('/cooperative') || pathname.startsWith('/company')) {
     if (!token) {
       console.log('No token, redirecting to /login');
-      return NextResponse.redirect(new URL('/login', request.url));
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('lang', lang);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: ['/cooperative/:path*', '/company/:path*'],
+  matcher: ['/cooperative/:path*', '/company/:path*', '/login/:path*'],
 };

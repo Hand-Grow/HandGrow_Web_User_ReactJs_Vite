@@ -30,11 +30,19 @@ interface FeedCardProps {
   setFeed: Dispatch<SetStateAction<Post[]>>;
 }
 
+interface Campaign {
+  id: string;
+  collectedQuantity: number;
+}
+
 type ApiType = 'announcement' | 'campaign';
 
+// ===== Time helper =====
 function timeAgo(dateString: string, t: TFunction) {
   const now = new Date();
-  const date = new Date(dateString);
+  const date = new Date(
+    dateString.endsWith('Z') ? dateString : dateString + 'Z'
+  );
 
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   const minutes = Math.floor(seconds / 60);
@@ -42,21 +50,24 @@ function timeAgo(dateString: string, t: TFunction) {
   const days = Math.floor(seconds / 86400);
 
   if (seconds < 60) return t('FEED.TIME.JUST_NOW');
-  if (minutes < 60) return t('FEED.TIME.MINUTES', { count: minutes });
-  if (hours < 24) return t('FEED.TIME.HOURS', { count: hours });
-  if (days < 7) return t('FEED.TIME.DAYS', { count: days });
+  if (minutes < 60) return t('FEED.TIME.MINUTES_AGO', { count: minutes });
+  if (hours < 24) return t('FEED.TIME.HOURS_AGO', { count: hours });
+  if (days < 7) return t('FEED.TIME.DAYS_AGO', { count: days });
 
   return date.toLocaleDateString();
 }
 
 export default function FeedCard({ item, setFeed }: FeedCardProps) {
-  const [comment, setComment] = useState('');
-  const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<CommentResponse[]>([]);
-  const [loadingComment, setLoadingComment] = useState(false);
-  const [publishOpen, setPublishOpen] = useState(false);
-
   const { t } = useTranslation();
+
+  const [comment, setComment] = useState<string>('');
+  const [showComments, setShowComments] = useState<boolean>(false);
+  const [comments, setComments] = useState<CommentResponse[]>([]);
+  const [loadingComment, setLoadingComment] = useState<boolean>(false);
+
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
+    null
+  );
 
   const postType: PostType =
     item.type === 'CAMPAIGN' ? 'CAMPAIGN' : 'ANNOUNCEMENT';
@@ -86,6 +97,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
   const isRecent =
     Date.now() - new Date(item.createdAt).getTime() < 24 * 60 * 60 * 1000;
 
+  // ===== Like =====
   const handleLike = async () => {
     try {
       await feedService.toggleLike(apiType, item.id);
@@ -106,6 +118,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
     }
   };
 
+  // ===== Load comments =====
   const loadComments = useCallback(async () => {
     try {
       setLoadingComment(true);
@@ -122,6 +135,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
     if (showComments) loadComments();
   }, [showComments, loadComments]);
 
+  // ===== Comment =====
   const handleComment = async () => {
     if (!comment.trim()) return;
 
@@ -149,7 +163,6 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         >
           {config.label}
         </span>
-
         {isRecent && (
           <span className="absolute top-4 left-4 flex items-center gap-1 text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
             <Flame size={14} />
@@ -170,6 +183,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
           </div>
         </div>
 
+        {/* Campaign */}
         {postType === 'CAMPAIGN' ? (
           <div className="bg-green-50 rounded-xl p-4 space-y-3">
             <div className="text-green-700 font-semibold text-lg">
@@ -185,8 +199,18 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
               {t('FEED.EXPECTED_CAMPAIGN')}
               <span className="font-semibold text-green-700">
                 {item.expectedDate
-                  ? new Date(item.expectedDate).toLocaleDateString()
+                  ? new Date(
+                      item.expectedDate + 'T00:00:00'
+                    ).toLocaleDateString('vi-VN')
                   : 'N/A'}
+              </span>
+            </div>
+
+            {/* Quantity */}
+            <div className="text-sm text-gray-600">
+              {t('FEED.COLLECTED')}:{' '}
+              <span className="font-semibold">
+                {item.totalQuantity ?? 0} {t('COMMON.UNIT.KG')}
               </span>
             </div>
           </div>
@@ -200,6 +224,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         )}
       </div>
 
+      {/* Image */}
       {images.length > 0 && (
         <img
           src={images[0]}
@@ -208,7 +233,9 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         />
       )}
 
+      {/* ===== Actions ===== */}
       <div className="px-5 py-3 flex items-center justify-between text-sm border-t">
+        {/* Like */}
         <button
           onClick={handleLike}
           className={`flex items-center gap-2 px-3 py-1 rounded-lg transition ${
@@ -219,6 +246,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
           {item.likeCount}
         </button>
 
+        {/* Comment */}
         <button
           onClick={() => setShowComments(!showComments)}
           className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-100 transition"
@@ -227,14 +255,22 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
           {item.commentCount}
         </button>
 
+        {/* Publish */}
         {postType === 'CAMPAIGN' && (
           <button
-            onClick={() => setPublishOpen(true)}
-            disabled={item.published}
+            onClick={() =>
+              setSelectedCampaign({
+                id: item.id,
+                collectedQuantity: item.totalQuantity ?? 0,
+              })
+            }
+            disabled={item.published || item.totalQuantity <= 0}
             className={`flex items-center gap-2 text-sm px-3 py-1 rounded-lg transition ${
               item.published
                 ? 'bg-gray-300 text-gray-600'
-                : 'bg-green-600 text-white hover:bg-green-700'
+                : item.totalQuantity <= 0
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 text-white hover:bg-green-700'
             }`}
           >
             <ShoppingCart size={16} />
@@ -243,6 +279,7 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         )}
       </div>
 
+      {/* ===== Comments ===== */}
       {showComments && (
         <div className="px-5 pb-5 space-y-3 border-t">
           {comments.map((c) => (
@@ -285,14 +322,16 @@ export default function FeedCard({ item, setFeed }: FeedCardProps) {
         </div>
       )}
 
-      {publishOpen && (
+      {/* ===== Modal ===== */}
+      {selectedCampaign && (
         <PublishCampaignModal
-          campaignId={item.id}
-          onClose={() => setPublishOpen(false)}
+          campaignId={selectedCampaign.id}
+          collectedQuantity={selectedCampaign.collectedQuantity}
+          onClose={() => setSelectedCampaign(null)}
           onSuccess={() => {
             setFeed((prev) =>
               prev.map((p) =>
-                p.id === item.id ? { ...p, published: true } : p
+                p.id === selectedCampaign.id ? { ...p, published: true } : p
               )
             );
           }}

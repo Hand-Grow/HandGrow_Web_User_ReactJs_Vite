@@ -10,6 +10,7 @@ export const vi = {
     LOADING: 'Đang tải...',
     EMPTY: 'Không có dữ liệu',
     ERROR: 'Có lỗi xảy ra',
+    VIETNAM: 'Việt Nam',
   },
   DASHBOARD: {
     HOME_TITLE: 'Trang chủ HTX',
@@ -85,6 +86,7 @@ export const vi = {
     UPCOMING_CAMPAIGN: 'Thu gom sắp tới',
     NO_CAMPAIGN: 'Chưa có đợt thu gom',
     NEW: 'Mới',
+    COLLECTED: 'Số lượng thu gom',
     EXPECTED_CAMPAIGN: 'Thu gom dự kiến:',
     PUBLISH: 'Đăng bán',
     PUBLISHED: 'Đã đăng Marketplace',
@@ -94,6 +96,7 @@ export const vi = {
     ERROR_IMAGE: 'Không thể tải ảnh. Vui lòng thử lại',
     UPLOADING: 'Đang tải lên...',
     POST: 'Đăng bài',
+    CONTENT: 'Nội dung',
     CONTENT_PLACEHOLDER: 'Nhập nội dung bài đăng...',
     TITLE_POST: 'Tiêu đề',
     TITLE_POST_PLACEHOLDER: 'Nhập tiêu đề bài đăng...',
@@ -103,7 +106,10 @@ export const vi = {
     EXPECTED_DATE: 'Ngày dự kiến',
     ATTACHMENTS: 'Ảnh đính kèm',
     ADD_IMAGE: 'Thêm ảnh',
-
+    CREAT_POST: 'Tạo bài đăng',
+    ERROR_TITLE_REQUIRED: 'Tiêu đề là bắt buộc',
+    ERROR_CONTENT_REQUIRED: 'Nội dung là bắt buộc',
+    ERROR_DATE_REQUIRED: 'Vui lòng chọn ngày dự kiến',
     TIME: {
       JUST_NOW: 'Vừa xong',
       MINUTES_AGO: '{{count}} phút trước',
@@ -170,12 +176,13 @@ export const vi = {
     COOPERATIVE: 'HTX',
     QUANTITY: 'Số lượng',
     DESCRIPTION: 'Mô tả',
+    QUANTITY_TONS: 'Tấn',
     CONTACT_FOR_PRICE: 'Liên hệ',
     VIEW_DETAILS: 'Xem chi tiết',
     POSTED_DATE: 'Đăng ngày: {{date}}',
     PRICE_FORMAT: '{{price}}đ/{{unit}}',
     QUANTITY_FORMAT: '{{quantity}} {{unit}}',
-
+    CONTACT: 'Liên hệ',
     FILTER: {
       ALL: 'Tất cả',
       AVAILABLE: 'Đang bán',
@@ -207,6 +214,23 @@ export const vi = {
 
     TOAST: {
       LOAD_ERROR: 'Không thể tải marketplace',
+    },
+    PUBLISH: {
+      TITLE: 'Đăng lên Marketplace',
+      PRICE_LABEL: 'Giá dự kiến (VND)',
+      PRICE_PLACEHOLDER: '150000',
+      ATTACHMENTS: 'Ảnh sản phẩm (Tùy chọn)',
+      ADD_IMAGE: 'Thêm ảnh',
+      SUBMIT: 'Đăng bài lên Marketplace',
+      LOADING: 'Đang đăng...',
+    },
+    ERRORS: {
+      QUANTITY_ZERO: 'Sản lượng thu phải lớn hơn 0.',
+      PRICE_REQUIRED: 'Vui lòng nhập giá.',
+      PRICE_INVALID: 'Giá phải lớn hơn 0.',
+      UPLOAD_FAILED: 'Tải ảnh thất bại.',
+      PUBLISH_FAILED: 'Đăng bài thất bại.',
+      PRICE_TOO_LARGE: 'Giá không được vượt quá {{max}}',
     },
   },
 
@@ -345,6 +369,7 @@ export const vi = {
     PRODUCTS: 'Quản lý sản phẩm',
     SEARCH_SUPPLY: 'Tìm kiếm nguồn cung',
     PURCHASE_REQUESTS: 'Yêu cầu mua',
+    MANAGE_MEMBER: 'Quản lý thành viên',
     MESSAGES: 'Tin nhắn',
     CONTRACTS: 'Hợp đồng',
     PROFILE: 'Cá nhân',
@@ -383,6 +408,7 @@ export const vi = {
       CREATED_AT: 'Ngày tạo',
       UPDATED_AT: 'Cập nhật',
       COUNT: '{{count}} yêu cầu',
+      REQUIREMENTS: 'Yêu cầu',
     },
 
     STATUS: {
@@ -406,31 +432,68 @@ export const vi = {
       SUBTITLE: 'Điền thông tin chi tiết về yêu cầu của bạn',
     },
 
-    FORM: {
-      PRODUCT_NAME: 'Tên sản phẩm',
-      PRODUCT_NAME_PLACEHOLDER: 'Ví dụ: Cà phê Arabica',
-      QUANTITY: 'Số lượng',
-      QUANTITY_PLACEHOLDER: '1000',
-      UNIT: 'Đơn vị',
-      UNITS: {
-        KG: 'Kg',
-        TON: 'Tấn',
-      },
-      EXPECTED_PRICE: 'Giá dự kiến (VNĐ)',
-      EXPECTED_PRICE_PLACEHOLDER: '50000',
-      DEADLINE: 'Hạn chót',
-      REQUIREMENTS: 'Yêu cầu thêm',
-      REQUIREMENTS_PLACEHOLDER:
-        'Nhập các yêu cầu cụ thể về chất lượng, quy cách, thời gian giao hàng...',
-      CANCEL: 'Hủy',
-      CREATE: 'Tạo yêu cầu',
-      CREATING: 'Đang tạo...',
+    // Trong file locale (ví dụ: vi/common.ts hoặc vi/sourcing.ts)
 
-      VALIDATION: {
-        PRODUCT_NAME_REQUIRED: 'Vui lòng nhập tên sản phẩm',
-        QUANTITY_REQUIRED: 'Vui lòng nhập số lượng',
-        DEADLINE_REQUIRED: 'Vui lòng chọn hạn chót',
-        DEADLINE_PAST: 'Hạn chót không thể là ngày đã qua',
+    SOURCING: {
+      TITLE: 'Tìm kiếm nguồn cung',
+      SUBTITLE: 'Quản lý các yêu cầu tìm kiếm nguồn cung của bạn',
+      CREATE_BUTTON: 'Tạo yêu cầu',
+
+      MODAL: {
+        TITLE: 'Tạo yêu cầu tìm kiếm nguồn cung mới',
+        SUBTITLE: 'Điền thông tin để tìm kiếm nhà cung cấp phù hợp',
+      },
+
+      FORM: {
+        PRODUCT_NAME: 'Tên sản phẩm',
+        PRODUCT_NAME_PLACEHOLDER: 'Ví dụ: Cà phê Arabica',
+
+        QUANTITY: 'Số lượng',
+        QUANTITY_PLACEHOLDER: '1000',
+
+        UNIT: 'Đơn vị',
+        UNITS: {
+          KG: 'Kg',
+          TON: 'Tấn',
+        },
+
+        EXPECTED_PRICE: 'Giá dự kiến (VNĐ)',
+        EXPECTED_PRICE_PLACEHOLDER: '50000',
+
+        DEADLINE: 'Hạn chót',
+
+        REQUIREMENTS: 'Yêu cầu thêm',
+        REQUIREMENTS_PLACEHOLDER:
+          'Nhập các yêu cầu cụ thể về chất lượng, quy cách, thời gian giao hàng...',
+
+        CANCEL: 'Hủy',
+        CREATE: 'Tạo yêu cầu',
+        CREATING: 'Đang tạo...',
+
+        SELECTED_DATE: 'Ngày đã chọn: {{date}}',
+
+        VALIDATION: {
+          PRODUCT_NAME_REQUIRED: 'Vui lòng nhập tên sản phẩm',
+          QUANTITY_REQUIRED: 'Vui lòng nhập số lượng',
+          QUANTITY_INVALID: 'Số lượng không hợp lệ',
+          QUANTITY_TOO_LARGE: 'Số lượng không được vượt quá {{max}} tấn',
+          PRICE_INVALID: 'Giá không hợp lệ',
+          PRICE_NEGATIVE: 'Giá không thể âm',
+          PRICE_TOO_LARGE: 'Giá không được vượt quá {{max}} VNĐ',
+          DEADLINE_REQUIRED: 'Vui lòng chọn hạn chót',
+          DATE_INVALID: 'Ngày không hợp lệ',
+          DEADLINE_PAST: 'Hạn chót không thể là ngày đã qua',
+        },
+      },
+
+      TOAST: {
+        CREATE_SUCCESS: 'Tạo yêu cầu thành công',
+        CREATE_FAILED: 'Tạo yêu cầu thất bại',
+        UNAUTHORIZED: 'Bạn chưa đăng nhập hoặc phiên đăng nhập hết hạn',
+        FORBIDDEN: 'Bạn không có quyền thực hiện hành động này',
+        INVALID_DATA: 'Dữ liệu không hợp lệ',
+        SERVER_ERROR: 'Lỗi máy chủ, vui lòng thử lại sau',
+        ACCESS_ERROR: 'Không thể truy cập API',
       },
     },
 
