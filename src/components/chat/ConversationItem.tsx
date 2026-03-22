@@ -19,8 +19,18 @@ export default function ConversationItem({
     viewerType === 'ENTERPRISE'
       ? room.cooperativeName
       : room.enterpriseName || 'Doanh nghiệp';
+
   const productLabel =
     PRODUCE_LABELS[room.productName as ProduceType] ?? room.productName;
+
+  const avatarUrl =
+    viewerType === 'ENTERPRISE'
+      ? room.cooperativeAvatarUrl
+      : room.enterpriseAvatarUrl;
+
+  const defaultAvatar =
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=' + displayName;
+
   return (
     <div
       onClick={onClick}
@@ -32,8 +42,12 @@ export default function ConversationItem({
       {/* avatar */}
       <div className="relative">
         <img
-          src="https://picsum.photos/40"
-          className="w-11 h-11 rounded-full object-cover"
+          src={avatarUrl || defaultAvatar}
+          alt={displayName}
+          className="w-11 h-11 rounded-full object-cover border border-neutral-100"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = defaultAvatar;
+          }}
         />
         <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
       </div>

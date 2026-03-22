@@ -11,12 +11,25 @@ export default function ChatHeader({ room, viewerType }: Props) {
     viewerType === 'ENTERPRISE'
       ? room.cooperativeName
       : room.enterpriseName || 'Doanh nghiệp';
+
+  const avatarUrl =
+    viewerType === 'ENTERPRISE'
+      ? room.cooperativeAvatarUrl
+      : room.enterpriseAvatarUrl;
+
+  const defaultAvatar =
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=' + displayName;
+
   return (
     <div className="flex items-center justify-between p-4 border border-neutral-200 shadow-sm bg-white">
       <div className="flex items-center gap-3">
         <img
-          src="https://picsum.photos/40"
-          className="w-10 h-10 rounded-full"
+          src={avatarUrl || defaultAvatar}
+          alt={displayName}
+          className="w-10 h-10 rounded-full object-cover border border-neutral-100"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = defaultAvatar;
+          }}
         />
 
         <div>

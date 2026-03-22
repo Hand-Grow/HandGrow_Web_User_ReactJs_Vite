@@ -50,7 +50,7 @@ function HeaderSkeleton() {
 // 2. LÕI LOGIC CỦA HEADER
 function HeaderContent() {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logout, initializing } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -134,6 +134,10 @@ function HeaderContent() {
   if (!mounted) {
     return <HeaderSkeleton />;
   }
+
+  const hasToken =
+    typeof window !== 'undefined' && !!localStorage.getItem('accessToken');
+  const showPlaceholderUser = initializing && hasToken && !user;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/60 dark:bg-gray-900/95 dark:border-gray-800">
@@ -219,38 +223,46 @@ function HeaderContent() {
               )}
             </Button>
 
-            {user && (
+            {(user || showPlaceholderUser) && (
               <div ref={dropdownRef} className="relative">
                 <button
-                  onClick={() => setOpen(!open)}
-                  className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  onClick={() => user && setOpen(!open)}
+                  disabled={!user}
+                  className={`flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${!user ? 'cursor-wait' : ''}`}
                   aria-label="User menu"
                   aria-expanded={open}
                 >
                   <div className="relative">
                     <img
-                      src="/avatar-default.png"
-                      alt={user.fullName}
+                      src={user?.avatarUrl || '/avatar-default.png'}
+                      alt={user?.fullName || 'User'}
                       className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-green-500"
                     />
                     <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></span>
                   </div>
-                  <span className="hidden lg:block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    {user.fullName}
-                  </span>
-                  <ChevronDown
-                    className={`hidden lg:block h-4 w-4 text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`}
-                  />
+                  {user && (
+                    <>
+                      <span className="hidden lg:block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        {user.fullName}
+                      </span>
+                      <ChevronDown
+                        className={`hidden lg:block h-4 w-4 text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`}
+                      />
+                    </>
+                  )}
+                  {showPlaceholderUser && (
+                    <div className="hidden lg:block w-24 h-4 bg-gray-100 dark:bg-gray-800 rounded animate-pulse ml-2" />
+                  )}
                 </button>
 
                 {open && (
                   <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden py-2">
                     <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
                       <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {user.fullName}
+                        {user?.fullName}
                       </p>
                       <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-medium">
-                        {user.role === USER_ROLES.COOP
+                        {user?.role === USER_ROLES.COOP
                           ? t('CONTRACT.COOPERATIVE')
                           : t('CONTRACT.ENTERPRISE')}
                       </p>

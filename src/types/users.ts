@@ -25,6 +25,19 @@ export interface UserProfile {
   commune: string | null;
   province: string | null;
   produce: string | null;
+  representativeName?: string | null;
+}
+
+export interface UpdateProfileRequest {
+  fullName?: string;
+  phoneNumber?: string;
+  address?: string;
+  commune?: string;
+  province?: string;
+  avatarUrl?: string;
+  companyName?: string;
+  representativeName?: string;
+  contactEmail?: string;
 }
 
 export interface UserStatistics {
