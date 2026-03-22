@@ -18,6 +18,9 @@ import { useTranslation } from 'react-i18next';
 import { authService } from '@/src/services/authService';
 import { AxiosError } from 'axios';
 
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 interface Props {
   selectedRoom: ChatRoom | undefined;
   senderType: 'COOPERATIVE' | 'ENTERPRISE';
@@ -27,11 +30,15 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+
   const [isDrafting, setIsDrafting] = useState(false);
   const [draftData, setDraftData] = useState<DraftContractData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
 
+  const stompClientRef = useRef<Client | null>(null);
+
+  // ─── Lấy profile user (dùng để render avatar & check "mine") ───────────────
   useEffect(() => {
     const fetchUserProfile = async () => {
       const profile = await authService.getProfile();
@@ -40,6 +47,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     fetchUserProfile();
   }, []);
 
+  // ─── Lấy lịch sử tin nhắn khi vào phòng ────────────────────────────────────
   const fetchMessages = useCallback(async () => {
     if (!selectedRoom?.id) return;
     try {
@@ -53,45 +61,86 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     }
   }, [selectedRoom?.id, t]);
 
+  // ─── Kết nối WebSocket STOMP mỗi khi đổi phòng ─────────────────────────────
   useEffect(() => {
     if (!selectedRoom?.id) {
       setMessages([]);
       return;
     }
 
+    // 1. Tải lịch sử tin nhắn lần đầu (HTTP)
     fetchMessages();
-    toast.success(t('CHAT.ROOM_LOADED') || 'Đã tải phòng chat!');
 
-    const interval = setInterval(fetchMessages, 3000);
+    // 2. Thiết lập kết nối WebSocket
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+    const socket = new SockJS(`${baseUrl}/ws`);
+    const token = localStorage.getItem('accessToken');
 
-    return () => clearInterval(interval);
-  }, [fetchMessages, selectedRoom?.id, t]);
+    const client = new Client({
+      webSocketFactory: () => socket,
+      connectHeaders: {
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+      reconnectDelay: 5000, // tự reconnect sau 5s nếu mất mạng
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
 
+      onConnect: () => {
+        console.log('✅ WebSocket connected to room:', selectedRoom.id);
+
+        // 3. Subscribe topic của phòng này
+        client.subscribe(`/topic/room/${selectedRoom.id}`, (msg) => {
+          const newMessage: ChatMessage = JSON.parse(msg.body);
+
+          setMessages((prev) => {
+            // Chống duplicate nếu React render 2 lần
+            if (prev.some((m) => m.id === newMessage.id)) return prev;
+            return [...prev, newMessage];
+          });
+        });
+      },
+
+      onStompError: (frame) => {
+        console.error('❌ STOMP error:', frame.headers['message']);
+        toast.error('Mất kết nối realtime, đang thử lại...');
+      },
+      onWebSocketError: (event) => {
+        console.error('❌ WebSocket error:', event);
+      },
+    });
+
+    client.activate();
+    stompClientRef.current = client;
+
+    // 4. Dọn dẹp khi rời phòng hoặc unmount
+    return () => {
+      if (client.active) {
+        client.deactivate();
+        console.log('🛑 WebSocket disconnected from room:', selectedRoom.id);
+      }
+    };
+  }, [selectedRoom?.id, fetchMessages]);
+
+  // ─── Auto-scroll xuống tin nhắn mới ────────────────────────────────────────
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // ─── Gửi tin nhắn (HTTP → server lưu DB → server bơm WS về) ───────────────
   const handleSendMessage = async (text: string) => {
     if (!selectedRoom || !text.trim()) return;
 
-    const toastId = toast.loading(t('CHAT.SENDING') || 'Đang gửi tin nhắn...');
-
     try {
-      // Vẫn dùng API gọi qua HTTP để ném lên server lưu Database.
-      // Khi server lưu xong, TỰ NÓ SẼ BƠM TIN NHẮN qua WebSocket về lại cho mình (và người kia).
       await chatApi.sendMessage(selectedRoom.id, text, senderType);
-      await fetchMessages();
-
-      toast.dismiss(toastId);
-      toast.success(t('CHAT.SEND_SUCCESS') || 'Gửi tin nhắn thành công!');
+      // KHÔNG fetchMessages() - WebSocket sẽ tự push tin nhắn về
     } catch (error) {
       console.error('Failed to send message', error);
-
-      toast.dismiss(toastId);
       toast.error(t('CHAT.SEND_ERROR') || 'Gửi tin nhắn thất bại!');
     }
   };
 
+  // ─── AI soạn thảo hợp đồng ──────────────────────────────────────────────────
   const handleDraftContract = async () => {
     if (!selectedRoom) return;
 
@@ -111,7 +160,6 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
       );
     } catch (err) {
       console.error('Draft contract failed', err);
-
       toast.dismiss(toastId);
       toast.error(
         t('CHAT.TOAST.DRAFT_ERROR') || 'Soạn thảo hợp đồng thất bại!'
@@ -121,6 +169,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     }
   };
 
+  // ─── Gửi hợp đồng vào chat ──────────────────────────────────────────────────
   const handleSendContract = async () => {
     if (!selectedRoom?.id) {
       toast.error(t('CHAT.NO_ROOM_SELECTED') || 'Chưa chọn phòng chat!');
@@ -134,15 +183,11 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     try {
       const res = await contractAPI.getContractByRoom(selectedRoom.id);
 
-      if (!res?.data) {
-        throw new Error('No contract data received');
-      }
+      if (!res?.data) throw new Error('No contract data received');
 
       const contract = res.data;
-
       await chatApi.sendContractMessage(selectedRoom.id, contract, senderType);
-
-      await fetchMessages();
+      // KHÔNG fetchMessages() - WebSocket sẽ tự push về
 
       toast.dismiss(toastId);
       toast.success(
@@ -180,6 +225,17 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     }
   };
 
+  // ─── Format giờ (giữ UTC+7) ─────────────────────────────────────────────────
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    date.setHours(date.getHours() + 7);
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  // ─── Empty state ─────────────────────────────────────────────────────────────
   if (!selectedRoom) {
     return (
       <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
@@ -188,27 +244,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     );
   }
 
-  const isMine = (msgSenderType: string) => {
-    return msgSenderType === senderType;
-  };
-
-  if (!selectedRoom) {
-    return (
-      <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
-        <p className="text-neutral-500"> Chọn một cuộc hội thoại để bắt đầu </p>
-      </div>
-    );
-  }
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-
-    date.setHours(date.getHours() + 7);
-
-    return date.toLocaleTimeString('vi-VN', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  // ─── Main chat UI ────────────────────────────────────────────────────────────
   return (
     <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex flex-col overflow-hidden">
       <ChatHeader room={selectedRoom} viewerType={senderType} />
@@ -220,7 +256,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
               key={msg.id}
               text={msg.content}
               time={formatTime(msg.createdAt)}
-              mine={isMine(msg.senderType)}
+              mine={msg.senderType === senderType}
               avatarUrl={msg.senderAvatarUrl}
               senderName={msg.senderName}
               currentUserRole={user?.role}
@@ -251,7 +287,6 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
           draft={draftData}
           onSaved={async () => {
             await handleSendContract();
-            await fetchMessages();
             toast.success(
               t('CHAT.CONTRACT_SAVED') || 'Lưu hợp đồng thành công!'
             );
