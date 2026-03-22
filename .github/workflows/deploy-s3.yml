@@ -3,7 +3,7 @@ name: Deploy HandGrow NextJS to S3
 on:
   push:
     branches:
-      - main # Hoặc nhánh main
+      - main
 
 jobs:
   build-and-deploy:
@@ -46,4 +46,7 @@ jobs:
         run: |
           aws s3 sync ./out s3://${{ secrets.AWS_BUCKET_NAME }} --delete
 
-#
+      # 7. Ra lệnh cho CloudFront xóa Cache cũ đi để cập nhật giao diện mới
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
