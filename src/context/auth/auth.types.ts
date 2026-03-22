@@ -1,7 +1,7 @@
-import { UserProfile } from '@/src/types';
+import { UserProfile, UserStatistics } from '@/src/types';
 
 export interface AuthContextType {
-  user: UserProfile | null;
+  user: UserProfile | UserStatistics | null;
   initializing: boolean;
   login: (credentials: LoginCredentials) => Promise<AuthTokens>;
   logout: () => void;

@@ -35,6 +35,8 @@ interface Props {
   text: string;
   mine?: boolean;
   time?: string;
+  avatarUrl?: string;
+  senderName?: string;
   currentUserRole?: UserRole;
   currentUserId?: string;
   onContractSigned?: () => void;
@@ -44,6 +46,8 @@ export default function MessageBubble({
   text,
   mine,
   time,
+  avatarUrl,
+  senderName,
   currentUserRole,
   currentUserId,
   onContractSigned,
@@ -168,7 +172,19 @@ export default function MessageBubble({
       const status = getStatusBadge();
 
       return (
-        <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
+        <div
+          className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : 'flex-row'}`}
+        >
+          {!mine && (
+            <img
+              src={
+                avatarUrl ||
+                `https://api.dicebear.com/7.x/avataaars/svg?seed=${senderName || 'System'}`
+              }
+              alt={senderName}
+              className="w-8 h-8 rounded-full object-cover border border-neutral-100 mb-6"
+            />
+          )}
           <div className="max-w-md">
             <div
               className={`bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden ${
@@ -312,7 +328,19 @@ export default function MessageBubble({
   }
 
   return (
-    <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
+    <div
+      className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : 'flex-row'}`}
+    >
+      {!mine && (
+        <img
+          src={
+            avatarUrl ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${senderName || 'System'}`
+          }
+          alt={senderName}
+          className="w-8 h-8 rounded-full object-cover border border-neutral-100 mb-6"
+        />
+      )}
       <div
         className={`
           px-4 py-3 rounded-2xl max-w-[65%] text-sm relative
