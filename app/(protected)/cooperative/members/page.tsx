@@ -61,7 +61,7 @@ export default function MembersPage() {
       name: item.farmerName,
       email: '',
       phone: item.farmerPhone,
-      address: item.cooperativeName,
+      address: item.farmerAddress,
       status: item.status,
       joinDate: new Date(item.createdAt).toLocaleDateString('vi-VN'),
       loans: 0,

@@ -4,8 +4,10 @@ export interface ChatRoom {
   productName: string;
   cooperativeId: string;
   cooperativeName: string;
+  cooperativeAvatarUrl?: string;
   enterpriseId: string;
   enterpriseName: string;
+  enterpriseAvatarUrl?: string;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -17,6 +19,7 @@ export interface ChatMessage {
   senderId: string;
   senderType: 'ENTERPRISE' | 'COOPERATIVE' | 'SYSTEM';
   senderName: string;
+  senderAvatarUrl?: string;
   content: string;
   createdAt: string;
 }

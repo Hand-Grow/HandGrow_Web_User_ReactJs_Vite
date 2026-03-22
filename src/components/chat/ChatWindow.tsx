@@ -221,6 +221,8 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
               text={msg.content}
               time={formatTime(msg.createdAt)}
               mine={isMine(msg.senderType)}
+              avatarUrl={msg.senderAvatarUrl}
+              senderName={msg.senderName}
               currentUserRole={user?.role}
               currentUserId={user?.id}
               onContractSigned={fetchMessages}

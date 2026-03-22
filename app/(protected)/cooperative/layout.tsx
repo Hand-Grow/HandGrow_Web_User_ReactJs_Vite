@@ -2,6 +2,7 @@
 
 import { Header } from '@/src/components/layout/Header';
 import { Sidebar } from '@/src/components/sidebar';
+import AuthGuard from '@/src/components/AuthGuard';
 import React, { useState, useEffect } from 'react';
 interface SidebarChangeEvent extends CustomEvent {
   detail: {
@@ -27,18 +28,20 @@ export default function CooperativeLayout({
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
-      <div className="flex flex-1">
-        <Sidebar onExpandChange={setSidebarExpanded} />
-        <main
-          className={`flex-1 overflow-x-auto transition-all duration-300 ${
-            sidebarExpanded ? 'ml-64' : 'ml-20'
-          }`}
-        >
-          <div className="p-6">{children}</div>
-        </main>
+    <AuthGuard>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <div className="flex flex-1">
+          <Sidebar onExpandChange={setSidebarExpanded} />
+          <main
+            className={`flex-1 overflow-x-auto transition-all duration-300 ${
+              sidebarExpanded ? 'ml-64' : 'ml-20'
+            }`}
+          >
+            <div className="p-6">{children}</div>
+          </main>
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

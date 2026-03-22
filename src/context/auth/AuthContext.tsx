@@ -1,33 +1,29 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { AuthContext } from './auth.context';
 import { authService } from '@/src/services/authService';
-import { jwtDecode } from 'jwt-decode';
-import { CustomJwtPayload } from './jwt';
+import { UserProfile } from '@/src/types';
 import { LoginCredentials } from './auth.types';
-import { AuthUser } from '@/src/types';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [initializing, setInitializing] = useState<boolean>(true);
 
   useEffect(() => {
-    const initAuth = () => {
+    const initAuth = async () => {
       const token = localStorage.getItem('accessToken');
 
       if (token) {
         try {
-          const decoded = jwtDecode<CustomJwtPayload>(token);
-
-          setUser({
-            email: decoded.sub,
-            role: decoded.role,
-          });
+          const profile = await authService.getProfile();
+          setUser(profile);
         } catch (err) {
+          console.error('Failed to initialize auth:', err);
           localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         }
       }
 
@@ -40,17 +36,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (credentials: LoginCredentials) => {
     const data = await authService.login(credentials);
 
-    localStorage.setItem('accessToken', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
+    const profile = await authService.getProfile();
+    setUser(profile);
 
-    const decoded = jwtDecode<CustomJwtPayload>(data.accessToken);
-
-    const user: AuthUser = {
-      email: decoded.sub,
-      role: decoded.role,
-    };
-
-    setUser(user);
     return data;
   };
 

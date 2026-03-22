@@ -2,6 +2,7 @@ export interface JoinRequest {
   id: string;
   farmerName: string;
   farmerPhone: string;
+  farmerAddress: string;
   cooperativeName: string;
   status: JoinRequestStatus;
   responseMessage?: string;
