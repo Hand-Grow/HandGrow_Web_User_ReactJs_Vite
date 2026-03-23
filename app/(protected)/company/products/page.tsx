@@ -688,7 +688,7 @@ function ProductsContent() {
           filtered.map((product) => (
             <div
               key={product.id}
-              className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               {/* IMAGE */}
               <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">

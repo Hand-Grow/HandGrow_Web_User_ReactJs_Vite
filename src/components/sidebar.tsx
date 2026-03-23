@@ -88,12 +88,7 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
 
   // Hàm kiểm tra active menu
   const isMenuItemActive = (itemHref: string) => {
-    if (itemHref === '/cooperative/dashboard') {
-      return pathname === '/cooperative/dashboard';
-    }
-    return (
-      pathname.startsWith(itemHref) && pathname !== '/cooperative/dashboard'
-    );
+    return pathname === itemHref || pathname.startsWith(itemHref + '/');
   };
 
   return (
@@ -104,16 +99,13 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
       suppressHydrationWarning
     >
       {/* Header */}
-      <div
-        className="p-4 border-b border-gray-200 flex items-center gap-3"
-        suppressHydrationWarning
-      >
+      <div className="p-4 border-b border-gray-200 flex items-center justify-center">
         <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
           HTX
         </div>
         {expanded && (
           <span
-            className="text-sm font-bold text-gray-900 truncate"
+            className="text-sm font-bold text-gray-900 truncate ml-3"
             suppressHydrationWarning
           >
             HTX nông nghiệp
@@ -133,7 +125,7 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+              className={`flex items-center ${expanded ? 'gap-3' : 'justify-center'} px-4 py-3 rounded-lg transition ${
                 isActive
                   ? 'bg-emerald-100 text-emerald-700 font-semibold'
                   : 'text-gray-700 hover:bg-gray-100'
@@ -160,9 +152,10 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
         suppressHydrationWarning
       >
         <button
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+          className={`w-full flex items-center ${expanded ? 'gap-3' : 'justify-center'} px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition`}
           onClick={toggleExpand}
           suppressHydrationWarning
+          title={!expanded ? t('SIDEBAR.COLLAPSE') : ''}
         >
           {expanded ? (
             <>
@@ -176,7 +169,7 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
             </>
           ) : (
             <ChevronRight
-              className="w-5 h-5 shrink-0 mx-auto"
+              className="w-5 h-5 shrink-0"
               suppressHydrationWarning
             />
           )}
@@ -184,7 +177,7 @@ export function Sidebar({ onExpandChange }: SidebarProps) {
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+          className={`w-full flex items-center ${expanded ? 'gap-3' : 'justify-center'} px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition`}
           title={!expanded ? t('SIDEBAR.LOGOUT') : ''}
           suppressHydrationWarning
         >

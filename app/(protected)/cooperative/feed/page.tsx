@@ -53,7 +53,7 @@ export default function FeedPage() {
       const data = Array.isArray(res) ? res : (res.content ?? []);
       const normalized = data.map((p: Post, index: number) => ({
         ...p,
-        id: p.id || `${Date.now()}-${index}`,
+        id: p.id || `${page}-${index}-${Date.now()}-${Math.random()}`,
         createdAt: normalizeDate(p.createdAt),
         attachments: p.attachments || [],
         likeCount: p.likeCount || 0,
@@ -221,7 +221,11 @@ export default function FeedPage() {
             {!loading &&
               filteredFeed.map((item, index) => (
                 <FeedCard
-                  key={item.id ?? `${item.createdAt}-${index}`} // 🔥 no warning
+                  key={
+                    item.id
+                      ? `${item.id}-feed-${item.type}-${index}`
+                      : `feed-${item.type}-${item.createdAt}-${index}-${Math.random()}`
+                  }
                   item={item}
                   setFeed={setFeed}
                 />
@@ -282,8 +286,15 @@ export default function FeedPage() {
               )}
 
               <div className="space-y-3">
-                {campaignPosts.map((post) => (
-                  <div key={post.id} className="bg-green-50 p-3 rounded-xl">
+                {campaignPosts.map((post, index) => (
+                  <div
+                    key={
+                      post.id
+                        ? `${post.id}-campaign-${post.productName}-${index}`
+                        : `campaign-${post.productName}-${post.expectedDate}-${index}-${Math.random()}`
+                    }
+                    className="bg-green-50 p-3 rounded-xl"
+                  >
                     <p className="font-medium text-green-700">
                       {PRODUCE_LABELS[post.productName as ProduceType] ??
                         post.productName}
