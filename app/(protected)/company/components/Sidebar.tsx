@@ -142,7 +142,7 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
     <aside
       className={`bg-white border-r border-gray-200 transition-all duration-300 ${
         expanded ? 'w-64' : 'w-20'
-      } h-screen flex flex-col fixed top-0 left-0 z-50`}
+      } h-[calc(100vh-4rem)] flex flex-col fixed top-16 left-0 z-40`}
     >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center gap-3">
@@ -170,7 +170,10 @@ function SidebarComponent({ onExpandChange }: SidebarProps) {
             pathname === item.href ||
             (pathname.startsWith(item.href + '/') &&
               !menuItems.some(
-                (i) => i.href !== item.href && pathname.startsWith(i.href)
+                (otherItem) =>
+                  otherItem.href !== item.href &&
+                  pathname.startsWith(otherItem.href) &&
+                  otherItem.href.length > item.href.length
               ));
 
           return (

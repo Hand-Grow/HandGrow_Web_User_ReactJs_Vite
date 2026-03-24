@@ -130,12 +130,12 @@ export default function MyRequests() {
           {requests.map((request) => (
             <div
               key={request.id}
-              className="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="group bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               {/* HEADER */}
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-lg text-gray-900 dark:text-white line-clamp-1">
+                  <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
                     {request.productName}
                   </h3>
                   <p className="text-xs text-gray-500 mt-1">
@@ -154,26 +154,26 @@ export default function MyRequests() {
 
               {/* MAIN INFO */}
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl">
+                <div className="bg-gray-50 p-3 rounded-xl">
                   <p className="text-gray-500 text-xs mb-1">
                     {t('SOURCING.MY_REQUESTS.QUANTITY')}
                   </p>
-                  <p className="font-semibold text-gray-900 dark:text-white">
+                  <p className="font-semibold text-gray-900">
                     {new Intl.NumberFormat('vi-VN').format(request.quantity)}{' '}
                     {t(`COMMON.UNIT.${request.unit.toUpperCase()}`)}
                   </p>
                 </div>
 
-                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl">
+                <div className="bg-green-50 p-3 rounded-xl">
                   <p className="text-green-600 text-xs mb-1">
                     {t('SOURCING.MY_REQUESTS.EXPECTED_PRICE')}
                   </p>
-                  <p className="font-semibold text-green-700 dark:text-green-400">
+                  <p className="font-semibold text-green-700">
                     {formatPrice(request.expectedPrice)}
                   </p>
                 </div>
 
-                <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl col-span-2">
+                <div className="bg-gray-50 p-3 rounded-xl col-span-2">
                   <p className="text-gray-500 text-xs mb-1">
                     {t('SOURCING.MY_REQUESTS.DEADLINE')}
                   </p>
@@ -183,17 +183,17 @@ export default function MyRequests() {
 
               {/* REQUIREMENTS */}
               {request.requirements && (
-                <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                <div className="mt-4 p-3 bg-gray-50 rounded-xl">
                   <p className="text-xs text-gray-500 mb-1">
                     {t('SOURCING.MY_REQUESTS.REQUIREMENTS')}
                   </p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                  <p className="text-sm text-gray-700 line-clamp-2">
                     {request.requirements}
                   </p>
                 </div>
               )}
 
-              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex justify-between text-xs text-gray-500">
+              <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between text-xs text-gray-500">
                 <span> {formatDate(request.createdAt)}</span>
                 {request.updatedAt !== request.createdAt && (
                   <span> {formatDate(request.updatedAt)} </span>
