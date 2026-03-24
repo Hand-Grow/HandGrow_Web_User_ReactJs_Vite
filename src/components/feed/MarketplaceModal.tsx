@@ -40,7 +40,7 @@ export default function MarketplaceCard({ post, onEdit, onDelete }: Props) {
   return (
     <div className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group hover:-translate-y-1">
       {/* IMAGE SLIDER */}
-      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+      <div className="relative aspect-4/3 bg-gray-100 overflow-hidden">
         {images.length > 0 ? (
           <img
             src={images[index]}
@@ -125,7 +125,7 @@ export default function MarketplaceCard({ post, onEdit, onDelete }: Props) {
             <Package size={16} className="text-blue-500" />
             <span>
               {/* ĐÃ SỬA: Hiển thị số lượng trực tiếp, không check điều kiện */}
-              {post.totalQuantity} tấn
+              {post.totalQuantity} Kg
             </span>
           </div>
 

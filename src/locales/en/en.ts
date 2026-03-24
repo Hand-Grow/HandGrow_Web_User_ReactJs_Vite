@@ -17,11 +17,21 @@ export const en = {
     HOME_SUBTITLE: 'Welcome to the cooperative management system',
 
     STATUS: {
-      TOTAL_MEMBERS: 'Total Members',
-      TOTAL_PACKAGES: 'Bulk Packages',
-      COLLECTING: 'Collecting',
-      CONTRACT_SALES: 'Contract Sales',
+      TOTAL_FARMERS: 'Farmers',
+      ACTIVE_SEASONS: 'Active Seasons',
+      COLLECTING_VOLUME: 'Collecting Volume (kg)',
+      ACTIVE_CONTRACTS: 'Active Contracts',
       MONTH_COMPARE: '+12% compared to last month',
+    },
+
+    COLLECTIONS: {
+      TITLE: 'Collections',
+      SUBTITLE: 'Ongoing collection batches',
+      PROGRESS: 'Progress',
+    },
+
+    ANNOUNCEMENTS: {
+      TITLE: 'Announcements',
     },
 
     TRANSACTIONS: {
@@ -37,7 +47,13 @@ export const en = {
 
     QUICK_ACTIONS: {
       TITLE: 'Quick Actions',
-      SUBTITLE: 'Easy to access with quick actions',
+      SUBTITLE: 'Quick access to common actions',
+
+      CREATE_COLLECTION: 'Create Collection',
+      MANAGE_FARMERS: 'Manage Farmers',
+      VIEW_REPORT: 'View Reports',
+
+      // giữ lại nếu còn dùng ở chỗ khác
       CREATE_PURCHASE_REQUEST: 'Create Purchase Request',
       SEARCH_SUPPLY: 'Search Supply',
       CREATE_ORDER: 'Create Purchase Order',
@@ -75,7 +91,7 @@ export const en = {
 
   FEED: {
     TITLE: 'Cooperative Feed',
-    CREAT_POST: 'Create post',
+    CREATE_POST: 'Create post',
     SUBTITLE: 'Updates on announcements and collection campaigns',
     MARKETPLACE: 'Marketplace',
     THINKING: 'What are you thinking?',

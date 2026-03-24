@@ -10,10 +10,9 @@ import ConversationList from '@/src/components/chat/ConversationList';
 import ChatWindow from '@/src/components/chat/ChatWindow';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { useAuth } from '@/src/context/auth/useAuth'; // Import useAuth
+import { useAuth } from '@/src/context/auth/useAuth';
 import { USER_ROLES } from '@/src/constants';
 
-// 1. TÁCH LÕI LOGIC ra một component riêng
 function MessagesContent() {
   const searchParams = useSearchParams();
   const roomIdFromUrl = searchParams.get('roomId');

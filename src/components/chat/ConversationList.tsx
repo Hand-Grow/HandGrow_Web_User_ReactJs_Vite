@@ -24,19 +24,17 @@ export default function ConversationList({
   return (
     <div
       className={`
-      transition-all duration-300
-      bg-white
-      border border-neutral-200
-      shadow-sm
-      flex flex-col
-      overflow-hidden
-      h-full
+    transition-all duration-300
+    bg-neutral-50
+    flex flex-col
+    overflow-hidden
+    h-full
 
-      ${collapsed ? 'w-14' : 'w-full sm:w-80 lg:w-96'}
-    `}
+    ${collapsed ? 'w-[64px]' : 'w-full sm:w-80 lg:w-96'}
+  `}
     >
       {/* HEADER */}
-      <div className="flex items-center justify-between p-3 sm:p-4 border-b">
+      <div className="flex items-center justify-between p-3 sm:p-4">
         {!collapsed && (
           <h2 className="text-sm font-semibold text-neutral-700">Tin nhắn</h2>
         )}
@@ -44,7 +42,7 @@ export default function ConversationList({
         {onToggle && (
           <button
             onClick={onToggle}
-            className="p-1 rounded-md hover:bg-neutral-100"
+            className="p-1.5 rounded-lg hover:bg-neutral-100 transition"
           >
             {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
           </button>
@@ -53,20 +51,12 @@ export default function ConversationList({
 
       {/* SEARCH */}
       {!collapsed && (
-        <div className="p-3 sm:p-4 border-b">
-          <div className="flex items-center bg-neutral-50 rounded-xl px-3 py-2">
+        <div className="px-3 sm:px-4 pb-3">
+          <div className="flex items-center bg-neutral-100 rounded-xl px-3 py-2">
             <Search size={16} className="text-neutral-400" />
-
             <input
               placeholder="Tìm kiếm tin nhắn..."
-              className="
-                ml-2
-                w-full
-                bg-transparent
-                outline-none
-                text-sm
-                placeholder-neutral-400
-              "
+              className="ml-2 w-full bg-transparent outline-none text-sm placeholder-neutral-400"
             />
           </div>
         </div>

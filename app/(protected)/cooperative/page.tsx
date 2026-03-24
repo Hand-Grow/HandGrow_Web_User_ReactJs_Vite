@@ -24,7 +24,7 @@ const statusCards = [
     color: 'bg-purple-100 text-purple-600',
   },
   {
-    label: 'Bán hợp đồng',
+    label: 'Hợp đồng',
     value: 628,
     icon: <TrendingUp className="w-6 h-6" />,
     color: 'bg-emerald-100 text-emerald-600',

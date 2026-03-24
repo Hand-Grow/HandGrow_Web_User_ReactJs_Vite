@@ -191,7 +191,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
 
       toast.dismiss(toastId);
       toast.success(
-        t('CHAT.SEND_CONTRACT_SUCCESS') || 'Gửi hợp đồng thành công!',
+        t('CHAT.TOAST.SEND_CONTRACT_SUCCESS') || 'Gửi hợp đồng thành công!',
         { icon: '📄' }
       );
     } catch (error: unknown) {
@@ -201,31 +201,34 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 404) {
           toast.error(
-            t('CHAT.CONTRACT_NOT_FOUND') || 'Không tìm thấy hợp đồng!'
+            t('CHAT.TOAST.CONTRACT_NOT_FOUND') || 'Không tìm thấy hợp đồng!'
           );
         } else if (error.response?.status === 403) {
           toast.error(
-            t('CHAT.CONTRACT_NO_PERMISSION') ||
+            t('CHAT.TOAST.CONTRACT_NO_PERMISSION') ||
               'Bạn không có quyền gửi hợp đồng này!'
           );
         } else {
           toast.error(
-            t('CHAT.SEND_CONTRACT_ERROR') || 'Gửi hợp đồng thất bại!'
+            t('CHAT.TOASTSEND_CONTRACT_ERROR') || 'Gửi hợp đồng thất bại!'
           );
         }
       } else if (error instanceof Error) {
         if (error.message === 'No contract data received') {
-          toast.error(t('CHAT.CONTRACT_EMPTY') || 'Dữ liệu hợp đồng trống!');
+          toast.error(
+            t('CHAT.TOAST.CONTRACT_EMPTY') || 'Dữ liệu hợp đồng trống!'
+          );
         } else {
           toast.error(error.message);
         }
       } else {
-        toast.error(t('CHAT.SEND_CONTRACT_ERROR') || 'Gửi hợp đồng thất bại!');
+        toast.error(
+          t('CHAT.TOAST.SEND_CONTRACT_ERROR') || 'Gửi hợp đồng thất bại!'
+        );
       }
     }
   };
 
-  // ─── Format giờ (giữ UTC+7) ─────────────────────────────────────────────────
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     date.setHours(date.getHours() + 7);
@@ -235,7 +238,6 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     });
   };
 
-  // ─── Empty state ─────────────────────────────────────────────────────────────
   if (!selectedRoom) {
     return (
       <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex items-center justify-center">
@@ -244,9 +246,8 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
     );
   }
 
-  // ─── Main chat UI ────────────────────────────────────────────────────────────
   return (
-    <div className="flex-1 bg-white rounded-2xl border border-neutral-200 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden">
       <ChatHeader room={selectedRoom} viewerType={senderType} />
 
       <div className="flex-1 bg-neutral-50 p-6 space-y-5 overflow-y-auto">
@@ -288,7 +289,7 @@ export default function ChatWindow({ selectedRoom, senderType }: Props) {
           onSaved={async () => {
             await handleSendContract();
             toast.success(
-              t('CHAT.CONTRACT_SAVED') || 'Lưu hợp đồng thành công!'
+              t('CHAT.TOAST.CONTRACT_SAVED') || 'Lưu hợp đồng thành công!'
             );
           }}
         />
