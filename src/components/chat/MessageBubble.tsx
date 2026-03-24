@@ -61,7 +61,7 @@ export default function MessageBubble({
       currency: 'VND',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price * 1000);
+    }).format(price);
   };
 
   const formatQuantity = (quantity: number) => {
@@ -217,7 +217,7 @@ export default function MessageBubble({
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-xs text-neutral-500 mb-1">
-                      {t('CONTRACT.COOP')}
+                      {t('CONTRACT.COOPERATIVE')}
                     </p>
                     <p className="text-sm font-medium text-neutral-900">
                       {contract.cooperativeName}

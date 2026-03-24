@@ -10,7 +10,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <I18nProvider>
           <Toaster position="top-right" />
-
           <AppProviders>{children}</AppProviders>
         </I18nProvider>
       </body>

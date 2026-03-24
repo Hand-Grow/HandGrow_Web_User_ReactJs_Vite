@@ -29,14 +29,21 @@ export default function CooperativeLayout({
 
   return (
     <AuthGuard>
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
-        <div className="flex flex-1">
-          <Sidebar onExpandChange={setSidebarExpanded} />
+      <div className="min-h-screen bg-neutral-50">
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Header />
+        </div>
+
+        <div className="flex">
+          <div className="fixed top-16 left-0 bottom-0 z-40">
+            <Sidebar onExpandChange={setSidebarExpanded} />
+          </div>
           <main
-            className={`flex-1 overflow-x-auto transition-all duration-300 ${
-              sidebarExpanded ? 'ml-64' : 'ml-20'
-            }`}
+            className={`
+            flex-1 transition-all duration-300
+            pt-16
+            ${sidebarExpanded ? 'ml-64' : 'ml-20'}
+          `}
           >
             <div className="p-6">{children}</div>
           </main>

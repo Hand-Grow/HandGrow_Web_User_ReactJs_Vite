@@ -17,11 +17,21 @@ export const vi = {
     HOME_SUBTITLE: 'Chào mừng bạn đến với hệ thống quản lý hợp tác xã',
 
     STATUS: {
-      TOTAL_MEMBERS: 'Tổng thành viên',
-      TOTAL_PACKAGES: 'Kiện hàng chung',
-      COLLECTING: 'Đang thu gom',
-      CONTRACT_SALES: 'Bán hợp đồng',
+      TOTAL_FARMERS: 'Nông dân',
+      ACTIVE_SEASONS: 'Mùa vụ đang trồng',
+      COLLECTING_VOLUME: 'Đang thu gom (kg)',
+      ACTIVE_CONTRACTS: 'Hợp đồng đang bán',
       MONTH_COMPARE: '+12% so với tháng trước',
+    },
+
+    COLLECTIONS: {
+      TITLE: 'Danh sách thu gom',
+      SUBTITLE: 'Các lô đang thu gom',
+      PROGRESS: 'Tiến độ',
+    },
+
+    ANNOUNCEMENTS: {
+      TITLE: 'Thông báo',
     },
 
     TRANSACTIONS: {
@@ -38,8 +48,10 @@ export const vi = {
     QUICK_ACTIONS: {
       TITLE: 'Thao tác nhanh',
       SUBTITLE: 'Dễ dàng thao tác cùng với mục thao tác nhanh',
-      CREATE_PURCHASE_REQUEST: 'Tạo yêu cầu mua mới',
-      SEARCH_SUPPLY: 'Tìm kiếm nguồn cung',
+
+      CREATE_COLLECTION: 'Tạo thu gom',
+      MANAGE_FARMERS: 'Quản lý nông dân',
+      VIEW_REPORT: 'Xem báo cáo',
       CREATE_ORDER: 'Tạo đơn mua hàng',
       MANAGE_MEMBERS: 'Quản lý thành viên',
       PRODUCTION_STATS: 'Thống kê sản xuất',
@@ -106,7 +118,7 @@ export const vi = {
     EXPECTED_DATE: 'Ngày dự kiến',
     ATTACHMENTS: 'Ảnh đính kèm',
     ADD_IMAGE: 'Thêm ảnh',
-    CREAT_POST: 'Tạo bài đăng',
+    CREATE_POST: 'Tạo bài đăng',
     ERROR_TITLE_REQUIRED: 'Tiêu đề là bắt buộc',
     ERROR_CONTENT_REQUIRED: 'Nội dung là bắt buộc',
     ERROR_DATE_REQUIRED: 'Vui lòng chọn ngày dự kiến',
@@ -225,7 +237,7 @@ export const vi = {
       LOADING: 'Đang đăng...',
     },
     ERRORS: {
-      QUANTITY_ZERO: 'Sản lượng thu phải lớn hơn 0.',
+      QUANTITY_ZERO: 'Số lượng thu phải lớn hơn 0.',
       PRICE_REQUIRED: 'Vui lòng nhập giá.',
       PRICE_INVALID: 'Giá phải lớn hơn 0.',
       UPLOAD_FAILED: 'Tải ảnh thất bại.',
@@ -250,7 +262,7 @@ export const vi = {
     CURRENCY: 'VND',
     PRODUCT: 'Sản phẩm',
     DELIVERY_DATE: 'Ngày giao',
-    QUANTITY: 'Sản lượng',
+    QUANTITY: 'Số lượng',
     PRICE: 'Đơn giá',
     CONTRACT: 'Hợp đồng',
     MESSAGE: 'Tin nhắn',
@@ -291,11 +303,11 @@ export const vi = {
     LOADING: 'Đang tải hợp đồng...',
     EMPTY: 'Chưa có hợp đồng nào',
     LOAD_ERROR: 'Không thể tải hợp đồng',
-    TITLE_CONTRACT: 'HỢP ĐỒNG',
+    TITLE_CONTRACT: 'Hợp đồng',
     ENTERPRISE: 'Doanh nghiệp',
     COOPERATIVE: 'Hợp tác xã',
     PRODUCT: 'Sản phẩm',
-    QUANTITY: 'Sản lượng',
+    QUANTITY: 'Số lượng',
     PRICE: 'Đơn giá',
     TOTAL_VALUE: 'Tổng giá trị',
     DELIVERY_DATE: 'Ngày giao hàng',
@@ -368,7 +380,7 @@ export const vi = {
     HOME: 'Trang chủ',
     PRODUCTS: 'Quản lý sản phẩm',
     SEARCH_SUPPLY: 'Tìm kiếm nguồn cung',
-    PURCHASE_REQUESTS: 'Yêu cầu mua',
+    PURCHASE_REQUESTS: 'Đơn mua chung',
     MANAGE_MEMBER: 'Quản lý thành viên',
     MESSAGES: 'Tin nhắn',
     CONTRACTS: 'Hợp đồng',
