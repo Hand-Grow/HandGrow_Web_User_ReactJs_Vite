@@ -43,10 +43,12 @@ httpClient.interceptors.response.use(
         break;
 
       case 401:
-        toast.error('Session expired. Please login again.');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        window.location.href = `/login?lang=${i18next.language || 'vi'}`;
+        if (!window.location.pathname.includes('/login')) {
+          toast.error('Session expired. Please login again.');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          window.location.href = `/login?lang=${i18next.language || 'vi'}`;
+        }
         break;
 
       case 403:
