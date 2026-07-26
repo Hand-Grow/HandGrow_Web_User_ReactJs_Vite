@@ -10,6 +10,7 @@ import CompanyRegisterForm from '@/src/components/layout/register/CompanyRegiste
 import i18next from 'i18next';
 import { Province, Ward } from '@/src/types';
 import { useRouter } from 'next/navigation';
+import { validateEnterpriseRegister } from '@/src/utils/validators/authValidator';
 
 const RegisterEnterprise: React.FC = () => {
   const [companyName, setCompanyName] = useState<string>('');
@@ -61,13 +62,18 @@ const RegisterEnterprise: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!companyName || !username || !password) {
-      toast.error('Vui lòng nhập đầy đủ thông tin');
-      return;
-    }
+    const error = validateEnterpriseRegister({
+      companyName,
+      username,
+      phoneNumber,
+      password,
+      confirmPassword,
+      province,
+      commune,
+    });
 
-    if (password !== confirmPassword) {
-      toast.error('Mật khẩu không khớp');
+    if (error) {
+      toast.error(error);
       return;
     }
 

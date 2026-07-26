@@ -2,34 +2,32 @@ import { API_ENDPOINTS } from '../constants/apiEndpoints';
 import httpClient from './http/httpClient';
 
 export const fileService = {
-  getPresignedUrl: async (filename: string, contentType: string) => {
-    const res = await httpClient.get(
-      API_ENDPOINTS.FILES.PRESIGNED_URL(filename, contentType)
-    );
-    return res.data; // { presignedUrl, publicUrl }
-  },
-
   uploadFile: async (file: File): Promise<string> => {
-    // 1. Lấy presigned URL từ backend
-    const { presignedUrl, publicUrl } = await fileService.getPresignedUrl(
-      file.name,
-      file.type
-    );
+    // Get file extension
+    const extension = file.name.split('.').pop();
+    const contentType = file.type || 'application/octet-stream';
 
-    // 2. Upload trực tiếp lên S3 bucket dùng fetch (không dùng httpClient vì không cần Auth header/BaseURL cho S3)
-    const response = await fetch(presignedUrl, {
+    // 1. Get presigned URL from backend
+    const presignRes = await httpClient.get(
+      `/api/v1/files/presigned-url?extension=${extension}&contentType=${encodeURIComponent(contentType)}`
+    );
+    // Backend wraps response in ApiResponse (data.data)
+    const { uploadUrl, fileKey } = presignRes.data.data;
+
+    // 2. Upload file directly to S3 using fetch or axios
+    // Must NOT use httpClient because we don't want to attach the Authorization header to S3
+    await fetch(uploadUrl, {
       method: 'PUT',
-      body: file,
       headers: {
-        'Content-Type': file.type,
+        'Content-Type': contentType,
       },
+      body: file,
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to upload file to S3');
-    }
-
-    // 3. Trả về public URL để lưu vào database
+    // 3. Return the final public URL
+    // We assume the bucket URL can be constructed. For AWS S3:
+    // Extract bucket URL from uploadUrl (everything before the fileKey)
+    const publicUrl = uploadUrl.split('?')[0];
     return publicUrl;
   },
 };
