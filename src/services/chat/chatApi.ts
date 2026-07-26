@@ -3,18 +3,21 @@ import httpClient from '../http/httpClient';
 import { API_ENDPOINTS } from '@/src/constants/apiEndpoints';
 import { UserRole } from '@/src/constants';
 export const chatApi = {
-  createRoom(bulkSaleId: string) {
-    return httpClient.post(API_ENDPOINTS.CHAT.ROOMS, { bulkSaleId });
+  async createRoom(bulkSaleId: string) {
+    const res = await httpClient.post(API_ENDPOINTS.CHAT.ROOMS, { bulkSaleId });
+    return { ...res, data: res.data.data };
   },
 
-  getMyRooms() {
-    return httpClient.get(API_ENDPOINTS.CHAT.ROOMS);
+  async getMyRooms() {
+    const res = await httpClient.get(API_ENDPOINTS.CHAT.ROOMS);
+    return { ...res, data: res.data.data };
   },
 
-  getMessages(roomId: string, page = 0, size = 20) {
-    return httpClient.get(
+  async getMessages(roomId: string, page = 0, size = 20) {
+    const res = await httpClient.get(
       `${API_ENDPOINTS.CHAT.MESSAGES(roomId)}?page=${page}&size=${size}`
     );
+    return { ...res, data: res.data.data };
   },
 
   sendMessage(

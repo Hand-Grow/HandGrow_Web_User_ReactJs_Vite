@@ -18,9 +18,11 @@ export const authService = {
   },
 
   getProfile: async (): Promise<UserProfile> => {
-    const res = await httpClient.get<UserProfile>(API_ENDPOINTS.USER.PROFILE);
+    const res = await httpClient.get<{ data: UserProfile }>(
+      API_ENDPOINTS.USER.PROFILE
+    );
 
-    return res.data;
+    return res.data.data;
   },
 
   logout: () => {
