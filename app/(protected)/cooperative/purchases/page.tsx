@@ -89,7 +89,7 @@ const fetchProducts = async (): Promise<Product[]> => {
       },
     });
     console.log('Products response:', response.data);
-    return response.data || [];
+    return response.data?.data || [];
   } catch (error) {
     console.error('Error fetching products:', error);
     return [];

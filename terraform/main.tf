@@ -65,6 +65,26 @@ resource "aws_acm_certificate" "cert" {
   }
 }
 
+# Hàm CloudFront Function để tự động thêm index.html vào các thư mục (Fix lỗi auto refresh của Next.js)
+resource "aws_cloudfront_function" "rewrite_uri" {
+  name    = "rewrite-uri-nextjs"
+  runtime = "cloudfront-js-1.0"
+  comment = "Append index.html to request URIs"
+  publish = true
+  code    = <<EOF
+function handler(event) {
+    var request = event.request;
+    var uri = request.uri;
+    if (uri.endsWith('/')) {
+        request.uri += 'index.html';
+    } else if (!uri.includes('.')) {
+        request.uri += '/index.html';
+    }
+    return request;
+}
+EOF
+}
+
 # 3. Tạo CloudFront Distribution (Mạng phân phối nội dung toàn cầu)
 resource "aws_cloudfront_distribution" "frontend_cdn" {
   enabled             = true
@@ -86,10 +106,16 @@ resource "aws_cloudfront_distribution" "frontend_cdn" {
     target_origin_id = "S3-${aws_s3_bucket.frontend_bucket.id}"
 
     forwarded_values {
-      query_string = false
+      query_string = true
       cookies {
         forward = "none"
       }
+    }
+
+    # Gắn hàm vào request
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rewrite_uri.arn
     }
 
     viewer_protocol_policy = "redirect-to-https"
