@@ -69,3 +69,9 @@ lerna-debug.log*
 *.sw?
 *.tsbuildinfo
 next-env.d.ts
+### Terraform ###
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.tfstate.lock.info

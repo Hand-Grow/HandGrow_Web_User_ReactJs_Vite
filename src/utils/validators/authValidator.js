@@ -59,3 +59,35 @@ export const validateRegister = ({
 
   return null;
 };
+
+export const validateEnterpriseRegister = ({
+  companyName,
+  username,
+  phoneNumber,
+  password,
+  confirmPassword,
+  province,
+  commune,
+}) => {
+  let error =
+    required(companyName, 'Tên doanh nghiệp') ||
+    required(username, 'Email') ||
+    required(phoneNumber, 'Số điện thoại') ||
+    required(province, 'Tỉnh / Thành phố') ||
+    required(commune, 'Xã / Phường') ||
+    required(password, 'Mật khẩu') ||
+    required(confirmPassword, 'Mật khẩu xác nhận');
+
+  if (error) return error;
+
+  if (!emailRegex.test(username)) return 'Email không hợp lệ';
+
+  if (!phoneRegex.test(phoneNumber))
+    return 'Số điện thoại không hợp lệ (0xxxxxxxxx hoặc +84xxxxxxxxx)';
+
+  if (password.length < 6) return 'Mật khẩu tối thiểu 6 ký tự';
+
+  if (password !== confirmPassword) return 'Mật khẩu xác nhận không khớp';
+
+  return null;
+};
